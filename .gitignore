@@ -48,3 +48,6 @@ docker-compose.override.yml
 *.local
 *.bak
 *.backup
+
+# logs
+logs/*

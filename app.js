@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 
 const app = express();
@@ -56,7 +56,12 @@ app.use("/api/demos", demorouter);
 const erorhandle = require("./middleware/errorhandling");
 app.use(erorhandle.errorhandling);
 
+//config categoryrouter
+const categoryrouter = require("./router/categoryrouter");
+app.use("/api/categories", categoryrouter);
+
 let port = process.env.PORT || 9000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port},http://localhost:${port}`);
+  console.log(`Swagger is running on http://localhost:${port}/api-docs/`);
 });
