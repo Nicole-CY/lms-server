@@ -1,5 +1,5 @@
 const userservice = require("../service/userservice");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const { bcryptConfig } = require("../appConfig");
 
 const addUserAsync = async (req, res) => {
@@ -19,8 +19,8 @@ const addUserAsync = async (req, res) => {
   user.gender = req.body.gender;
 
   let password = req.body.password;
-  const salt = bcrypt.genSaltSync(bcryptConfig.saltRounds);
-  let encrypPassword = await bcrypt.hashSync(user.password,salt);
+  const salt = await bcrypt.genSalt(bcryptConfig.saltRounds);
+  let encrypPassword = await bcrypt.hash(user.password, salt);
   user.password = encrypPassword;
   let result = await userservice.addUserAsync(user);
   if (result.isSuccess) {

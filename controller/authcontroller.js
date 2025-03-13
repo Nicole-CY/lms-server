@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcryptjs');
 const logger = require("../common/logsetting");
 const { jwtConfig } = require("../appConfig");
 const jwt = require("jsonwebtoken");
@@ -11,7 +11,7 @@ const loginAsync = async (req, res) => {
   if (!result.isSuccess) {
     res.sendCommonValue(null, "login fail username or password not math", 0);
   } else {
-    let isMath = await bcrypt.compareSync(password, result.data.password);
+    let isMatch = await bcrypt.compare(password, result.data.password);
     if (isMath) {
       let user = { id: result.data.id, username: result.data.username };
       let tokenStr = jwt.sign(user, jwtConfig.secret, {

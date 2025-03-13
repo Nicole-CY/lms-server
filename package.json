@@ -1,6 +1,6 @@
 {
   "name": "nodeadmin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -12,8 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.18.3",
     "express-async-errors": "^3.1.1",
     "express-jwt": "^8.4.1",
