@@ -17,12 +17,16 @@ module.exports = {
       "user",
       [
         {
-          username: "default user",
+          username: "superadmin",
           password:
             "$2b$10$ig9HBJNu6OgmwSnbPn/jWupbPPq1LC4Ee5uptADcG/Ho3M1e3VM1S",
           email: "defaultuser@example.com",
           age: 30,
           gender: 1,
+          avatar: "https://via.placeholder.com/150",
+          nickname: "default",
+          active: true,
+          access: "user",
         },
         {
           username: "admin",
@@ -31,6 +35,10 @@ module.exports = {
           email: "admin@example.com",
           age: 30,
           gender: 1,
+          avatar: "https://via.placeholder.com/150",
+          nickname: "default",
+          active: true,
+          access: "user",
         },
       ],
       {}
