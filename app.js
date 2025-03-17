@@ -1,9 +1,14 @@
+require("dotenv").config();
 const express = require("express");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
 const cors = require("cors");
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:9008', 
+  credentials: true
+}));
 
 //config commonresult
 const returnvalue = require("./middleware/returnvalue");
@@ -12,6 +17,9 @@ app.use(returnvalue.returnvalue);
 //config josn body
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+//parse Cookie
+app.use(cookieParser());
 
 // config Swagger
 const swaggerDocument = require("./common/swagger");
@@ -24,15 +32,6 @@ app.use(
   "/api-docs",
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocument, swaggerUiOptions)
-);
-
-//config jwt
-const { jwtConfig } = require("./appConfig");
-let { expressjwt: jwt } = require("express-jwt");
-app.use(
-  jwt({ secret: jwtConfig.secret, algorithms: jwtConfig.algorithms }).unless({
-    path: ["/", , "/api-docs", "/api/auth/login", "/api/auth/loginOut"],
-  })
 );
 
 app.get("/", (req, res) => {
@@ -51,6 +50,14 @@ app.use("/api/users", userrouter);
 const demorouter = require("./router/demorouter");
 app.use("/api/demos", demorouter);
 
+//config categoryrouter
+const categoryrouter = require("./router/categoryrouter");
+app.use("/api/categories", categoryrouter);
+
+//config courseRouter
+const courseRouter = require('./router/courseRouter');
+app.use("/api/courses", courseRouter);
+
 //config erorhandle
 const erorhandle = require("./middleware/errorhandling");
 app.use(erorhandle.errorhandling);
@@ -58,4 +65,5 @@ app.use(erorhandle.errorhandling);
 let port = process.env.PORT || 9000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port},http://localhost:${port}`);
+  console.log(`Swagger is running on http://localhost:${port}/api-docs/`);
 });

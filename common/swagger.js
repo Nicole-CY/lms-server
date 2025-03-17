@@ -10,14 +10,7 @@ const options = {
       description: `only has user apis and will add more`,
     },
     components: {
-      securitySchemes: {
-        BearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-          value: "Bearer <JWT token here>",
-        },
-      },
+      
     },
   },
   apis: [path.join(__dirname, "../router/*.js")],

@@ -1,126 +1,154 @@
-const { db } = require("../db/mysqldb.js");
+const User = require("../models/user");
 const logger = require("../common/logsetting");
 
-var getUserbyNameAsync = async (name) => {
-  let sql = "SELECT * FROM user where username=? ";
-  let result = await db.query(sql, [name]);
-  let user = { id: 0 };
-  if (result[0].length > 0) {
-    user.id = result[0][0].id;
-    user.username = result[0][0].username;
-    user.password = result[0][0].password;
-    user.email = result[0][0].email;
-    user.age = result[0][0].age;
-    user.gender = result[0][0].gender;
-  }
-  return { isSuccess: user.id > 0, message: "", data: user };
-};
-
-var addUserAsync = async (user) => {
-  let sql =
-    "insert into user(username,password,email,address,age,gender) values (?,?,?,?,?,?)";
-  let result = await db.query(sql, [
-    user.username,
-    user.password,
-    user.email,
-    user.address,
-    user.age,
-    user.gender,
-  ]);
-  return { isSuccess: true, message: "" };
-};
-
-var getUserListAsync = async (page, pageSize) => {
-  let countSql = "SELECT count(*) total FROM user; ";
-  let resultCount = await db.query(countSql);
-  let total = resultCount[0][0].total;
-  if (total == 0) {
-    return { isSuccess: true, message: "", data: { items: [], total: 0 } };
-  }
-  let sql = "SELECT * FROM user limit ? offset ? ;";
-  let resultData = await db.query(sql, [pageSize, (page - 1) * pageSize]);
-
-  let userlist = [];
-  if (resultData[0].length > 0) {
-    resultData[0].forEach((element) => {
-      let user = { id: 0 };
-      user.id = element.id;
-      user.username = element.username;
-      //user.password = element.password;
-      user.email = element.email;
-      user.age = element.age;
-      user.gender = element.gender;
-      userlist.push(user);
+const getUserbyNameAsync = async (name) => {
+  try {
+    const user = await User.findOne({
+      where: { username: name },
     });
+
+    if (!user) {
+      return { isSuccess: false, message: "User not found", data: { id: 0 } };
+    }
+
+    return { isSuccess: true, message: "", data: user };
+  } catch (error) {
+    logger.error("getUserbyNameAsync error:", error);
+    return { isSuccess: false, message: "Server error", data: null };
   }
-  return {
-    isSuccess: true,
-    message: "",
-    data: { items: userlist, total: total },
-  };
+};
+
+const addUserAsync = async (user) => {
+  try {
+    const newUser = await User.create({
+      username: user.username,
+      password: user.password,
+      email: user.email,
+      address: user.address,
+      age: user.age,
+      gender: user.gender,
+      avatar: user.avatar,
+      nickname: user.nickname,
+      active: user.active ?? true,  
+      access: user.access || "user", 
+    });
+
+    return { isSuccess: true, message: "", data: newUser };
+  } catch (error) {
+    logger.error("addUserAsync error:", error);
+    return { isSuccess: false, message: "Add user failed", data: null };
+  }
+};
+
+const getUserListAsync = async (page = 1, pageSize = 10) => {
+  try {
+    const { count, rows } = await User.findAndCountAll({
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+      attributes: { exclude: ["password"] }, 
+    });
+
+    return {
+      isSuccess: true,
+      message: "",
+      data: {
+        items: rows,
+        total: count,
+      },
+    };
+  } catch (error) {
+    logger.error("getUserListAsync error:", error);
+    return { isSuccess: false, message: "Get user list failed", data: null };
+  }
 };
 
 const delUserByIdAsync = async (idsString) => {
-  const ids = idsString.split(",").map((id) => parseInt(id));
-  let sql = "Delete FROM user where id in (?); ";
-  let reuslt = await db.query(sql, [ids]);
-  if (reuslt[0].affectedRows > 0) {
-    return { isSuccess: true, mesage: "" };
-  }
+  try {
+    const ids = idsString.split(",").map((id) => parseInt(id));
 
-  return { isSuccess: false, mesage: "" };
+    const result = await User.destroy({
+      where: {
+        id: ids,
+      },
+    });
+
+    if (result > 0) {
+      return { isSuccess: true, message: "Delete successful" };
+    }
+
+    return { isSuccess: false, message: "Delete failed, no user found" };
+  } catch (error) {
+    logger.error("delUserByIdAsync error:", error);
+    return { isSuccess: false, message: "Delete failed", data: null };
+  }
 };
 
-var uptUserByIdAsync = async (user) => {
-  let sql =
-    "Update user set username=?,email=?,address=?,age=?,gender=? where id =?";
-  let result = await db.query(sql, [
-    user.username,
-    user.email,
-    user.address,
-    user.age,
-    user.gender,
-    user.id,
-  ]);
-  if (result[0].affectedRows > 0) {
-    return { isSuccess: true, mesage: "" };
+const uptUserByIdAsync = async (user) => {
+  try {
+    const result = await User.update(
+      {
+        username: user.username,
+        email: user.email,
+        address: user.address,
+        age: user.age,
+        gender: user.gender,
+        avatar: user.avatar,
+        nickname: user.nickname,
+        active: user.active,
+        access: user.access,
+      },
+      {
+        where: {
+          id: user.id,
+        },
+      }
+    );
+
+    if (result[0] > 0) {
+      return { isSuccess: true, message: "Update successful" };
+    }
+
+    return { isSuccess: false, message: "Update failed, user not found" };
+  } catch (error) {
+    logger.error("uptUserByIdAsync error:", error);
+    return { isSuccess: false, message: "Update failed", data: null };
   }
-  return { isSuccess: false, mesage: "" };
 };
 
-var checkUserNameAsync = async (uername, id) => {
-  let sql = "SELECT * FROM user where username=? ";
-  let result = await db.query(sql, [uername]);
-  let user = { id: 0 };
-  if (result[0].length > 0) {
-    user.id = result[0][0].id;
-    user.username = result[0][0].username;
-    user.password = result[0][0].password;
-    user.email = result[0][0].email;
-    user.age = result[0][0].age;
-    user.gender = result[0][0].gender;
-  }
+const checkUserNameAsync = async (username, id) => {
+  try {
+    const user = await User.findOne({
+      where: { username },
+    });
 
-  if (user.id > 0 && user.id !== id) {
-    return { isSuccess: false, message: "username already exists", data: user };
-  }
+    if (user && user.id !== id) {
+      return {
+        isSuccess: false,
+        message: "Username already exists",
+        data: user,
+      };
+    }
 
-  return { isSuccess: true, message: "", data: user };
+    return { isSuccess: true, message: "", data: null };
+  } catch (error) {
+    logger.error("checkUserNameAsync error:", error);
+    return { isSuccess: false, message: "Check failed", data: null };
+  }
 };
 
-var getUserbyIdAsync = async (id) => {
-  let sql = "SELECT * FROM user where id=? ";
-  let result = await db.query(sql, [id]);
-  let user = { id: 0 };
-  if (result[0].length > 0) {
-    user.id = result[0][0].id;
-    user.username = result[0][0].username;
-    user.password = result[0][0].password;
-    user.email = result[0][0].email;
-    user.age = result[0][0].age;
-    user.gender = result[0][0].gender;
+const getUserbyIdAsync = async (id) => {
+  try {
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      return { isSuccess: false, message: "User not found", data: { id: 0 } };
+    }
+
+    return { isSuccess: true, message: "", data: user };
+  } catch (error) {
+    logger.error("getUserbyIdAsync error:", error);
+    return { isSuccess: false, message: "Get user failed", data: null };
   }
-  return { isSuccess: true, message: "", data: user };
 };
 
 module.exports = {

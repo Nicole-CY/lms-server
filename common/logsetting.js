@@ -1,5 +1,5 @@
 const winston = require("winston");
-require('winston-daily-rotate-file');  
+require("winston-daily-rotate-file");
 // create Winston log
 const logger = winston.createLogger({
   level: "info",
@@ -9,25 +9,29 @@ const logger = winston.createLogger({
       filename: "logs/error_%DATE%.log",
       level: "error",
       maxSize: "20m",
-      maxFiles: "14d"
+      maxFiles: "14d",
+      auditFile: false,
     }),
     new winston.transports.DailyRotateFile({
       filename: "logs/warn_%DATE%.log",
       level: "warn",
       maxSize: "20m",
-      maxFiles: "14d"
+      maxFiles: "14d",
+      auditFile: false,
     }),
     new winston.transports.DailyRotateFile({
       filename: "logs/info_%DATE%.log",
       level: "info",
       maxSize: "20m",
-      maxFiles: "14d"
+      maxFiles: "14d",
+      auditFile: false,
     }),
     new winston.transports.DailyRotateFile({
       filename: "logs/debug_%DATE%.log",
       level: "debug",
       maxSize: "20m",
       maxFiles: "14d",
+      auditFile: false,
     }),
     new winston.transports.DailyRotateFile({ filename: "logs/all_%DATE%.log" }),
   ],
