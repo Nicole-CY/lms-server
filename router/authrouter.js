@@ -13,7 +13,7 @@ const { authenticateToken, verifyCsrfToken } = require("../middleware/authMiddle
 * '/api/auth/login':
 *  post:
 *     tags:
-*     - auth Controller
+*       - auth Controller
 *     summary: Login as a user and return token via cookie
 *     description: Login returns JWT in HttpOnly cookie + CSRF token
 *     requestBody:
@@ -53,7 +53,9 @@ router.post(
 * '/api/auth/logout':
 *  post:
 *     tags:
-*     - auth Controller
+*       - auth Controller
+*     security:
+*       - XSRFTokenScheme: []
 *     summary: Logout user and clear token
 *     description: Logout clears JWT and CSRF token cookies
 *     responses:
@@ -74,7 +76,9 @@ router.post(
 * '/api/auth/me':
 *  post:
 *     tags:
-*     - auth Controller
+*       - auth Controller
+*     security:
+*       - XSRFTokenScheme: []
 *     summary: Get authenticated user details
 *     description: Retrieve the details of the currently authenicated user based on the provided JWT token
 *     responses:
