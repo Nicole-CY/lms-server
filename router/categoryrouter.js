@@ -227,4 +227,68 @@ router.get(
   categoryController.getCategoryByIdAsync
 );
 
+/**
+ * @openapi
+ * '/api/categories':
+ *  put:
+ *     tags:
+ *     - Category Controller
+ *     summary: update a category
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *           schema:
+ *            type: object
+ *            required:
+ *              - CategoryName
+ *              - Description
+ *              - ParentId
+ *              - createdAt
+ *              - updatedAt
+ *              - Created_By
+ *              - Updated_By
+ *              - IconUrl
+ *            properties:
+ *              CategoryName:
+ *                type: string
+ *                example: Electronics
+ *              Description:
+ *                type: string
+ *                example: Category for electronic items
+ *              ParentId:
+ *                type: integer
+ *                example: 1
+ *              Created_By:
+ *                type: integer
+ *                example: 1
+ *              Updated_By:
+ *                type: integer
+ *                example: 1
+ *              IconUrl:
+ *                type: string
+ *                example: "https://example.com/icon.png"
+ *     responses:
+ *      201:
+ *        description: Created
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *      409:
+ *        description: Conflict
+ *      500:
+ *        description: Server Error
+ */
+router.put(
+  "",
+  commonValidate([
+    body("CategoryName").notEmpty().withMessage("Not a valid CategoryName"),
+    body("id").notEmpty().withMessage("Not a valid id"),
+  ]),
+  categoryController.updateCategoryByIdAsync
+);
+
 module.exports = router;
