@@ -1,47 +1,47 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
-const categoryModel = sequelize.define(
-  "categoryModel",
+const Category = sequelize.define(
+  "category",
   {
-    // Model attributes are defined here
-    ID: {
+    id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       allowNull: false,
     },
     CategoryName: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(50),
       allowNull: false,
     },
     Description: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: true,
     },
     ParentId: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    Created_At: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
+    Created_By: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Users",
+        key: "id",
+      },
     },
-    Updated_At: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      allowNull: false,
+    Updated_By: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Users",
+        key: "id",
+      },
     },
-    // Created_By: {
-    //   type: DataTypes.INTEGER,
-    // },
     IconUrl: {
-      type: DataTypes.STRING,
-      allowNull: true,
+      type: DataTypes.STRING(255),
+      allowNull: false,
     },
   },
   { timestamps: false, tableName: "Category" }
 );
 
-module.exports = categoryModel;
+module.exports = Category;
