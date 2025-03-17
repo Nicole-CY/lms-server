@@ -32,19 +32,19 @@ const getCategoryListAsync = async (page = 1, pageSize = 10) => {
       total: 0,
     },
   };
-  const total = await Category.count();
-
-  if (total === 0) return result;
 
   const offset = (page - 1) * pageSize;
-  const categories = await Category.findAll({
+
+  const { count, rows } = await Category.findAndCountAll({
     offset,
     limit: pageSize,
   });
 
+  if (count === 0) return result;
+
   result.data = {
-    items: categories,
-    total,
+    items: rows,
+    total: count,
   };
 
   return result;
@@ -76,9 +76,29 @@ const deleteCategoryByIdAsync = async (idsString) => {
   return { isSuccess: false, message: "No matching categories found" };
 };
 
+const getCategoryByIdAsync = async (id) => {
+  try {
+    const category = await Category.findByPk(id);
+
+    if (!category) {
+      return {
+        isSuccess: false,
+        message: "category not found",
+        data: { id: 0 },
+      };
+    }
+
+    return { isSuccess: true, message: "", data: category };
+  } catch (error) {
+    logger.error("getCategoryByIdAsync error:", error);
+    return { isSuccess: false, message: "Get category failed", data: null };
+  }
+};
+
 module.exports = {
   getCategoryByNameAsync,
   getCategoryListAsync,
   addCategoryAsync,
   deleteCategoryByIdAsync,
+  getCategoryByIdAsync,
 };

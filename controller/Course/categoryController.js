@@ -1,5 +1,16 @@
 const CategoryService = require("../../service/Course/categoryService");
 
+const getCategoryByNameAsync = async (req, res) => {
+  const { name } = req.params;
+  const result = await CategoryService.getCategoryByNameAsync(name);
+
+  if (result.isSuccess) {
+    res.sendCommonValue(result.data, "success", 1);
+  } else {
+    res.sendCommonValue({}, "Category not found", 0);
+  }
+};
+
 const getCategoryListAsync = async (req, res) => {
   const page = parseInt(req.params.page);
   const pageSize = parseInt(req.params.pageSize);
@@ -8,7 +19,7 @@ const getCategoryListAsync = async (req, res) => {
   if (result.isSuccess) {
     res.sendCommonValue(result.data, "success", 1);
   } else {
-    res.sendCommonValue([], "failed", 0);
+    res.sendCommonValue({}, "Category not found", 0);
   }
 };
 
@@ -42,8 +53,20 @@ const deleteCategoryByIdAsync = async (req, res) => {
   }
 };
 
+const getCategoryByIdAsync = async (req, res) => {
+  let id = parseInt(req.query.id);
+  let result = await CategoryService.getCategoryByIdAsync(id);
+  if (result.isSuccess) {
+    res.sendCommonValue(result.data, "success", 1);
+  } else {
+    res.sendCommonValue([], "failed", 0);
+  }
+};
+
 module.exports = {
+  getCategoryByNameAsync,
   getCategoryListAsync,
   addCategoryAsync,
   deleteCategoryByIdAsync,
+  getCategoryByIdAsync,
 };

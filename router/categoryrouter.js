@@ -9,6 +9,43 @@ const categoryController = require("../controller/Course/categoryController");
 
 /**
  * @openapi
+ * '/api/categories/getCategory':
+ *  get:
+ *     tags:
+ *     - Category Controller
+ *     summary: Get a category by name
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *      - name: category name
+ *        in: query
+ *        description: Name of the category to retrieve
+ *        required: true
+ *     responses:
+ *      200:
+ *        description: Fetched Successfully
+ *      400:
+ *        description: Bad Request
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Not Found
+ *      500:
+ *        description: Server Error
+ */
+router.get(
+  "/by-name/:name",
+  commonValidate([
+    param("name")
+      .notEmpty()
+      .isInt({ allow_leading_zeroes: false, min: 1 })
+      .withMessage("Category name is required"),
+  ]),
+  categoryController.getCategoryByNameAsync
+);
+
+/**
+ * @openapi
  * '/api/categories/{page}/{pageSize}':
  *  get:
  *     tags:
@@ -47,7 +84,7 @@ router.get(
     param("pageSize")
       .notEmpty()
       .isInt({ allow_leading_zeroes: false, min: 1 })
-      .withMessage("Not a valid page"),
+      .withMessage("Not a valid page size"),
   ]),
   categoryController.getCategoryListAsync
 );
@@ -110,7 +147,7 @@ router.get(
 router.post(
   "/",
   commonValidate([
-    body("CategoryName").notEmpty().withMessage("CategoryName is required"),
+    body("CategoryName").notEmpty().withMessage("Category name is required"),
     body("Description").notEmpty().withMessage("Description is required"),
     body("ParentId")
       .optional()
@@ -132,7 +169,7 @@ router.post(
  *  delete:
  *     tags:
  *     - Category Controller
- *     summary: delete a category by Id
+ *     summary: Delete a category by Id
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -156,6 +193,38 @@ router.delete(
   "/:ids",
   param([param("ids").notEmpty().withMessage("Not a valid id")]),
   categoryController.deleteCategoryByIdAsync
+);
+
+/**
+ * @openapi
+ * '/api/categories/getCategoryById':
+ *  get:
+ *     tags:
+ *     - Category Controller
+ *     summary: Get a category by id
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *      - name: category id
+ *        in: query
+ *        description: The id of the category
+ *        required: true
+ *     responses:
+ *      200:
+ *        description: Fetched Successfully
+ *      400:
+ *        description: Bad Request
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Not Found
+ *      500:
+ *        description: Server Error
+ */
+router.get(
+  "/getCategoryById",
+  commonValidate([query("id").notEmpty().withMessage("Not a valid id")]),
+  categoryController.getCategoryByIdAsync
 );
 
 module.exports = router;
