@@ -1,6 +1,13 @@
 require("dotenv").config();
 
 module.exports = {
+  envConfig: process.env.APP_ENV || 'development',
+  corsConfig: {
+    origin: process.env.CORS_ORIGIN || 'http://localhost:9008',
+  },
+  serverConfig: {
+    port: process.env.SERVER_PORT || 9000,
+  },
   jwtConfig: {
     secret: process.env.JWT_SECRET,                  
     audience: process.env.JWT_AUDIENCE,
