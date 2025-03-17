@@ -2,13 +2,17 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
 const Session = sequelize.define(
-    "session",
+    "Session",
     {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
             allowNull: false,
+        },
+        courseId: {
+            type: DataTypes.INTEGER,
+            allowNull: false
         },
         SessionTitle: {
             type: DataTypes.STRING(50),
@@ -39,5 +43,9 @@ const Session = sequelize.define(
     },
     { timestamps: false, tableName: "Session" }
 );
+
+Session.associate = function (models) {
+    Session.belongsTo(models.Course, { foreignKey: "courseId" });
+};
 
 module.exports = Session;

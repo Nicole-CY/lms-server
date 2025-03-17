@@ -10,6 +10,15 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER,
             },
+            courseId: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                references: {
+                    model: "Course",
+                    key: "id",
+                },
+                onDelete: "CASCADE",
+            },
             SessionTitle: {
                 type: Sequelize.STRING(50),
                 allowNull: false,
