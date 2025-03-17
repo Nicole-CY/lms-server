@@ -52,10 +52,6 @@ const user = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    avatar: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
   },
   { timestamps: false, tableName: 'user' }
 );
