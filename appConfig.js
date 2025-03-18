@@ -1,4 +1,4 @@
-require('dotenv').config({ path: './.env.example' });
+require('dotenv').config();
 
 module.exports = {
   envConfig: process.env.APP_ENV || 'development',
