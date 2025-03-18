@@ -51,6 +51,14 @@ app.use("/api/users", userrouter);
 const demorouter = require("./router/demorouter");
 app.use("/api/demos", demorouter);
 
+//config rolerouter
+const rolerouter = require("./router/rolerouter");
+app.use("/api/roles", rolerouter);
+
+//config erorhandle
+const errorhandle = require("./middleware/errorhandling");
+app.use(errorhandle.errorhandling);
+
 //config categoryrouter
 const categoryrouter = require("./router/categoryrouter");
 app.use("/api/categories", categoryrouter);
