@@ -11,12 +11,12 @@ const options = {
     },
     components: {
       securitySchemes: {
-        BearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-          value: "Bearer <JWT token here>",
-        },
+        XSRFTokenScheme: {
+          type: "apiKey",
+          in: "header",
+          name: "x-xsrf-token", 
+          description: "Enter your XSRF token in the header"
+        }
       },
     },
   },

@@ -1,11 +1,18 @@
 require('dotenv').config();
 
 module.exports = {
+  envConfig: process.env.APP_ENV || 'development',
+  corsConfig: {
+    origin: process.env.CORS_ORIGIN || 'http://localhost:9008',
+  },
+  serverConfig: {
+    port: process.env.SERVER_PORT || 9000,
+  },
   jwtConfig: {
-    secret: process.env.JWT_SECRET,
+    secret: process.env.JWT_SECRET,                  
     audience: process.env.JWT_AUDIENCE,
     issuer: process.env.JWT_ISSUER,
-    algorithms: ["HS256"],
+    algorithms: process.env.JWT_ALGORITHMS ? process.env.JWT_ALGORITHMS.split(',') : ["HS256"],
     expiresIn: process.env.JWT_EXPIRES_IN,
   },
   mysqlConfig: {
@@ -16,7 +23,7 @@ module.exports = {
     database: process.env.MYSQL_DATABASE,
   },
   redisConfig: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
+    host: process.env.REDIS_HOST || "127.0.0.1",
+    port: process.env.REDIS_PORT || 6379,
   },
 };

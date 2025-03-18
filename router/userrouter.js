@@ -75,7 +75,7 @@ router.post(
  *     - User Controller
  *     summary: Get a user by username
  *     security:
- *       - BearerAuth: []
+ *       - security: []
  *     parameters:
  *      - name: username
  *        in: query
