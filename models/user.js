@@ -18,7 +18,7 @@ const user = sequelize.define(
     },
     email: {
       type: DataTypes.STRING,
-      allowNull:false,
+      allowNull: false,
       unique: true,
     },
     address: {
@@ -29,8 +29,8 @@ const user = sequelize.define(
       type: DataTypes.INTEGER,
       //allowNull:false,
     },
-    age: {
-      type: DataTypes.INTEGER,
+    birthDate: {
+      type: DataTypes.DATEONLY, 
       // allowNull:false,
     },
     password: {
@@ -41,18 +41,15 @@ const user = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: true, // Allow null because avatar might not be provided initially
     },
-    nickname: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-    },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: true,// change to true for now, due to data missing columns
       defaultValue: true,
     },
-    access: {
-      type: DataTypes.STRING,
+    roles: {
+      type: DataTypes.JSON,
       allowNull: false,
+      defaultValue: [],
     },
   },
   { timestamps: false, tableName: 'user' }

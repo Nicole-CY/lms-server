@@ -6,24 +6,19 @@ module.exports = {
       type: Sequelize.STRING(255),
       allowNull: true,
     });
-    await queryInterface.addColumn("user", "nickname", {
-      type: Sequelize.STRING(255),
-      allowNull: true,
-    });
     await queryInterface.addColumn("user", "active", {
       type: Sequelize.BOOLEAN,
       defaultValue: true,
     });
-    await queryInterface.addColumn("user", "access", {
-      type: Sequelize.STRING(255),
+    await queryInterface.addColumn("user", "roles", {
+      type: Sequelize.JSON,
       allowNull: false,
     });
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.removeColumn("user", "avatar");
-    await queryInterface.removeColumn("user", "nickname");
     await queryInterface.removeColumn("user", "active");
-    await queryInterface.removeColumn("user", "access");
+    await queryInterface.removeColumn("user", "roles");
   },
 };

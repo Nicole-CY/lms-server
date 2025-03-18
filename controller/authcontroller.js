@@ -24,14 +24,13 @@ const loginAsync = async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, result.data.password);
-    console.log("isMatch: ", isMatch)
 
     if (!isMatch) {
       logger.warn(`Password mismatch for username: ${username}`);
       return res.sendCommonValue(null, "Authentication failed", 0);
     }
 
-    const user = { id: result.data.id, username: result.data.username };
+    const user = { id: result.data.id, role: [result.data.roles], username: result.data.username };
 
     const tokenStr = jwt.sign(user, jwtConfig.secret, {
       expiresIn: `${jwtConfig.expiresIn}s`,
@@ -43,7 +42,7 @@ const loginAsync = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      maxAge: jwtConfig.expiresIn * 1000, 
+      maxAge: jwtConfig.expiresIn * 1000,
     });
 
     res.cookie("XSRF-TOKEN", csrfToken, {
@@ -52,8 +51,6 @@ const loginAsync = async (req, res) => {
       secure: true,
       maxAge: jwtConfig.expiresIn * 1000,
     });
-
-    logger.info(`User logged in: ${username}`);
 
     return res.sendCommonValue(
       {
@@ -89,7 +86,7 @@ const registerAsync = async (req, res) => {
       email,
       username,
       password: hashedPassword,
-      roles: ['user'], 
+      roles: ['user'],
     };
 
     const result = await userservice.addUserAsync(newUser);
@@ -133,7 +130,7 @@ const meAsync = async (req, res) => {
     return res.sendCommonValue({
       id: result.data.id,
       username: result.data.username,
-      roles: result.data.roles || [],  
+      roles: result.data.roles || [],
     }, "User information retrieved successfully.", 1);
   } catch (err) {
     logger.error(`Error retrieving user information: ${err}`);
@@ -146,12 +143,12 @@ const logoutAsync = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
+      sameSite: "None",
     });
 
     res.clearCookie("XSRF-TOKEN", {
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
+      sameSite: "None",
     });
 
     logger.info(`User logged out`);

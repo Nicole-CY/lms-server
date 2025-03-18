@@ -15,7 +15,7 @@ const addUserAsync = async (req, res) => {
   user.password = req.body.password;
   user.email = req.body.email;
   user.address = req.body.address;
-  user.age = req.body.age;
+  user.birthDate = req.body.birthDate;
   user.gender = req.body.gender;
 
   let password = req.body.password;
@@ -67,7 +67,7 @@ const updateUserAsync = async (req, res) => {
   user.username = req.body.username;
   user.email = req.body.email;
   user.address = req.body.address;
-  user.age = req.body.age;
+  user.birthDate = req.body.birthDate;
   user.gender = req.body.gender;
 
   let checkUserResult = await userservice.checkUserNameAsync(

@@ -21,24 +21,22 @@ module.exports = {
           password:
             "$2b$10$ig9HBJNu6OgmwSnbPn/jWupbPPq1LC4Ee5uptADcG/Ho3M1e3VM1S",
           email: "defaultuser@example.com",
-          age: 30,
+          birthDate: '1990-05-20',
           gender: 1,
           avatar: "https://via.placeholder.com/150",
-          nickname: "default",
           active: true,
-          access: "user",
+          roles: JSON.stringify(["super_admin"]),
         },
         {
           username: "admin",
           password:
             "$2b$10$ig9HBJNu6OgmwSnbPn/jWupbPPq1LC4Ee5uptADcG/Ho3M1e3VM1S",
           email: "admin@example.com",
-          age: 30,
+          birthDate: '1990-05-20',
           gender: 1,
           avatar: "https://via.placeholder.com/150",
-          nickname: "default",
           active: true,
-          access: "user",
+          roles: JSON.stringify(["admin"]),
         },
       ],
       {}
