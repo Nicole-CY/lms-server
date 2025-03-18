@@ -41,7 +41,7 @@ const loginAsync = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      maxAge: jwtConfig.expiresIn * 1000, 
+      maxAge: jwtConfig.expiresIn * 1000,
     });
 
     res.cookie("XSRF-TOKEN", csrfToken, {
@@ -84,7 +84,7 @@ const meAsync = async (req, res) => {
     return res.sendCommonValue({
       id: result.data.id,
       username: result.data.username,
-      roles: result.data.roles || [],  
+      roles: result.data.roles || [],
     }, "User information retrieved successfully.", 1);
   } catch (err) {
     logger.error(`Error retrieving user information: ${err}`);
