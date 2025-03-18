@@ -1,6 +1,6 @@
-var express = require("express");
+const express = require("express");
 require("express-async-errors");
-var router = express.Router();
+const router = express.Router();
 
 const { commonValidate } = require("../middleware/expressValidator");
 const { roleValidator } = require("../validator/roleValidator");

@@ -55,8 +55,8 @@ const rolerouter = require("./router/rolerouter");
 app.use("/api/roles", rolerouter);
 
 //config erorhandle
-const erorhandle = require("./middleware/errorhandling");
-app.use(erorhandle.errorhandling);
+const errorhandle = require("./middleware/errorhandling");
+app.use(errorhandle.errorhandling);
 
 //config categoryrouter
 const categoryrouter = require("./router/categoryrouter");
