@@ -4,6 +4,8 @@ const { jwtConfig } = require("../appConfig");
 const jwt = require("jsonwebtoken");
 const userservice = require("../service/userservice");
 const crypto = require("crypto");
+const { bcryptConfig } = require("../appConfig");
+
 
 const loginAsync = async (req, res) => {
   try {
@@ -66,6 +68,53 @@ const loginAsync = async (req, res) => {
   }
 };
 
+const registerAsync = async (req, res) => {
+  try {
+    const { email, username, password } = req.body;
+
+    if (!username || !password) {
+      return res.sendCommonValue(null, "Username and password are required", 0);
+    }
+
+    const existingUser = await userservice.getUserbyNameAsync(username);
+
+    if (existingUser.isSuccess && existingUser.data) {
+      return res.sendCommonValue(null, "Username already exists", 0);
+    }
+
+    const salt = await bcrypt.genSalt(bcryptConfig.saltRounds);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = {
+      email,
+      username,
+      password: hashedPassword,
+      roles: ['user'], 
+    };
+
+    const result = await userservice.addUserAsync(newUser);
+
+    if (!result.isSuccess) {
+      logger.error(`User registration failed for username: ${username}`);
+      return res.sendCommonValue(null, "Registration failed", 0);
+    }
+
+    logger.info(`New user registered: ${username}`);
+
+    return res.status(201).sendCommonValue(
+      {
+        username: username,
+      },
+      "Registration successful",
+      1
+    );
+  } catch (err) {
+    logger.error(`Register error for username: ${req.body.username}, error: ${err}`);
+    return res.sendCommonValue(null, "Internal server error", 0);
+  }
+};
+
+
 const meAsync = async (req, res) => {
 
   try {
@@ -116,6 +165,7 @@ const logoutAsync = async (req, res) => {
 
 module.exports = {
   loginAsync,
+  registerAsync,
   logoutAsync,
   meAsync,
 };
