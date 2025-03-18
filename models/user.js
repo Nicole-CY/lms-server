@@ -14,10 +14,12 @@ const user = sequelize.define(
     username: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     email: {
       type: DataTypes.STRING,
-      //allowNull:false,
+      allowNull:false,
+      unique: true,
     },
     address: {
       type: DataTypes.STRING,
@@ -28,12 +30,12 @@ const user = sequelize.define(
       //allowNull:false,
     },
     age: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       // allowNull:false,
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     avatar: {
       type: DataTypes.STRING(255),

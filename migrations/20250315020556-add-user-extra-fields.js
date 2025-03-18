@@ -16,7 +16,7 @@ module.exports = {
     });
     await queryInterface.addColumn("user", "access", {
       type: Sequelize.STRING(255),
-      allowNull: true,
+      allowNull: false,
     });
   },
 
