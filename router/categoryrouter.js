@@ -17,7 +17,7 @@ const categoryController = require("../controller/Course/categoryController");
  *     security:
  *       - BearerAuth: []
  *     parameters:
- *      - name: category name
+ *      - name: categoryname
  *        in: query
  *        description: Name of the category to retrieve
  *        required: true
@@ -34,12 +34,9 @@ const categoryController = require("../controller/Course/categoryController");
  *        description: Server Error
  */
 router.get(
-  "/by-name/:name",
+  "/getCategory",
   commonValidate([
-    param("name")
-      .notEmpty()
-      .isInt({ allow_leading_zeroes: false, min: 1 })
-      .withMessage("Category name is required"),
+    query("categoryname").notEmpty().withMessage("Category name is required"),
   ]),
   categoryController.getCategoryByNameAsync
 );
@@ -205,7 +202,7 @@ router.delete(
  *     security:
  *       - BearerAuth: []
  *     parameters:
- *      - name: category id
+ *      - name: id
  *        in: query
  *        description: The id of the category
  *        required: true
@@ -243,6 +240,7 @@ router.get(
  *           schema:
  *            type: object
  *            required:
+ *              - id
  *              - CategoryName
  *              - Description
  *              - ParentId
@@ -252,6 +250,9 @@ router.get(
  *              - Updated_By
  *              - IconUrl
  *            properties:
+ *              id:
+ *                type: number
+ *                default: 41
  *              CategoryName:
  *                type: string
  *                example: Electronics

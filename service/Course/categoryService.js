@@ -103,7 +103,11 @@ const updateCategoryByIdAsync = async (id, updateData) => {
       return { isSuccess: false, message: "Category not found", data: null };
     }
 
-    await category.update(updateData);
+    await Category.update(updateData, {
+      where: {
+        id: updateData.id,
+      },
+    });
 
     return {
       isSuccess: true,

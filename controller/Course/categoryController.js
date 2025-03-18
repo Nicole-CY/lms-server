@@ -1,8 +1,8 @@
 const CategoryService = require("../../service/Course/categoryService");
 
 const getCategoryByNameAsync = async (req, res) => {
-  const { name } = req.params;
-  const result = await CategoryService.getCategoryByNameAsync(name);
+  const { categoryname } = req.query;
+  const result = await CategoryService.getCategoryByNameAsync(categoryname);
 
   if (result.isSuccess) {
     res.sendCommonValue(result.data, "Category found", 1);
@@ -54,6 +54,7 @@ const deleteCategoryByIdAsync = async (req, res) => {
 
 const getCategoryByIdAsync = async (req, res) => {
   const id = parseInt(req.query.id, 10);
+
   const result = await CategoryService.getCategoryByIdAsync(id);
 
   if (result.isSuccess) {
@@ -64,7 +65,7 @@ const getCategoryByIdAsync = async (req, res) => {
 };
 
 const updateCategoryByIdAsync = async (req, res) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(req.body.id, 10);
   const updateData = req.body;
 
   const result = await CategoryService.updateCategoryByIdAsync(id, updateData);
