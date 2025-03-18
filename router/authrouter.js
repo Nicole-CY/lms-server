@@ -50,6 +50,49 @@ router.post(
 
 /**
 * @openapi
+* '/api/auth/register':
+*  post:
+*     tags:
+*     - auth Controller
+*     summary: Register a new user
+*     description: Register a new user by providing a username, email, and password.
+*     requestBody:
+*      required: true
+*      content:
+*        application/json:
+*           schema:
+*            type: object
+*            required:
+*              - username
+*              - password
+*              - email
+*            properties:
+*              username:
+*                type: string
+*                example: newuser
+*              email:
+*                type: string
+*                example: newuser@gmail.com
+*              password:
+*                type: string
+*                example: 123456
+*     responses:
+*      201:
+*        description: User registered successfully
+*      400:
+*        description: Bad Request
+*      500:
+*        description: Server Error 
+*/
+router.post(
+  "/register",
+  commonValidate(loginValidator), 
+  authcontroller.registerAsync
+);
+
+
+/**
+* @openapi
 * '/api/auth/logout':
 *  post:
 *     tags:
@@ -74,7 +117,7 @@ router.post(
 /**
 * @openapi
 * '/api/auth/me':
-*  post:
+*  get:
 *     tags:
 *       - auth Controller
 *     security:
