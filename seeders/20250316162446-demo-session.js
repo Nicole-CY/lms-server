@@ -5,7 +5,7 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         await queryInterface.bulkInsert("Session", [
             {
-                courseId: 1,
+                courseInstanceId: 1,
                 SessionTitle: "Introduction to Data Science",
                 SessionDescription: "What is the Data Science in our life?",
                 Order: null,
@@ -15,7 +15,7 @@ module.exports = {
                 UpdatedAt: new Date(),
             },
             {
-                courseId: 1,
+                courseInstanceId: 1,
                 SessionTitle: "Data Science 2",
                 SessionDescription: "How to use Data Science in our life?",
                 Order: null,
@@ -25,7 +25,7 @@ module.exports = {
                 UpdatedAt: new Date(),
             },
             {
-                courseId: 1,
+                courseInstanceId: 1,
                 SessionTitle: "Data Science 3",
                 SessionDescription: "What is the Data Science 3?",
                 Order: null,
@@ -35,7 +35,7 @@ module.exports = {
                 UpdatedAt: new Date(),
             },
             {
-                courseId: 1,
+                courseInstanceId: 1,
                 SessionTitle: "Data Science 4",
                 SessionDescription: "What is the Data Science 4?",
                 Order: null,
@@ -45,7 +45,7 @@ module.exports = {
                 UpdatedAt: new Date(),
             },
             {
-                courseId: 1,
+                courseInstanceId: 1,
                 SessionTitle: "Data Science 5",
                 SessionDescription: "What is the Data Science 5?",
                 Order: null,

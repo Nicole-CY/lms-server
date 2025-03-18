@@ -1,4 +1,4 @@
-require("dotenv").config();
+require('dotenv').config({ path: './.env.example' });
 
 module.exports = {
   jwtConfig: {
@@ -20,3 +20,4 @@ module.exports = {
     port: process.env.REDIS_PORT || 6379,
   },
 };
+

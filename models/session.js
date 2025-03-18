@@ -10,9 +10,13 @@ const Session = sequelize.define(
             autoIncrement: true,
             allowNull: false,
         },
-        courseId: {
+        courseInstanceId: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: "courseInstance",
+                key: "id",
+            }
         },
         SessionTitle: {
             type: DataTypes.STRING(50),
@@ -45,7 +49,7 @@ const Session = sequelize.define(
 );
 
 Session.associate = function (models) {
-    Session.belongsTo(models.Course, { foreignKey: "courseId" });
+    Session.belongsTo(models.courseInstance, { foreignKey: "courseInstanceId" });
 };
 
 module.exports = Session;
