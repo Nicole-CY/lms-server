@@ -25,12 +25,11 @@ const addUserAsync = async (user) => {
       password: user.password,
       email: user.email,
       address: user.address,
-      age: user.age,
+      birthDate: user.birthDate,
       gender: user.gender,
       avatar: user.avatar,
-      nickname: user.nickname,
       active: user.active ?? true,  
-      access: user.access || "user", 
+      roles: user.roles || ["user"], 
     });
 
     return { isSuccess: true, message: "", data: newUser };
@@ -90,12 +89,11 @@ const uptUserByIdAsync = async (user) => {
         username: user.username,
         email: user.email,
         address: user.address,
-        age: user.age,
+        birthDate: user.birthDate,
         gender: user.gender,
         avatar: user.avatar,
-        nickname: user.nickname,
         active: user.active,
-        access: user.access,
+        roles: user.roles,
       },
       {
         where: {
