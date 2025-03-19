@@ -1,8 +1,18 @@
-require("dotenv").config();
+require('dotenv').config();
 
 module.exports = {
+  envConfig: process.env.APP_ENV || 'development',
+  corsConfig: {
+    origin: process.env.CORS_ORIGIN || 'http://localhost:9008',
+  },
+  serverConfig: {
+    port: process.env.SERVER_PORT || 9000,
+  },
+  bcryptConfig: {
+    saltRounds: process.env.SALT_ROUNDS,
+  },
   jwtConfig: {
-    secret: process.env.JWT_SECRET,                  
+    secret: process.env.JWT_SECRET,
     audience: process.env.JWT_AUDIENCE,
     issuer: process.env.JWT_ISSUER,
     algorithms: process.env.JWT_ALGORITHMS ? process.env.JWT_ALGORITHMS.split(',') : ["HS256"],

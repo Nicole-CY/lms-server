@@ -1,50 +1,27 @@
 "use strict";
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("demo", {
-      // Model attributes are defined here
-      id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-      },
-      title: {
-        type: Sequelize.STRING(200),
-        allowNull: false,
-      },
-      mark: {
-        type: Sequelize.STRING(500),
-        allowNull: true,
-      },
-      count: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      acitve: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true,
-        allowNull: false,
-      },
-      dataTime: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
-        allowNull: false,
-      },
+    await queryInterface.addColumn("users", "avatar", {
+      type: Sequelize.STRING(255),
+      allowNull: true,
     });
-    console.log("table demo created");
+
+    await queryInterface.addColumn("users", "active", {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    });
+
+    await queryInterface.addColumn("users", "roles", {
+      type: Sequelize.JSON,
+      allowNull: true,
+    });
   },
 
   async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
-    await queryInterface.dropTable("demo");
-    console.log("table demo droped");
+    await queryInterface.removeColumn("users", "avatar");
+    await queryInterface.removeColumn("users", "active");
+    await queryInterface.removeColumn("users", "roles");
   },
 };

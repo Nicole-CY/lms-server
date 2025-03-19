@@ -9,6 +9,40 @@ const categoryController = require("../controller/Course/categoryController");
 
 /**
  * @openapi
+ * '/api/categories/getCategory':
+ *  get:
+ *     tags:
+ *     - Category Controller
+ *     summary: Get a category by name
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *      - name: categoryname
+ *        in: query
+ *        description: Name of the category to retrieve
+ *        required: true
+ *     responses:
+ *      200:
+ *        description: Fetched Successfully
+ *      400:
+ *        description: Bad Request
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Not Found
+ *      500:
+ *        description: Server Error
+ */
+router.get(
+  "/getCategory",
+  commonValidate([
+    query("categoryname").notEmpty().withMessage("Category name is required"),
+  ]),
+  categoryController.getCategoryByNameAsync
+);
+
+/**
+ * @openapi
  * '/api/categories/{page}/{pageSize}':
  *  get:
  *     tags:
@@ -47,9 +81,215 @@ router.get(
     param("pageSize")
       .notEmpty()
       .isInt({ allow_leading_zeroes: false, min: 1 })
-      .withMessage("Not a valid page"),
+      .withMessage("Not a valid page size"),
   ]),
   categoryController.getCategoryListAsync
+);
+
+/**
+ * @openapi
+ * '/api/categories':
+ *  post:
+ *     tags:
+ *     - Category Controller
+ *     summary: Add a category
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *           schema:
+ *            type: object
+ *            required:
+ *              - CategoryName
+ *              - Description
+ *              - ParentId
+ *              - createdAt
+ *              - updatedAt
+ *              - Created_By
+ *              - Updated_By
+ *              - IconUrl
+ *            properties:
+ *              CategoryName:
+ *                type: string
+ *                example: Electronics
+ *              Description:
+ *                type: string
+ *                example: Category for electronic items
+ *              ParentId:
+ *                type: integer
+ *                example: 1
+ *              Created_By:
+ *                type: integer
+ *                example: 1
+ *              Updated_By:
+ *                type: integer
+ *                example: 1
+ *              IconUrl:
+ *                type: string
+ *                example: "https://example.com/icon.png"
+ *     responses:
+ *      201:
+ *        description: Created
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *      409:
+ *        description: Conflict
+ *      500:
+ *        description: Server Error
+ */
+router.post(
+  "/",
+  commonValidate([
+    body("CategoryName").notEmpty().withMessage("Category name is required"),
+    body("Description").notEmpty().withMessage("Description is required"),
+    body("ParentId")
+      .optional()
+      .isInt()
+      .withMessage("ParentId must be a string"),
+    body("Created_By").notEmpty().withMessage("Created_By is required"),
+    body("Updated_By").notEmpty().withMessage("Updated_By is required"),
+    body("IconUrl")
+      .optional()
+      .isURL()
+      .withMessage("IconUrl must be a valid URL"),
+  ]),
+  categoryController.addCategoryAsync
+);
+
+/**
+ * @openapi
+ * '/api/categories/{ids}':
+ *  delete:
+ *     tags:
+ *     - Category Controller
+ *     summary: Delete a category by Id
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *      - name: ids
+ *        in: path
+ *        description: The id of the category
+ *        required: true
+ *     responses:
+ *      200:
+ *        description: Fetched Successfully
+ *      400:
+ *        description: Bad Request
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Not Found
+ *      500:
+ *        description: Server Error
+ */
+router.delete(
+  "/:ids",
+  param([param("ids").notEmpty().withMessage("Not a valid id")]),
+  categoryController.deleteCategoryByIdAsync
+);
+
+/**
+ * @openapi
+ * '/api/categories/getCategoryById':
+ *  get:
+ *     tags:
+ *     - Category Controller
+ *     summary: Get a category by id
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *      - name: id
+ *        in: query
+ *        description: The id of the category
+ *        required: true
+ *     responses:
+ *      200:
+ *        description: Fetched Successfully
+ *      400:
+ *        description: Bad Request
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Not Found
+ *      500:
+ *        description: Server Error
+ */
+router.get(
+  "/getCategoryById",
+  commonValidate([query("id").notEmpty().withMessage("Not a valid id")]),
+  categoryController.getCategoryByIdAsync
+);
+
+/**
+ * @openapi
+ * '/api/categories':
+ *  put:
+ *     tags:
+ *     - Category Controller
+ *     summary: update a category
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *           schema:
+ *            type: object
+ *            required:
+ *              - id
+ *              - CategoryName
+ *              - Description
+ *              - ParentId
+ *              - createdAt
+ *              - updatedAt
+ *              - Created_By
+ *              - Updated_By
+ *              - IconUrl
+ *            properties:
+ *              id:
+ *                type: number
+ *                default: 41
+ *              CategoryName:
+ *                type: string
+ *                example: Electronics
+ *              Description:
+ *                type: string
+ *                example: Category for electronic items
+ *              ParentId:
+ *                type: integer
+ *                example: 1
+ *              Created_By:
+ *                type: integer
+ *                example: 1
+ *              Updated_By:
+ *                type: integer
+ *                example: 1
+ *              IconUrl:
+ *                type: string
+ *                example: "https://example.com/icon.png"
+ *     responses:
+ *      201:
+ *        description: Created
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *      409:
+ *        description: Conflict
+ *      500:
+ *        description: Server Error
+ */
+router.put(
+  "",
+  commonValidate([
+    body("CategoryName").notEmpty().withMessage("Not a valid CategoryName"),
+    body("id").notEmpty().withMessage("Not a valid id"),
+  ]),
+  categoryController.updateCategoryByIdAsync
 );
 
 module.exports = router;

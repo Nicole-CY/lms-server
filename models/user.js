@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
-const user = sequelize.define(
+const User = sequelize.define(
   "user",
   {
     // Model attributes are defined here
@@ -14,10 +14,12 @@ const user = sequelize.define(
     username: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     email: {
       type: DataTypes.STRING,
-      //allowNull:false,
+      allowNull: false,
+      unique: true,
     },
     address: {
       type: DataTypes.STRING,
@@ -27,37 +29,31 @@ const user = sequelize.define(
       type: DataTypes.INTEGER,
       //allowNull:false,
     },
-    age: {
-      type: DataTypes.STRING,
+    birthDate: {
+      type: DataTypes.DATEONLY, 
+      field: 'birth_date',
       // allowNull:false,
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     avatar: {
       type: DataTypes.STRING(255),
       allowNull: true, // Allow null because avatar might not be provided initially
-    },
-    nickname: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
     },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: true,// change to true for now, due to data missing columns
       defaultValue: true,
     },
-    access: {
-      type: DataTypes.STRING,
+    roles: {
+      type: DataTypes.JSON,
       allowNull: false,
-    },
-    avatar: {
-      type: DataTypes.STRING,
-      allowNull: true,
+      defaultValue: [],
     },
   },
-  { timestamps: false, tableName: 'user' }
+  { timestamps: false, tableName: 'users' }
 );
 
-module.exports = user;
+module.exports = User;

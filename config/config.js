@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { mysqlConfig } = require('../appConfig');
 
 module.exports = {

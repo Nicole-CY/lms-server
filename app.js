@@ -3,10 +3,11 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 
 const app = express();
+const appConfig = require("./appConfig");
 
 const cors = require("cors");
 app.use(cors({
-  origin: 'http://localhost:9008', 
+  origin: appConfig.corsConfig.origin, 
   credentials: true
 }));
 
@@ -50,15 +51,27 @@ app.use("/api/users", userrouter);
 const demorouter = require("./router/demorouter");
 app.use("/api/demos", demorouter);
 
+//config rolerouter
+const rolerouter = require("./router/rolerouter");
+app.use("/api/roles", rolerouter);
+
+//config erorhandle
+const errorhandle = require("./middleware/errorhandling");
+app.use(errorhandle.errorhandling);
+
 //config categoryrouter
 const categoryrouter = require("./router/categoryrouter");
 app.use("/api/categories", categoryrouter);
+
+//config courseRouter
+const courseRouter = require('./router/courseRouter');
+app.use("/api/courses", courseRouter);
 
 //config erorhandle
 const erorhandle = require("./middleware/errorhandling");
 app.use(erorhandle.errorhandling);
 
-let port = process.env.PORT || 9000;
+let port = appConfig.serverConfig.port;
 app.listen(port, () => {
   console.log(`Server is running on port ${port},http://localhost:${port}`);
   console.log(`Swagger is running on http://localhost:${port}/api-docs/`);

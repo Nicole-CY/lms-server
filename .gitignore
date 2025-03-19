@@ -3,6 +3,7 @@ npm-debug.log
 yarn-error.log
 package-lock.json
 yarn.lock
+appConfig.js
 
 .env
 .env.test
@@ -12,6 +13,8 @@ yarn.lock
 dist/
 build/
 *.log
+logs*
+logs/
 
 tmp/
 temp/
