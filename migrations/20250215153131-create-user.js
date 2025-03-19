@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("user", {
+    await queryInterface.createTable('users', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -25,15 +25,17 @@ module.exports = {
       },
       address: {
         type: Sequelize.STRING(255),
+        allowNull: true,
       },
-      birthDate: {
+      birth_date: {
         type: Sequelize.DATEONLY,
+        allowNull: true,
       },
       gender: {
         type: Sequelize.INTEGER,
+        allowNull: true,
       },
     });
-    console.log("table user created");
   },
 
   async down(queryInterface, Sequelize) {
@@ -43,7 +45,7 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('user');
+    await queryInterface.dropTable('users');
     console.log("table user droped");
   },
 };
