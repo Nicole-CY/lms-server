@@ -7,7 +7,7 @@ const appConfig = require("./appConfig");
 
 const cors = require("cors");
 app.use(cors({
-  origin: appConfig.corsConfig.origin, 
+  origin: appConfig.corsConfig.origin,
   credentials: true
 }));
 
@@ -21,6 +21,13 @@ app.use(express.urlencoded({ extended: false }));
 
 //parse Cookie
 app.use(cookieParser());
+
+const { expressjwt: jwtMiddleware } = require('express-jwt');
+app.use(jwtMiddleware({
+  secret: appConfig.jwtConfig.secret,
+  algorithms: appConfig.jwtConfig.algorithms,
+  getToken: (req) => req.cookies.token
+}).unless({ path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register'] }));
 
 // config Swagger
 const swaggerDocument = require("./common/swagger");

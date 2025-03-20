@@ -15,8 +15,6 @@ const democontroller = require("../controller/democontroller");
  *     - demo Controller
  *     summary: add demo
  *     description: add demo
- *     security:
- *       - BearerAuth: []
  *     requestBody:
  *      required: true
  *      content:
@@ -66,8 +64,6 @@ router.post(
  *     tags:
  *     - demo Controller
  *     summary: Get all demos
- *     security:
- *       - BearerAuth: []
  *     responses:
  *      200:
  *        description: Fetched Successfully
