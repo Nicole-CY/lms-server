@@ -115,7 +115,7 @@ const registerAsync = async (req, res) => {
 const meAsync = async (req, res) => {
 
   try {
-    const user = req.user;
+    const user = req.auth;
 
     if (!user) {
       return res.status(401).sendCommonValue(null, "Not logged in", 0);
@@ -142,16 +142,14 @@ const logoutAsync = async (req, res) => {
   try {
     res.clearCookie("token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "None",
     });
 
     res.clearCookie("XSRF-TOKEN", {
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "None",
     });
-
-    logger.info(`User logged out`);
 
     return res.sendCommonValue(null, "Logout successful", 1);
   } catch (err) {
