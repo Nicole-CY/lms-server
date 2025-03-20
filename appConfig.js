@@ -9,7 +9,7 @@ module.exports = {
     port: process.env.SERVER_PORT || 9000,
   },
   bcryptConfig: {
-    saltRounds: process.env.SALT_ROUNDS,
+    saltRounds: Number(process.env.SALT_ROUNDS),
   },
   jwtConfig: {
     secret: process.env.JWT_SECRET,

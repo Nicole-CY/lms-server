@@ -18,6 +18,23 @@ const getUserbyNameAsync = async (name) => {
   }
 };
 
+const getUserbyEmailAsync = async (email) => {
+  try {
+    const user = await User.findOne({
+      where: { email: email },
+    });
+
+    if (!user) {
+      return { isSuccess: false, message: "User not found", data: { id: 0 } };
+    }
+
+    return { isSuccess: true, message: "", data: user };
+  } catch (error) {
+    logger.error("getUserbyEmailAsync error:", error);
+    return { isSuccess: false, message: "Server error", data: null };
+  }
+};
+
 const addUserAsync = async (user) => {
   try {
     const newUser = await User.create({
@@ -28,8 +45,8 @@ const addUserAsync = async (user) => {
       birthDate: user.birthDate,
       gender: user.gender,
       avatar: user.avatar,
-      active: user.active ?? true,  
-      roles: user.roles || ["user"], 
+      active: user.active ?? true,
+      roles: user.roles || ["user"],
     });
 
     return { isSuccess: true, message: "", data: newUser };
@@ -44,7 +61,7 @@ const getUserListAsync = async (page = 1, pageSize = 10) => {
     const { count, rows } = await User.findAndCountAll({
       limit: pageSize,
       offset: (page - 1) * pageSize,
-      attributes: { exclude: ["password"] }, 
+      attributes: { exclude: ["password"] },
     });
 
     return {
@@ -151,6 +168,7 @@ const getUserbyIdAsync = async (id) => {
 
 module.exports = {
   getUserbyNameAsync,
+  getUserbyEmailAsync,
   addUserAsync,
   getUserListAsync,
   delUserByIdAsync,
