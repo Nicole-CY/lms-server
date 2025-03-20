@@ -15,8 +15,6 @@ var usercontroller = require("../controller/usercontroller");
  *     - User Controller
  *     summary: add user
  *     description: add user
- *     security:
- *       - BearerAuth: []
  *     requestBody:
  *      required: true
  *      content:
@@ -108,8 +106,6 @@ router.get(
  *     tags:
  *     - User Controller
  *     summary: Get all users
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *      - name: page
  *        in: path
@@ -155,8 +151,6 @@ router.get(
  *     tags:
  *     - User Controller
  *     summary: delete a user by Id
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *      - name: ids
  *        in: path
@@ -188,8 +182,6 @@ router.delete(
  *     - User Controller
  *     summary: update user
  *     description: update user
- *     security:
- *       - BearerAuth: []
  *     requestBody:
  *      required: true
  *      content:
@@ -246,8 +238,6 @@ router.put(
  *     tags:
  *     - User Controller
  *     summary: Get a user by id
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *      - name: id
  *        in: query

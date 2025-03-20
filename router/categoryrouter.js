@@ -14,8 +14,6 @@ const categoryController = require("../controller/Course/categoryController");
  *     tags:
  *     - Category Controller
  *     summary: Get a category by name
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *      - name: categoryname
  *        in: query
@@ -48,8 +46,6 @@ router.get(
  *     tags:
  *     - Category Controller
  *     summary: Get all categories
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *       - name: page
  *         in: path
@@ -93,8 +89,6 @@ router.get(
  *     tags:
  *     - Category Controller
  *     summary: Add a category
- *     security:
- *       - BearerAuth: []
  *     requestBody:
  *      required: true
  *      content:
@@ -167,8 +161,6 @@ router.post(
  *     tags:
  *     - Category Controller
  *     summary: Delete a category by Id
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *      - name: ids
  *        in: path
@@ -199,8 +191,6 @@ router.delete(
  *     tags:
  *     - Category Controller
  *     summary: Get a category by id
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *      - name: id
  *        in: query
@@ -231,8 +221,6 @@ router.get(
  *     tags:
  *     - Category Controller
  *     summary: update a category
- *     security:
- *       - BearerAuth: []
  *     requestBody:
  *      required: true
  *      content:
