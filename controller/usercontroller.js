@@ -10,6 +10,12 @@ const addUserAsync = async (req, res) => {
     return;
   }
 
+  const existingEmail = await userservice.getUserbyEmailAsync(req.body.email);
+
+  if (existingEmail.isSuccess && existingEmail.data.id > 0) {
+    return res.sendCommonValue({}, "Email already exists", 400, 400);
+  }
+
   let user = {};
   user.username = req.body.username;
   user.password = req.body.password;

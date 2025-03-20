@@ -69,14 +69,19 @@ const registerAsync = async (req, res) => {
   try {
     const { email, username, password } = req.body;
 
-    if (!username || !password) {
-      return res.sendCommonValue(null, "Username and password are required", 0);
+    if (!username || !password || !email) {
+      return res.sendCommonValue({}, "Username, password, and email are required", 400, 400);
     }
 
-    const existingUser = await userservice.getUserbyNameAsync(username);
+    const existingUsername = await userservice.getUserbyNameAsync(username);
+    if (existingUsername.isSuccess && existingUsername.data) {
+      return res.sendCommonValue({}, "Username already exists", 400, 400);
+    }
 
-    if (existingUser.isSuccess && existingUser.data) {
-      return res.sendCommonValue(null, "Username already exists", 0);
+
+    const existingEmail = await userservice.getUserbyEmailAsync(email);
+    if (existingEmail.isSuccess && existingEmail.data) {
+      return res.sendCommonValue({}, "Email already exists", 400, 400);
     }
 
     const salt = await bcrypt.genSalt(bcryptConfig.saltRounds);
@@ -88,6 +93,8 @@ const registerAsync = async (req, res) => {
       password: hashedPassword,
       roles: ['user'],
     };
+
+
 
     const result = await userservice.addUserAsync(newUser);
 
