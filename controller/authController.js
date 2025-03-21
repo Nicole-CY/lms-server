@@ -1,8 +1,8 @@
 const bcrypt = require("bcryptjs");
-const logger = require("../common/logsetting");
+const logger = require("../common/logSetting");
 const { jwtConfig } = require("../appConfig");
 const jwt = require("jsonwebtoken");
-const userservice = require("../service/userservice");
+const userService = require("../service/userService");
 const crypto = require("crypto");
 const { bcryptConfig } = require("../appConfig");
 
@@ -16,7 +16,7 @@ const loginAsync = async (req, res) => {
       return res.sendCommonValue(null, "Username and password are required", 0);
     }
 
-    const result = await userservice.getUserbyNameAsync(username);
+    const result = await userService.getUserbyNameAsync(username);
 
     if (!result.isSuccess) {
       logger.warn(`Login failed for username: ${username}`);
@@ -73,13 +73,13 @@ const registerAsync = async (req, res) => {
       return res.sendCommonValue({}, "Username, password, and email are required", 400, 400);
     }
 
-    const existingUsername = await userservice.getUserbyNameAsync(username);
+    const existingUsername = await userService.getUserbyNameAsync(username);
     if (existingUsername.isSuccess && existingUsername.data) {
       return res.sendCommonValue({}, "Username already exists", 400, 400);
     }
 
 
-    const existingEmail = await userservice.getUserbyEmailAsync(email);
+    const existingEmail = await userService.getUserbyEmailAsync(email);
     if (existingEmail.isSuccess && existingEmail.data) {
       return res.sendCommonValue({}, "Email already exists", 400, 400);
     }
@@ -96,7 +96,7 @@ const registerAsync = async (req, res) => {
 
 
 
-    const result = await userservice.addUserAsync(newUser);
+    const result = await userService.addUserAsync(newUser);
 
     if (!result.isSuccess) {
       logger.error(`User registration failed for username: ${username}`);
@@ -128,7 +128,7 @@ const meAsync = async (req, res) => {
       return res.status(401).sendCommonValue(null, "Not logged in", 0);
     }
 
-    const result = await userservice.getUserbyNameAsync(user.username);
+    const result = await userService.getUserbyNameAsync(user.username);
 
     if (!result.isSuccess) {
       return res.status(404).sendCommonValue(null, "User does not exist.", 0);

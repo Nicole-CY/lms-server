@@ -1,5 +1,5 @@
 const User = require("../models/user");
-const logger = require("../common/logsetting");
+const logger = require("../common/logSetting");
 
 const getUserbyNameAsync = async (name) => {
   try {

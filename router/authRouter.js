@@ -5,7 +5,7 @@ var router = express.Router();
 const { commonValidate } = require("../middleware/expressValidator");
 const { loginValidator } = require("../validator/authValidator");
 
-const authcontroller = require("../controller/authcontroller");
+const authController = require("../controller/authController");
 
 /**
 * @openapi
@@ -44,7 +44,7 @@ const authcontroller = require("../controller/authcontroller");
 router.post(
   "/login",
   commonValidate(loginValidator),
-  authcontroller.loginAsync
+  authController.loginAsync
 );
 
 /**
@@ -86,7 +86,7 @@ router.post(
 router.post(
   "/register",
   commonValidate(loginValidator), 
-  authcontroller.registerAsync
+  authController.registerAsync
 );
 
 
@@ -106,7 +106,7 @@ router.post(
 */
 router.post(
   "/logout",
-  authcontroller.logoutAsync
+  authController.logoutAsync
 );
 
 /**
@@ -125,7 +125,7 @@ router.post(
 */
 router.get(
   "/me",
-  authcontroller.meAsync
+  authController.meAsync
 );
 
 module.exports = router;
