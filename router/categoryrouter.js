@@ -194,7 +194,7 @@ router.delete(
 
 /**
  * @openapi
- * '/api/categories/getCategoryById':
+ * '/api/categories/getCategoriesById':
  *  get:
  *     tags:
  *     - Category Controller
@@ -219,18 +219,18 @@ router.delete(
  *        description: Server Error
  */
 router.get(
-  "/getCategoryById",
+  "/getCategoriesById",
   commonValidate([query("id").notEmpty().withMessage("Not a valid id")]),
   categoryController.getCategoryByIdAsync
 );
 
 /**
  * @openapi
- * '/api/categories':
+ * '/api/categories/updateCategoriesById':
  *  put:
  *     tags:
  *     - Category Controller
- *     summary: update a category
+ *     summary: update a category by id
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -284,12 +284,80 @@ router.get(
  *        description: Server Error
  */
 router.put(
-  "",
+  "/updateCategoriesById",
   commonValidate([
     body("CategoryName").notEmpty().withMessage("Not a valid CategoryName"),
     body("id").notEmpty().withMessage("Not a valid id"),
   ]),
   categoryController.updateCategoryByIdAsync
+);
+
+/**
+ * @openapi
+ * '/api/categories/updateCategoriesByName':
+ *  put:
+ *     tags:
+ *     - Category Controller
+ *     summary: update a category by name
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *           schema:
+ *            type: object
+ *            required:
+ *              - id
+ *              - CategoryName
+ *              - Description
+ *              - ParentId
+ *              - createdAt
+ *              - updatedAt
+ *              - Created_By
+ *              - Updated_By
+ *              - IconUrl
+ *            properties:
+ *              id:
+ *                type: number
+ *                default: 41
+ *              CategoryName:
+ *                type: string
+ *                example: Electronics
+ *              Description:
+ *                type: string
+ *                example: Category for electronic items
+ *              ParentId:
+ *                type: integer
+ *                example: 1
+ *              Created_By:
+ *                type: integer
+ *                example: 1
+ *              Updated_By:
+ *                type: integer
+ *                example: 1
+ *              IconUrl:
+ *                type: string
+ *                example: "https://example.com/icon.png"
+ *     responses:
+ *      201:
+ *        description: Created
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *      409:
+ *        description: Conflict
+ *      500:
+ *        description: Server Error
+ */
+router.put(
+  "/updateCategoriesByName",
+  commonValidate([
+    body("CategoryName").notEmpty().withMessage("Not a valid CategoryName"),
+    body("id").notEmpty().withMessage("Not a valid id"),
+  ]),
+  categoryController.updateCategoryByNameAsync
 );
 
 module.exports = router;

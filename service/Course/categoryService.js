@@ -2,6 +2,7 @@ const { sequelize } = require("../../db/sequelizedb");
 const Category = require("../../models/category");
 const logger = require("../../common/logsetting");
 
+// Get categories by name
 const getCategoryByNameAsync = async (name) => {
   try {
     const category = await Category.findOne({
@@ -23,6 +24,7 @@ const getCategoryByNameAsync = async (name) => {
   }
 };
 
+// Get categories lists
 const getCategoryListAsync = async (page = 1, pageSize = 10) => {
   try {
     const offset = (page - 1) * pageSize;
@@ -46,6 +48,7 @@ const getCategoryListAsync = async (page = 1, pageSize = 10) => {
   }
 };
 
+// Add categories
 const addCategoryAsync = async (category) => {
   try {
     const newCategory = await Category.create(category);
@@ -57,6 +60,7 @@ const addCategoryAsync = async (category) => {
   }
 };
 
+// Delete categories by id
 const deleteCategoryByIdAsync = async (idsString) => {
   const ids = idsString.split(",").map((id) => parseInt(id, 10));
 
@@ -76,6 +80,7 @@ const deleteCategoryByIdAsync = async (idsString) => {
   }
 };
 
+// Get categories by id
 const getCategoryByIdAsync = async (id) => {
   try {
     const category = await Category.findByPk(id);
@@ -95,13 +100,11 @@ const getCategoryByIdAsync = async (id) => {
   }
 };
 
+// Update categories by id
 const updateCategoryByIdAsync = async (id, updateData) => {
   try {
-    const category = Category.findByPk(id);
-
-    if (!category) {
-      return { isSuccess: false, message: "Category not found", data: null };
-    }
+    const result = await getCategoryByIdAsync(id);
+    if (!result.isSuccess) return result;
 
     await Category.update(updateData, {
       where: {
@@ -120,6 +123,45 @@ const updateCategoryByIdAsync = async (id, updateData) => {
   }
 };
 
+// Update categories by name
+const updateCategoryByNameAsync = async (name, updateData) => {
+  try {
+    //1. Find current category by name
+    const result = await getCategoryByNameAsync(name);
+    if (!result.isSuccess) return result;
+
+    //2. Check if renaming is happening
+    if (updateData.CategoryName && updateData.CategoryName !== name) {
+      const existingResult = await getCategoryByNameAsync(updateData.name);
+      const isExisting = existingResult.isSuccess;
+
+      if (isExisting) {
+        return {
+          isSuccess: false,
+          message: "The new category name already exists",
+          data: null,
+        };
+      }
+    }
+
+    // 3. Proceed with update
+    await Category.update(updateData, {
+      where: {
+        name,
+      },
+    });
+
+    return {
+      isSuccess: true,
+      message: "Category updated successfully",
+      data: updateData,
+    };
+  } catch (error) {
+    logger.error("updateCategoryByNameAsync error:", error);
+    return { isSuccess: false, message: "Server error", data: null };
+  }
+};
+
 module.exports = {
   getCategoryByNameAsync,
   getCategoryListAsync,
@@ -127,4 +169,5 @@ module.exports = {
   deleteCategoryByIdAsync,
   getCategoryByIdAsync,
   updateCategoryByIdAsync,
+  updateCategoryByNameAsync,
 };
