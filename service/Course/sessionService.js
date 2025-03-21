@@ -10,11 +10,11 @@ const addSessionAsync = async (sessionData) => {
 
         const newSession = await Session.create({
             courseInstanceId: sessionData.courseInstanceId,
-            SessionTitle: sessionData.SessionTitle,
-            SessionDescription: sessionData.SessionDescription || null,
-            Order: sessionData.Order || null,
-            CreatedBy: sessionData.CreatedBy,
-            CreatedAt: new Date(),
+            sessionTitle: sessionData.SessionTitle,
+            sessionDescription: sessionData.SessionDescription || null,
+            order: sessionData.Order,
+            createdBy: sessionData.CreatedBy,
+            createdAt: new Date(),
         });
 
         return { isSuccess: true, message: "Session added successfully", data: newSession };
@@ -62,7 +62,7 @@ const getSessionsByCourseInstanceIdAsync = async (courseInstanceId) => {
 
         const sessions = await Session.findAll({
             where: { courseInstanceId },
-            order: [['Order', 'ASC']],
+            order: [['order', 'ASC']],
         });
         if (sessions.length === 0) {
             return { isSuccess: false, message: "No sessions found for this course instance", data: [] };
@@ -89,7 +89,7 @@ const getSessionListAsync = async (page = 1, pageSize = 10) => {
         const { count, rows: sessions } = await Session.findAndCountAll({
             limit: pageSize,
             offset,
-            order: [['Order', 'ASC']],
+            order: [['order', 'ASC']],
         });
 
         return { isSuccess: true, message: "Sessions fetched successfully", data: { total: count, sessions, } };
@@ -118,11 +118,11 @@ const updateSessionAsync = async (sessionId, sessionData) => {
         };
 
         await session.update({
-            SessionTitle: sessionData.SessionTitle || session.SessionTitle,
-            SessionDescription: sessionData.SessionDescription || session.SessionDescription,
-            Order: sessionData.Order !== undefined ? sessionData.Order : session.Order,
-            UpdatedBy: sessionData.UpdateBy || session.UpdateBy,
-            UpdatedAt: new Date(),
+            sessionTitle: sessionData.sessionTitle || session.sessionTitle,
+            sessionDescription: sessionData.sessionDescription || session.sessionDescription,
+            order: sessionData.order !== undefined ? sessionData.order : session.order,
+            updatedBy: sessionData.updateBy || session.updateBy,
+            updatedAt: new Date(),
         });
 
         return { isSuccess: true, message: "Session updated successfully", data: session };

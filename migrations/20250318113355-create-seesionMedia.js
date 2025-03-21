@@ -3,39 +3,39 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable("Media", {
+        await queryInterface.createTable("media", {
             id: {
                 type: Sequelize.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
                 allowNull: false,
             },
-            sessionId: {
+            session_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "Session",
+                    model: "sessions",
                     key: "id",
                 },
                 onDelete: "CASCADE",
             },
-            fileType: {
+            file_type: {
                 type: Sequelize.ENUM("video", "pdf"),
                 allowNull: false,
             },
-            fileName: {
+            file_name: {
                 type: Sequelize.STRING(255),
                 allowNull: false,
             },
-            filePath: {
+            file_path: {
                 type: Sequelize.STRING(255),
                 allowNull: false,
             },
-            thumbnailPath: {
+            thumbnail_path: {
                 type: Sequelize.STRING(255),
                 allowNull: true,
             },
-            uploaderId: {
+            uploader_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
@@ -44,12 +44,12 @@ module.exports = {
                 },
                 onDelete: "CASCADE",
             },
-            uploadedAt: {
+            uploaded_at: {
                 type: Sequelize.DATE,
                 allowNull: false,
                 defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
             },
-            approvalStatus: {
+            approval_status: {
                 type: Sequelize.ENUM("Pending", "Approved", "Rejected"),
                 allowNull: false,
                 defaultValue: "Pending",
@@ -58,6 +58,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable("Media");
+        await queryInterface.dropTable("media");
     },
 };
