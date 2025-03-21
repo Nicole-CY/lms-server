@@ -1,8 +1,9 @@
-const userservice = require("../service/userservice");
+const userService = require("../service/userService");
 const bcrypt = require("bcryptjs");
 const { bcryptConfig } = require("../appConfig");
 
 const addUserAsync = async (req, res) => {
+<<<<<<< HEAD:controller/usercontroller.js
     //check username not in db
     let dbResult = await userservice.getUserbyNameAsync(req.body.username);
     if (dbResult.isSuccess && dbResult.data.id > 0) {
@@ -11,6 +12,16 @@ const addUserAsync = async (req, res) => {
     }
 
     const existingEmail = await userservice.getUserbyEmailAsync(req.body.email);
+=======
+  //check username not in db
+  let dbResult = await userService.getUserbyNameAsync(req.body.username);
+  if (dbResult.isSuccess && dbResult.data.id > 0) {
+    res.sendCommonValue({}, "Username already exists", 400, 400);
+    return;
+  }
+
+  const existingEmail = await userService.getUserbyEmailAsync(req.body.email);
+>>>>>>> dev:controller/userController.js
 
     if (existingEmail.isSuccess && existingEmail.data.id > 0) {
         return res.sendCommonValue({}, "Email already exists", 400, 400);
@@ -24,6 +35,7 @@ const addUserAsync = async (req, res) => {
     user.birthDate = req.body.birthDate;
     user.gender = req.body.gender;
 
+<<<<<<< HEAD:controller/usercontroller.js
     let password = req.body.password;
     const salt = await bcrypt.genSalt(bcryptConfig.saltRounds);
     let encrypPassword = await bcrypt.hash(user.password, salt);
@@ -35,6 +47,19 @@ const addUserAsync = async (req, res) => {
     } else {
         res.sendCommonValue({}, "", 0);
     }
+=======
+  let password = req.body.password;
+  const salt = await bcrypt.genSalt(bcryptConfig.saltRounds);
+  let encrypPassword = await bcrypt.hash(user.password, salt);
+  user.password = encrypPassword;
+  let result = await userService.addUserAsync(user);
+  if (result.isSuccess) {
+    user.password = password;
+    res.sendCommonValue(user, "success", 1);
+  } else {
+    res.sendCommonValue({}, "", 0);
+  }
+>>>>>>> dev:controller/userController.js
 };
 
 const getUserAsync = (req, res) => {
@@ -46,6 +71,7 @@ const getUserAsync = (req, res) => {
 };
 
 const getUserListAsync = async (req, res) => {
+<<<<<<< HEAD:controller/usercontroller.js
     let page = parseInt(req.params.page);
     let pageSize = parseInt(req.params.pageSize);
     let result = await userservice.getUserListAsync(page, pageSize);
@@ -64,6 +90,26 @@ const deUserByIdAsync = async (req, res) => {
     } else {
         res.sendCommonValue({}, "failed", 0);
     }
+=======
+  let page = parseInt(req.params.page);
+  let pageSize = parseInt(req.params.pageSize);
+  let result = await userService.getUserListAsync(page, pageSize);
+  if (result.isSuccess) {
+    res.sendCommonValue(result.data, "success", 1);
+  } else {
+    res.sendCommonValue([], "failed", 0);
+  }
+};
+
+const deUserByIdAsync = async (req, res) => {
+  let ids = req.params.ids;
+  let result = await userService.delUserByIdAsync(ids);
+  if (result.isSuccess) {
+    res.sendCommonValue({}, "success", 1);
+  } else {
+    res.sendCommonValue({}, "failed", 0);
+  }
+>>>>>>> dev:controller/userController.js
 };
 
 const updateUserAsync = async (req, res) => {
@@ -76,6 +122,7 @@ const updateUserAsync = async (req, res) => {
     user.birthDate = req.body.birthDate;
     user.gender = req.body.gender;
 
+<<<<<<< HEAD:controller/usercontroller.js
     let checkUserResult = await userservice.checkUserNameAsync(
         user.username,
         user.id
@@ -101,6 +148,33 @@ const getUserByIdAsync = async (req, res) => {
     } else {
         res.sendCommonValue([], "failed", 0);
     }
+=======
+  let checkUserResult = await userService.checkUserNameAsync(
+    user.username,
+    user.id
+  );
+  if (!checkUserResult.isSuccess) {
+    res.sendCommonValue({}, "Username already exists", 400, 400);
+    return;
+  }
+  let dbResult = await userService.uptUserByIdAsync(user);
+  if (dbResult.isSuccess) {
+    res.sendCommonValue(user, "Username already exists", 1);
+    return;
+  } else {
+    res.sendCommonValue({}, "", 0);
+  }
+};
+
+const getUserByIdAsync = async (req, res) => {
+  let id = parseInt(req.query.id);
+  let result = await userService.getUserbyIdAsync(id);
+  if (result.isSuccess) {
+    res.sendCommonValue(result.data, "success", 1);
+  } else {
+    res.sendCommonValue([], "failed", 0);
+  }
+>>>>>>> dev:controller/userController.js
 };
 
 module.exports = {

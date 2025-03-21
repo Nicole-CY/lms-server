@@ -1,5 +1,5 @@
 const Role = require('../models/role');
-const logger = require("../common/logsetting");
+const logger = require("../common/logSetting");
 
 const getRoleByNameAsync = async (roleName) => {
     try {

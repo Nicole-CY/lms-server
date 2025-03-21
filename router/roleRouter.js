@@ -5,7 +5,7 @@ const router = express.Router();
 const { commonValidate } = require("../middleware/expressValidator");
 const { roleValidator } = require("../validator/roleValidator");
 
-var roleController = require("../controller/rolecontroller");
+var roleController = require("../controller/roleController");
 
 /**
  * @openapi
