@@ -14,29 +14,29 @@ module.exports = {
      */
 
     await queryInterface.bulkInsert(
-      "user",
+      "users",
       [
         {
           username: "superadmin",
           password:
             "$2b$10$ig9HBJNu6OgmwSnbPn/jWupbPPq1LC4Ee5uptADcG/Ho3M1e3VM1S",
-          email: "defaultuser@example.com",
-          birthDate: '1990-05-20',
+          email: "superadmin@example.com",
+          birth_date: '1990-05-20',
           gender: 1,
           avatar: "https://via.placeholder.com/150",
           active: true,
-          roles: JSON.stringify(["super_admin"]),
+          roles: JSON.stringify(["super_admin", "user"]),
         },
         {
           username: "admin",
           password:
             "$2b$10$ig9HBJNu6OgmwSnbPn/jWupbPPq1LC4Ee5uptADcG/Ho3M1e3VM1S",
           email: "admin@example.com",
-          birthDate: '1990-05-20',
+          birth_date: '1990-05-20',
           gender: 1,
           avatar: "https://via.placeholder.com/150",
           active: true,
-          roles: JSON.stringify(["admin"]),
+          roles: JSON.stringify(["admin", "user"]),
         },
       ],
       {}

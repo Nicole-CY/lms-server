@@ -1,6 +1,6 @@
 const { sequelize } = require("../../db/sequelizedb");
 const Category = require("../../models/category");
-const logger = require("../../common/logsetting");
+const logger = require("../../common/logSetting");
 
 // Get categories by name
 const getCategoryByNameAsync = async (name) => {

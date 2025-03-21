@@ -5,8 +5,7 @@ var router = express.Router();
 const { commonValidate } = require("../middleware/expressValidator");
 const { loginValidator } = require("../validator/authValidator");
 
-const authcontroller = require("../controller/authcontroller");
-const { authenticateToken, verifyCsrfToken } = require("../middleware/authMiddleware");
+const authController = require("../controller/authController");
 
 /**
 * @openapi
@@ -45,7 +44,7 @@ const { authenticateToken, verifyCsrfToken } = require("../middleware/authMiddle
 router.post(
   "/login",
   commonValidate(loginValidator),
-  authcontroller.loginAsync
+  authController.loginAsync
 );
 
 /**
@@ -87,7 +86,7 @@ router.post(
 router.post(
   "/register",
   commonValidate(loginValidator), 
-  authcontroller.registerAsync
+  authController.registerAsync
 );
 
 
@@ -97,8 +96,6 @@ router.post(
 *  post:
 *     tags:
 *       - auth Controller
-*     security:
-*       - XSRFTokenScheme: []
 *     summary: Logout user and clear token
 *     description: Logout clears JWT and CSRF token cookies
 *     responses:
@@ -109,9 +106,7 @@ router.post(
 */
 router.post(
   "/logout",
-  authenticateToken, 
-  verifyCsrfToken,
-  authcontroller.logoutAsync
+  authController.logoutAsync
 );
 
 /**
@@ -120,8 +115,6 @@ router.post(
 *  get:
 *     tags:
 *       - auth Controller
-*     security:
-*       - XSRFTokenScheme: []
 *     summary: Get authenticated user details
 *     description: Retrieve the details of the currently authenicated user based on the provided JWT token
 *     responses:
@@ -132,9 +125,7 @@ router.post(
 */
 router.get(
   "/me",
-  authenticateToken,    
-  verifyCsrfToken,      
-  authcontroller.meAsync
+  authController.meAsync
 );
 
 module.exports = router;

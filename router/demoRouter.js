@@ -5,7 +5,7 @@ var router = express.Router();
 const { body, query, param } = require("express-validator");
 const { commonValidate } = require("../middleware/expressValidator");
 
-const democontroller = require("../controller/democontroller");
+const demoController = require("../controller/demoController");
 
 /**
  * @openapi
@@ -15,8 +15,6 @@ const democontroller = require("../controller/democontroller");
  *     - demo Controller
  *     summary: add demo
  *     description: add demo
- *     security:
- *       - BearerAuth: []
  *     requestBody:
  *      required: true
  *      content:
@@ -56,7 +54,7 @@ const democontroller = require("../controller/democontroller");
 router.post(
   "",
   commonValidate([body("title").notEmpty().withMessage("Not a valid title")]),
-  democontroller.createAsync
+  demoController.createAsync
 );
 
 /**
@@ -66,8 +64,6 @@ router.post(
  *     tags:
  *     - demo Controller
  *     summary: Get all demos
- *     security:
- *       - BearerAuth: []
  *     responses:
  *      200:
  *        description: Fetched Successfully
@@ -80,6 +76,6 @@ router.post(
  *      500:
  *        description: Server Error
  */
-router.get("", democontroller.getAllAsync);
+router.get("", demoController.getAllAsync);
 
 module.exports = router;
