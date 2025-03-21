@@ -1,6 +1,6 @@
 const Course = require("../../models/course");
 const CourseCategory = require("../../models/courseCategory");
-const logger = require("../../common/logsetting");
+const logger = require("../../common/logSetting");
 
 const addCourseAsync = async(courseData) => {
     try{
