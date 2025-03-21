@@ -6,7 +6,6 @@ const { commonValidate } = require("../middleware/expressValidator");
 const { loginValidator } = require("../validator/authValidator");
 
 const authcontroller = require("../controller/authcontroller");
-const { authenticateToken, verifyCsrfToken } = require("../middleware/authMiddleware");
 
 /**
 * @openapi
@@ -97,8 +96,6 @@ router.post(
 *  post:
 *     tags:
 *       - auth Controller
-*     security:
-*       - XSRFTokenScheme: []
 *     summary: Logout user and clear token
 *     description: Logout clears JWT and CSRF token cookies
 *     responses:
@@ -109,8 +106,6 @@ router.post(
 */
 router.post(
   "/logout",
-  authenticateToken, 
-  verifyCsrfToken,
   authcontroller.logoutAsync
 );
 
@@ -120,8 +115,6 @@ router.post(
 *  get:
 *     tags:
 *       - auth Controller
-*     security:
-*       - XSRFTokenScheme: []
 *     summary: Get authenticated user details
 *     description: Retrieve the details of the currently authenicated user based on the provided JWT token
 *     responses:
@@ -132,8 +125,6 @@ router.post(
 */
 router.get(
   "/me",
-  authenticateToken,    
-  verifyCsrfToken,      
   authcontroller.meAsync
 );
 
