@@ -10,40 +10,44 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      CategoryName: {
+      categoryName: {
         type: Sequelize.STRING(50),
       },
-      Description: {
+      description: {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
-      ParentId: {
+      parentId: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
-      Created_By: {
+      createdBy: {
         type: Sequelize.INTEGER,
         references: {
           model: "users",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
-      Updated_By: {
+      updatedBy: {
         type: Sequelize.INTEGER,
         references: {
           model: "users",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
-      IconUrl: {
+      iconUrl: {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
