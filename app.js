@@ -6,10 +6,12 @@ const app = express();
 const appConfig = require("./appConfig");
 
 const cors = require("cors");
-app.use(cors({
-  origin: appConfig.corsConfig.origin, 
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: appConfig.corsConfig.origin,
+    credentials: true,
+  })
+);
 
 //config commonresult
 const returnvalue = require("./middleware/returnvalue");
@@ -64,8 +66,12 @@ const categoryrouter = require("./router/categoryrouter");
 app.use("/api/categories", categoryrouter);
 
 //config courseRouter
-const courseRouter = require('./router/courseRouter');
+const courseRouter = require("./router/courseRouter");
 app.use("/api/courses", courseRouter);
+
+//config menuRouter
+const menuRouter = require("./router/menuRouter");
+app.use("/api/menus", menuRouter);
 
 //config erorhandle
 const erorhandle = require("./middleware/errorhandling");
