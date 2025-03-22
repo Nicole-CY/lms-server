@@ -8,7 +8,6 @@ const { body, query, param } = require("express-validator");
 const { commonValidate } = require("../middleware/expressValidator");
 
 const courseOfferingController = require("../controller/Course/courseOfferingController");
-// console.log("controller method:", courseOfferingController.getCourseOfferingListAsync);
 
 /**
  * @openapi
