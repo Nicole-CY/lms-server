@@ -1,0 +1,31 @@
+"use strict";
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.bulkInsert(
+      "users",
+      [
+        {
+          username: "superadmin111",
+          password:
+            "$2b$10$ig9HBJNu6OgmwSnbPn/jWupbPPq1LC4Ee5uptADcG/Ho3M1e3VM1S", // Example hash
+          email: "superadmin@example.com",
+          //address: "",
+          //gender: 1,
+          //avatar: "https://via.placeholder.com/150",
+          //birth_date: "1990-05-20",
+          //roles: JSON.stringify(["super_admin"]), // Use JSON.stringify to ensure it's a valid JSON array
+          //active: 1,
+        },
+      ],
+      { timestamps: false }
+    );
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete("users", null, {});
+    // delete table if necessary   to use reset-db command in package.json
+    await queryInterface.dropTable("users");
+  },
+};

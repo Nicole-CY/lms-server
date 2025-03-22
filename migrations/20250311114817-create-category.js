@@ -10,14 +10,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      CategoryName: {
+      categoryName: {
         type: Sequelize.STRING(50),
       },
-      Description: {
+      description: {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
-      ParentId: {
+      parentId: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
@@ -29,21 +29,21 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      Created_By: {
+      createdBy: {
         type: Sequelize.INTEGER,
         references: {
           model: "users",
           key: "id",
         },
       },
-      Updated_By: {
+      updatedBy: {
         type: Sequelize.INTEGER,
         references: {
           model: "users",
           key: "id",
         },
       },
-      IconUrl: {
+      iconUrl: {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
