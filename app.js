@@ -6,6 +6,7 @@ const app = express();
 const appConfig = require("./appConfig");
 
 const cors = require("cors");
+
 app.use(
   cors({
     origin: appConfig.corsConfig.origin,
@@ -14,8 +15,8 @@ app.use(
 );
 
 //config commonresult
-const returnvalue = require("./middleware/returnvalue");
-app.use(returnvalue.returnvalue);
+const returnValue = require("./middleware/returnValue");
+app.use(returnValue.returnValue);
 
 //config josn body
 app.use(express.json());
@@ -23,6 +24,13 @@ app.use(express.urlencoded({ extended: false }));
 
 //parse Cookie
 app.use(cookieParser());
+
+const { expressjwt: jwtMiddleware } = require('express-jwt');
+app.use(jwtMiddleware({
+  secret: appConfig.jwtConfig.secret,
+  algorithms: appConfig.jwtConfig.algorithms,
+  getToken: (req) => req.cookies.token
+}).unless({ path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register'] }));
 
 // config Swagger
 const swaggerDocument = require("./common/swagger");
@@ -41,29 +49,25 @@ app.get("/", (req, res) => {
   res.send("server running " + new Date().toLocaleString());
 });
 
-//config authrouter
-const authrouter = require("./router/authrouter");
-app.use("/api/auth", authrouter);
+//config authRouter
+const authRouter = require("./router/authRouter");
+app.use("/api/auth", authRouter);
 
-//config userrouter
-const userrouter = require("./router/userrouter");
-app.use("/api/users", userrouter);
+//config userRouter
+const userRouter = require("./router/userRouter");
+app.use("/api/users", userRouter);
 
-//config demorouter
-const demorouter = require("./router/demorouter");
-app.use("/api/demos", demorouter);
+//config demoRouter
+const demoRouter = require("./router/demoRouter");
+app.use("/api/demos", demoRouter);
 
-//config rolerouter
-const rolerouter = require("./router/rolerouter");
-app.use("/api/roles", rolerouter);
+//config roleRouter
+const roleRouter = require("./router/roleRouter");
+app.use("/api/roles", roleRouter);
 
-//config erorhandle
-const errorhandle = require("./middleware/errorhandling");
-app.use(errorhandle.errorhandling);
-
-//config categoryrouter
-const categoryrouter = require("./router/categoryrouter");
-app.use("/api/categories", categoryrouter);
+//config categoryRouter
+const categoryRouter = require("./router/categoryRouter");
+app.use("/api/categories", categoryRouter);
 
 //config courseRouter
 const courseRouter = require("./router/courseRouter");
@@ -74,8 +78,8 @@ const menuRouter = require("./router/menuRouter");
 app.use("/api/menus", menuRouter);
 
 //config erorhandle
-const erorhandle = require("./middleware/errorhandling");
-app.use(erorhandle.errorhandling);
+const erorhandle = require("./middleware/errorHandling");
+app.use(erorhandle.errorHandling);
 
 let port = appConfig.serverConfig.port;
 app.listen(port, () => {

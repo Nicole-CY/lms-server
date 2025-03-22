@@ -1,8 +1,8 @@
-const logger = require("../common/logsetting");
+const logger = require("../common/logSetting");
 
-const errorhandling = (err, req, res, next) => {
+const errorHandling = (err, req, res, next) => {
   
-  logger.error('global errorhandling', err);
+  logger.error('global errorHandling', err);
   if (err.name === "UnauthorizedError") {
     return res.sendCommonValue({}, "Unauthorized", 401, 401);
   }
@@ -14,5 +14,5 @@ const errorhandling = (err, req, res, next) => {
 };
 
 module.exports = {
-  errorhandling,
+  errorHandling,
 };

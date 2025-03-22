@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
-const user = sequelize.define(
-  "user",
+const User = sequelize.define(
+  "User",
   {
     // Model attributes are defined here
     id: {
@@ -31,6 +31,7 @@ const user = sequelize.define(
     },
     birthDate: {
       type: DataTypes.DATEONLY, 
+      field: 'birth_date',
       // allowNull:false,
     },
     password: {
@@ -52,7 +53,8 @@ const user = sequelize.define(
       defaultValue: [],
     },
   },
-  { timestamps: false, tableName: 'user' }
+  { timestamps: false, tableName: 'User' }
 );
 
-module.exports = user;
+module.exports = User;
+module.exports = User;

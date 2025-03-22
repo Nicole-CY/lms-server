@@ -1,11 +1,13 @@
 const { sequelize } = require("../../db/sequelizedb");
+const { getPaginatedResults } = require("../../utils/pagination");
 const Category = require("../../models/category");
-const logger = require("../../common/logsetting");
+const logger = require("../../common/logSetting");
 
+// Get categories by name
 const getCategoryByNameAsync = async (name) => {
   try {
     const category = await Category.findOne({
-      where: { CategoryName: name },
+      where: { categoryName: name },
     });
 
     if (!category) {
@@ -23,29 +25,24 @@ const getCategoryByNameAsync = async (name) => {
   }
 };
 
-const getCategoryListAsync = async (page = 1, pageSize = 10) => {
+// Get categories lists
+const getCategoryListAsync = async (page = 1, pageSize = 10, search = "") => {
   try {
-    const offset = (page - 1) * pageSize;
+    const where = search ? { categoryName: { [Op.like]: `%${search}%` } } : {};
 
-    const { count, rows } = await Category.findAndCountAll({
-      offset,
-      limit: pageSize,
+    const result = await getPaginatedResults(Category, {
+      page,
+      pageSize,
+      where,
     });
-
-    return {
-      isSuccess: true,
-      message: "",
-      data: {
-        items: rows,
-        total: count,
-      },
-    };
+    return result;
   } catch (error) {
     logger.error("getCategoryListAsync error:", error);
     return { isSuccess: false, message: "Server error", data: null };
   }
 };
 
+// Add categories
 const addCategoryAsync = async (category) => {
   try {
     const newCategory = await Category.create(category);
@@ -57,6 +54,7 @@ const addCategoryAsync = async (category) => {
   }
 };
 
+// Delete categories by id
 const deleteCategoryByIdAsync = async (idsString) => {
   const ids = idsString.split(",").map((id) => parseInt(id, 10));
 
@@ -76,6 +74,7 @@ const deleteCategoryByIdAsync = async (idsString) => {
   }
 };
 
+// Get categories by id
 const getCategoryByIdAsync = async (id) => {
   try {
     const category = await Category.findByPk(id);
@@ -95,17 +94,15 @@ const getCategoryByIdAsync = async (id) => {
   }
 };
 
+// Update categories by id
 const updateCategoryByIdAsync = async (id, updateData) => {
   try {
-    const category = Category.findByPk(id);
+    const result = await getCategoryByIdAsync(id);
+    if (!result.isSuccess) return result;
 
-    if (!category) {
-      return { isSuccess: false, message: "Category not found", data: null };
-    }
-
-    await Category.update(updateData, {
+    const category = await Category.update(updateData, {
       where: {
-        id: updateData.id,
+        id,
       },
     });
 
@@ -120,6 +117,45 @@ const updateCategoryByIdAsync = async (id, updateData) => {
   }
 };
 
+// Update categories by name
+const updateCategoryByNameAsync = async (name, updateData) => {
+  try {
+    //1. Find current category by name
+    const result = await getCategoryByNameAsync(name);
+    if (!result.isSuccess) return result;
+
+    //2. Check if renaming is happening
+    if (updateData.categoryName && updateData.categoryName !== name) {
+      const existingResult = await getCategoryByNameAsync(updateData.name);
+      const isExisting = existingResult.isSuccess;
+
+      if (isExisting) {
+        return {
+          isSuccess: false,
+          message: "The new category name already exists",
+          data: null,
+        };
+      }
+    }
+
+    // 3. Proceed with update
+    await Category.update(updateData, {
+      where: {
+        categoryName: name,
+      },
+    });
+
+    return {
+      isSuccess: true,
+      message: "Category updated successfully",
+      data: updateData,
+    };
+  } catch (error) {
+    logger.error("updateCategoryByNameAsync error:", error);
+    return { isSuccess: false, message: "Server error", data: null };
+  }
+};
+
 module.exports = {
   getCategoryByNameAsync,
   getCategoryListAsync,
@@ -127,4 +163,5 @@ module.exports = {
   deleteCategoryByIdAsync,
   getCategoryByIdAsync,
   updateCategoryByIdAsync,
+  updateCategoryByNameAsync,
 };

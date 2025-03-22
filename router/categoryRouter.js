@@ -14,8 +14,6 @@ const categoryController = require("../controller/Course/categoryController");
  *     tags:
  *     - Category Controller
  *     summary: Get a category by name
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *      - name: categoryname
  *        in: query
@@ -48,8 +46,6 @@ router.get(
  *     tags:
  *     - Category Controller
  *     summary: Get all categories
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *       - name: page
  *         in: path
@@ -93,8 +89,6 @@ router.get(
  *     tags:
  *     - Category Controller
  *     summary: Add a category
- *     security:
- *       - BearerAuth: []
  *     requestBody:
  *      required: true
  *      content:
@@ -102,31 +96,31 @@ router.get(
  *           schema:
  *            type: object
  *            required:
- *              - CategoryName
- *              - Description
- *              - ParentId
+ *              - categoryName
+ *              - description
+ *              - parentId
  *              - createdAt
  *              - updatedAt
- *              - Created_By
- *              - Updated_By
- *              - IconUrl
+ *              - createdBy
+ *              - updatedBy
+ *              - iconUrl
  *            properties:
- *              CategoryName:
+ *              categoryName:
  *                type: string
  *                example: Electronics
- *              Description:
+ *              description:
  *                type: string
  *                example: Category for electronic items
- *              ParentId:
+ *              parentId:
  *                type: integer
  *                example: 1
- *              Created_By:
+ *              createdBy:
  *                type: integer
  *                example: 1
- *              Updated_By:
+ *              updatedBy:
  *                type: integer
  *                example: 1
- *              IconUrl:
+ *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
@@ -144,18 +138,18 @@ router.get(
 router.post(
   "/",
   commonValidate([
-    body("CategoryName").notEmpty().withMessage("Category name is required"),
-    body("Description").notEmpty().withMessage("Description is required"),
-    body("ParentId")
+    body("categoryName").notEmpty().withMessage("category name is required"),
+    body("description").notEmpty().withMessage("description is required"),
+    body("parentId")
       .optional()
       .isInt()
-      .withMessage("ParentId must be a string"),
-    body("Created_By").notEmpty().withMessage("Created_By is required"),
-    body("Updated_By").notEmpty().withMessage("Updated_By is required"),
-    body("IconUrl")
+      .withMessage("parentId must be a string"),
+    body("createdBy").notEmpty().withMessage("createdBy is required"),
+    body("updatedBy").notEmpty().withMessage("updatedBy is required"),
+    body("iconUrl")
       .optional()
       .isURL()
-      .withMessage("IconUrl must be a valid URL"),
+      .withMessage("iconUrl must be a valid URL"),
   ]),
   categoryController.addCategoryAsync
 );
@@ -167,8 +161,6 @@ router.post(
  *     tags:
  *     - Category Controller
  *     summary: Delete a category by Id
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *      - name: ids
  *        in: path
@@ -194,13 +186,11 @@ router.delete(
 
 /**
  * @openapi
- * '/api/categories/getCategoryById':
+ * '/api/categories/getCategoriesById':
  *  get:
  *     tags:
  *     - Category Controller
  *     summary: Get a category by id
- *     security:
- *       - BearerAuth: []
  *     parameters:
  *      - name: id
  *        in: query
@@ -219,18 +209,23 @@ router.delete(
  *        description: Server Error
  */
 router.get(
-  "/getCategoryById",
+  "/getCategoriesById",
   commonValidate([query("id").notEmpty().withMessage("Not a valid id")]),
   categoryController.getCategoryByIdAsync
 );
 
 /**
  * @openapi
- * '/api/categories':
+ * '/api/categories/updateCategoriesById':
  *  put:
  *     tags:
  *     - Category Controller
- *     summary: update a category
+ *     summary: update a category by id
+ *     parameters:
+ *      - name: id
+ *        in: query
+ *        description: The id of the category
+ *        required: true
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -241,34 +236,31 @@ router.get(
  *            type: object
  *            required:
  *              - id
- *              - CategoryName
- *              - Description
- *              - ParentId
+ *              - categoryName
+ *              - description
+ *              - parentId
  *              - createdAt
  *              - updatedAt
- *              - Created_By
- *              - Updated_By
- *              - IconUrl
+ *              - createdBy
+ *              - updatedBy
+ *              - iconUrl
  *            properties:
- *              id:
- *                type: number
- *                default: 41
- *              CategoryName:
+ *              categoryName:
  *                type: string
  *                example: Electronics
- *              Description:
+ *              description:
  *                type: string
  *                example: Category for electronic items
- *              ParentId:
+ *              parentId:
  *                type: integer
  *                example: 1
- *              Created_By:
+ *              createdBy:
  *                type: integer
  *                example: 1
- *              Updated_By:
+ *              updatedBy:
  *                type: integer
  *                example: 1
- *              IconUrl:
+ *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
@@ -284,12 +276,77 @@ router.get(
  *        description: Server Error
  */
 router.put(
-  "",
-  commonValidate([
-    body("CategoryName").notEmpty().withMessage("Not a valid CategoryName"),
-    body("id").notEmpty().withMessage("Not a valid id"),
-  ]),
+  "/updateCategoriesById",
+  commonValidate([query("id").notEmpty().withMessage("Not a valid id")]),
   categoryController.updateCategoryByIdAsync
+);
+
+/**
+ * @openapi
+ * '/api/categories/updateCategoriesByName':
+ *  put:
+ *     tags:
+ *     - Category Controller
+ *     summary: update a category by name
+ *     parameters:
+ *      - name: name
+ *        in: query
+ *        description: The name of the category
+ *        required: true
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *           schema:
+ *            type: object
+ *            required:
+ *              - categoryName
+ *              - description
+ *              - parentId
+ *              - createdAt
+ *              - updatedAt
+ *              - createdBy
+ *              - updatedBy
+ *              - iconUrl
+ *            properties:
+ *              categoryName:
+ *                type: string
+ *                example: Electronics
+ *              description:
+ *                type: string
+ *                example: Category for electronic items
+ *              parentId:
+ *                type: integer
+ *                example: 1
+ *              createdBy:
+ *                type: integer
+ *                example: 1
+ *              updatedBy:
+ *                type: integer
+ *                example: 1
+ *              iconUrl:
+ *                type: string
+ *                example: "https://example.com/icon.png"
+ *     responses:
+ *      201:
+ *        description: Created
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ *      409:
+ *        description: Conflict
+ *      500:
+ *        description: Server Error
+ */
+router.put(
+  "/updateCategoriesByName",
+  commonValidate([
+    body("categoryName").notEmpty().withMessage("Not a valid categoryName"),
+  ]),
+  categoryController.updateCategoryByNameAsync
 );
 
 module.exports = router;

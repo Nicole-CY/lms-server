@@ -1,4 +1,4 @@
-const demoservice = require("../service/demoservice");
+const demoService = require("../service/demoService");
 
 /**
  * add demo
@@ -13,7 +13,7 @@ const createAsync = async (req, res) => {
   demo.active = req.body.active;
   demo.dataTime = req.body.dataTime;
 
-  let result = await demoservice.createAsync(demo);
+  let result = await demoService.createAsync(demo);
   if (result.isSuccess) {
     res.sendCommonValue(result.data, "success", 1);
   } else {
@@ -27,7 +27,7 @@ const createAsync = async (req, res) => {
  * @param {*} res 
  */
 const getAllAsync = async (req, res) => {
-  let result = await demoservice.getAllAsync();
+  let result = await demoService.getAllAsync();
   if (result.isSuccess) {
     res.sendCommonValue(result.data, "success", 1);
   } else {

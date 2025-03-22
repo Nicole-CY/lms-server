@@ -1,13 +1,19 @@
-const userservice = require("../service/userservice");
+const userService = require("../service/userService");
 const bcrypt = require("bcryptjs");
 const { bcryptConfig } = require("../appConfig");
 
 const addUserAsync = async (req, res) => {
   //check username not in db
-  let dbResult = await userservice.getUserbyNameAsync(req.body.username);
+  let dbResult = await userService.getUserbyNameAsync(req.body.username);
   if (dbResult.isSuccess && dbResult.data.id > 0) {
     res.sendCommonValue({}, "Username already exists", 400, 400);
     return;
+  }
+
+  const existingEmail = await userService.getUserbyEmailAsync(req.body.email);
+
+  if (existingEmail.isSuccess && existingEmail.data.id > 0) {
+    return res.sendCommonValue({}, "Email already exists", 400, 400);
   }
 
   let user = {};
@@ -22,7 +28,7 @@ const addUserAsync = async (req, res) => {
   const salt = await bcrypt.genSalt(bcryptConfig.saltRounds);
   let encrypPassword = await bcrypt.hash(user.password, salt);
   user.password = encrypPassword;
-  let result = await userservice.addUserAsync(user);
+  let result = await userService.addUserAsync(user);
   if (result.isSuccess) {
     user.password = password;
     res.sendCommonValue(user, "success", 1);
@@ -42,7 +48,7 @@ const getUserAsync = (req, res) => {
 const getUserListAsync = async (req, res) => {
   let page = parseInt(req.params.page);
   let pageSize = parseInt(req.params.pageSize);
-  let result = await userservice.getUserListAsync(page, pageSize);
+  let result = await userService.getUserListAsync(page, pageSize);
   if (result.isSuccess) {
     res.sendCommonValue(result.data, "success", 1);
   } else {
@@ -52,7 +58,7 @@ const getUserListAsync = async (req, res) => {
 
 const deUserByIdAsync = async (req, res) => {
   let ids = req.params.ids;
-  let result = await userservice.delUserByIdAsync(ids);
+  let result = await userService.delUserByIdAsync(ids);
   if (result.isSuccess) {
     res.sendCommonValue({}, "success", 1);
   } else {
@@ -70,7 +76,7 @@ const updateUserAsync = async (req, res) => {
   user.birthDate = req.body.birthDate;
   user.gender = req.body.gender;
 
-  let checkUserResult = await userservice.checkUserNameAsync(
+  let checkUserResult = await userService.checkUserNameAsync(
     user.username,
     user.id
   );
@@ -78,7 +84,7 @@ const updateUserAsync = async (req, res) => {
     res.sendCommonValue({}, "Username already exists", 400, 400);
     return;
   }
-  let dbResult = await userservice.uptUserByIdAsync(user);
+  let dbResult = await userService.uptUserByIdAsync(user);
   if (dbResult.isSuccess) {
     res.sendCommonValue(user, "Username already exists", 1);
     return;
@@ -89,7 +95,7 @@ const updateUserAsync = async (req, res) => {
 
 const getUserByIdAsync = async (req, res) => {
   let id = parseInt(req.query.id);
-  let result = await userservice.getUserbyIdAsync(id);
+  let result = await userService.getUserbyIdAsync(id);
   if (result.isSuccess) {
     res.sendCommonValue(result.data, "success", 1);
   } else {
