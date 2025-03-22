@@ -70,6 +70,14 @@ app.use("/api/categories", categoryRouter);
 const courseRouter = require('./router/courseRouter');
 app.use("/api/courses", courseRouter);
 
+//config courseOfferingRouter
+const courseOfferingRouter = require("./router/courseOfferingRouter");
+app.use("/api/courseOfferings", courseOfferingRouter);
+
+//config courseNotificationROuters
+const courseNotificationRouter = require("./router/courseNotificationRouter");
+app.use("/api/courseNotifications", courseNotificationRouter);
+
 //config erorhandle
 const erorhandle = require("./middleware/errorHandling");
 app.use(erorhandle.errorHandling);
