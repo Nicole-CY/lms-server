@@ -1,4 +1,5 @@
 const { sequelize } = require("../../db/sequelizedb");
+const { getPaginatedResults } = require("../../utils/pagination");
 const Category = require("../../models/category");
 const logger = require("../../common/logSetting");
 
@@ -25,23 +26,16 @@ const getCategoryByNameAsync = async (name) => {
 };
 
 // Get categories lists
-const getCategoryListAsync = async (page = 1, pageSize = 10) => {
+const getCategoryListAsync = async (page = 1, pageSize = 10, search = "") => {
   try {
-    const offset = (page - 1) * pageSize;
+    const where = search ? { categoryName: { [Op.like]: `%${search}%` } } : {};
 
-    const { count, rows } = await Category.findAndCountAll({
-      offset,
-      limit: pageSize,
+    const result = await getPaginatedResults(Category, {
+      page,
+      pageSize,
+      where,
     });
-
-    return {
-      isSuccess: true,
-      message: "",
-      data: {
-        items: rows,
-        total: count,
-      },
-    };
+    return result;
   } catch (error) {
     logger.error("getCategoryListAsync error:", error);
     return { isSuccess: false, message: "Server error", data: null };
