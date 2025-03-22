@@ -72,7 +72,7 @@ const getCategoryByIdAsync = async (req, res) => {
 
 // Update categories by id
 const updateCategoryByIdAsync = async (req, res) => {
-  const id = parseInt(req.body.id, 10);
+  const id = parseInt(req.query.id, 10);
   const updateData = req.body;
 
   const result = await CategoryService.updateCategoryByIdAsync(id, updateData);

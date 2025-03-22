@@ -97,12 +97,12 @@ const getCategoryByIdAsync = async (id) => {
 // Update categories by id
 const updateCategoryByIdAsync = async (id, updateData) => {
   try {
-    const result = await console.log(result);
+    const result = await getCategoryByIdAsync(id);
     if (!result.isSuccess) return result;
 
     const category = await Category.update(updateData, {
       where: {
-        id: updateData.id,
+        id,
       },
     });
 

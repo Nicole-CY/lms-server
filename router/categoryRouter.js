@@ -221,6 +221,11 @@ router.get(
  *     tags:
  *     - Category Controller
  *     summary: update a category by id
+ *     parameters:
+ *      - name: id
+ *        in: query
+ *        description: The id of the category
+ *        required: true
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -240,9 +245,6 @@ router.get(
  *              - updatedBy
  *              - iconUrl
  *            properties:
- *              id:
- *                type: number
- *                default: 41
  *              categoryName:
  *                type: string
  *                example: Electronics
@@ -275,10 +277,7 @@ router.get(
  */
 router.put(
   "/updateCategoriesById",
-  commonValidate([
-    body("categoryName").notEmpty().withMessage("Not a valid categoryName"),
-    body("id").notEmpty().withMessage("Not a valid id"),
-  ]),
+  commonValidate([query("id").notEmpty().withMessage("Not a valid id")]),
   categoryController.updateCategoryByIdAsync
 );
 
