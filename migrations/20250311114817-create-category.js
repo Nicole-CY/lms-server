@@ -24,10 +24,12 @@ module.exports = {
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
       createdBy: {
         type: Sequelize.INTEGER,
@@ -35,6 +37,7 @@ module.exports = {
           model: "users",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       updatedBy: {
         type: Sequelize.INTEGER,
@@ -42,6 +45,7 @@ module.exports = {
           model: "users",
           key: "id",
         },
+        onDelete: "CASCADE",
       },
       iconUrl: {
         type: Sequelize.STRING(255),

@@ -6,7 +6,7 @@ const logger = require("../../common/logSetting");
 const getCategoryByNameAsync = async (name) => {
   try {
     const category = await Category.findOne({
-      where: { CategoryName: name },
+      where: { categoryName: name },
     });
 
     if (!category) {
@@ -103,10 +103,10 @@ const getCategoryByIdAsync = async (id) => {
 // Update categories by id
 const updateCategoryByIdAsync = async (id, updateData) => {
   try {
-    const result = await getCategoryByIdAsync(id);
+    const result = await console.log(result);
     if (!result.isSuccess) return result;
 
-    await Category.update(updateData, {
+    const category = await Category.update(updateData, {
       where: {
         id: updateData.id,
       },
@@ -131,7 +131,7 @@ const updateCategoryByNameAsync = async (name, updateData) => {
     if (!result.isSuccess) return result;
 
     //2. Check if renaming is happening
-    if (updateData.CategoryName && updateData.CategoryName !== name) {
+    if (updateData.categoryName && updateData.categoryName !== name) {
       const existingResult = await getCategoryByNameAsync(updateData.name);
       const isExisting = existingResult.isSuccess;
 
@@ -147,7 +147,7 @@ const updateCategoryByNameAsync = async (name, updateData) => {
     // 3. Proceed with update
     await Category.update(updateData, {
       where: {
-        name,
+        categoryName: name,
       },
     });
 

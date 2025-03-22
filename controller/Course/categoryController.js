@@ -28,9 +28,9 @@ const getCategoryListAsync = async (req, res) => {
 
 // Add categories
 const addCategoryAsync = async (req, res) => {
-  const { CategoryName } = req.body;
+  const { categoryName } = req.body;
 
-  const dbResult = await CategoryService.getCategoryByNameAsync(CategoryName);
+  const dbResult = await CategoryService.getCategoryByNameAsync(categoryName);
 
   if (dbResult.isSuccess) {
     return res.sendCommonValue({}, "Category name already exists", 0);
@@ -86,11 +86,11 @@ const updateCategoryByIdAsync = async (req, res) => {
 
 // Update categories by name
 const updateCategoryByNameAsync = async (req, res) => {
-  const { CategoryName } = req.query;
+  const { name } = req.query;
   const updateData = req.body;
 
   const result = await CategoryService.updateCategoryByNameAsync(
-    CategoryName,
+    name,
     updateData
   );
 

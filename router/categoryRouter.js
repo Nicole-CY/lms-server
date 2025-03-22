@@ -96,31 +96,31 @@ router.get(
  *           schema:
  *            type: object
  *            required:
- *              - CategoryName
- *              - Description
- *              - ParentId
+ *              - categoryName
+ *              - description
+ *              - parentId
  *              - createdAt
  *              - updatedAt
- *              - Created_By
- *              - Updated_By
- *              - IconUrl
+ *              - createdBy
+ *              - updatedBy
+ *              - iconUrl
  *            properties:
- *              CategoryName:
+ *              categoryName:
  *                type: string
  *                example: Electronics
- *              Description:
+ *              description:
  *                type: string
  *                example: Category for electronic items
- *              ParentId:
+ *              parentId:
  *                type: integer
  *                example: 1
- *              Created_By:
+ *              createdBy:
  *                type: integer
  *                example: 1
- *              Updated_By:
+ *              updatedBy:
  *                type: integer
  *                example: 1
- *              IconUrl:
+ *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
@@ -138,18 +138,18 @@ router.get(
 router.post(
   "/",
   commonValidate([
-    body("CategoryName").notEmpty().withMessage("Category name is required"),
-    body("Description").notEmpty().withMessage("Description is required"),
-    body("ParentId")
+    body("categoryName").notEmpty().withMessage("category name is required"),
+    body("description").notEmpty().withMessage("description is required"),
+    body("parentId")
       .optional()
       .isInt()
-      .withMessage("ParentId must be a string"),
-    body("Created_By").notEmpty().withMessage("Created_By is required"),
-    body("Updated_By").notEmpty().withMessage("Updated_By is required"),
-    body("IconUrl")
+      .withMessage("parentId must be a string"),
+    body("createdBy").notEmpty().withMessage("createdBy is required"),
+    body("updatedBy").notEmpty().withMessage("updatedBy is required"),
+    body("iconUrl")
       .optional()
       .isURL()
-      .withMessage("IconUrl must be a valid URL"),
+      .withMessage("iconUrl must be a valid URL"),
   ]),
   categoryController.addCategoryAsync
 );
@@ -231,34 +231,34 @@ router.get(
  *            type: object
  *            required:
  *              - id
- *              - CategoryName
- *              - Description
- *              - ParentId
+ *              - categoryName
+ *              - description
+ *              - parentId
  *              - createdAt
  *              - updatedAt
- *              - Created_By
- *              - Updated_By
- *              - IconUrl
+ *              - createdBy
+ *              - updatedBy
+ *              - iconUrl
  *            properties:
  *              id:
  *                type: number
  *                default: 41
- *              CategoryName:
+ *              categoryName:
  *                type: string
  *                example: Electronics
- *              Description:
+ *              description:
  *                type: string
  *                example: Category for electronic items
- *              ParentId:
+ *              parentId:
  *                type: integer
  *                example: 1
- *              Created_By:
+ *              createdBy:
  *                type: integer
  *                example: 1
- *              Updated_By:
+ *              updatedBy:
  *                type: integer
  *                example: 1
- *              IconUrl:
+ *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
@@ -276,7 +276,7 @@ router.get(
 router.put(
   "/updateCategoriesById",
   commonValidate([
-    body("CategoryName").notEmpty().withMessage("Not a valid CategoryName"),
+    body("categoryName").notEmpty().withMessage("Not a valid categoryName"),
     body("id").notEmpty().withMessage("Not a valid id"),
   ]),
   categoryController.updateCategoryByIdAsync
@@ -289,6 +289,11 @@ router.put(
  *     tags:
  *     - Category Controller
  *     summary: update a category by name
+ *     parameters:
+ *      - name: name
+ *        in: query
+ *        description: The name of the category
+ *        required: true
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -298,35 +303,31 @@ router.put(
  *           schema:
  *            type: object
  *            required:
- *              - id
- *              - CategoryName
- *              - Description
- *              - ParentId
+ *              - categoryName
+ *              - description
+ *              - parentId
  *              - createdAt
  *              - updatedAt
- *              - Created_By
- *              - Updated_By
- *              - IconUrl
+ *              - createdBy
+ *              - updatedBy
+ *              - iconUrl
  *            properties:
- *              id:
- *                type: number
- *                default: 41
- *              CategoryName:
+ *              categoryName:
  *                type: string
  *                example: Electronics
- *              Description:
+ *              description:
  *                type: string
  *                example: Category for electronic items
- *              ParentId:
+ *              parentId:
  *                type: integer
  *                example: 1
- *              Created_By:
+ *              createdBy:
  *                type: integer
  *                example: 1
- *              Updated_By:
+ *              updatedBy:
  *                type: integer
  *                example: 1
- *              IconUrl:
+ *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
@@ -344,8 +345,7 @@ router.put(
 router.put(
   "/updateCategoriesByName",
   commonValidate([
-    body("CategoryName").notEmpty().withMessage("Not a valid CategoryName"),
-    body("id").notEmpty().withMessage("Not a valid id"),
+    body("categoryName").notEmpty().withMessage("Not a valid categoryName"),
   ]),
   categoryController.updateCategoryByNameAsync
 );
