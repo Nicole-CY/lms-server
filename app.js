@@ -73,7 +73,6 @@ app.use("/api/categories", categoryRouter);
 const courseRouter = require("./router/courseRouter");
 app.use("/api/courses", courseRouter);
 
-<<<<<<< .merge_file_PtKYES
 //config courseOfferingRouter
 const courseOfferingRouter = require("./router/courseOfferingRouter");
 app.use("/api/courseOfferings", courseOfferingRouter);
@@ -81,11 +80,6 @@ app.use("/api/courseOfferings", courseOfferingRouter);
 //config courseNotificationROuters
 const courseNotificationRouter = require("./router/courseNotificationRouter");
 app.use("/api/courseNotifications", courseNotificationRouter);
-=======
-//config menuRouter
-const menuRouter = require("./router/menuRouter");
-app.use("/api/menus", menuRouter);
->>>>>>> .merge_file_VWIzbN
 
 //config erorhandle
 const erorhandle = require("./middleware/errorHandling");
