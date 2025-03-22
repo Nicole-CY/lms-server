@@ -6,6 +6,7 @@ const { body, query, param } = require("express-validator");
 const { commonValidate } = require("../middleware/expressValidator");
 
 const categoryController = require("../controller/Course/categoryController");
+console.log("controller 11111method:", categoryController);
 
 /**
  * @openapi
