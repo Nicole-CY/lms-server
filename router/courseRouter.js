@@ -1,9 +1,16 @@
 const express = require("express");
 require("express-async-errors");
 const router = express.Router();
-const {body, query, param,} = require("express-validator");
 const {commonValidate} = require("../middleware/expressValidator"); 
 const courseController = require("../controller/Course/courseController");
+const {addCourseValidator,
+    updateCourseValidator,
+    getCourseByTitleValidator,
+    getCourseByCodeValidator,
+    getCourseByIdValidator,
+    getCourseListValidator,
+    deleteCourseValidator,
+    bulkDeleteCoursesValidator,} = require("../validator/courseValidator")
 
 /**
  * @openapi
@@ -12,7 +19,7 @@ const courseController = require("../controller/Course/courseController");
  *     tags:
  *     - Course Controller
  *     summary: add course
- *     description: add course
+ *     description: Create a new course with associated categories.
  *     # security:
  *     #   - BearerAuth: []
  *     requestBody:
@@ -84,10 +91,7 @@ const courseController = require("../controller/Course/courseController");
  *        description: Server Error
  */
 router.post("",
-    commonValidate([
-        body("title").notEmpty().withMessage("title is required"),
-        body("courseCode").notEmpty().withMessage("courseCode is required"),
-    ]),
+    commonValidate(addCourseValidator),
     courseController.addCourseAsync
 );
 
@@ -107,6 +111,8 @@ router.post("",
  *        in: query
  *        description: The title of the course
  *        require: true
+ *        schema:
+ *          type: string
  *     responses:
  *      200:
  *        description: Fetched Successfully 
@@ -121,8 +127,8 @@ router.post("",
  */
 router.get(
     "/getByTitle",
-    commonValidate([query("title").notEmpty().withMessage("not a valid course title")]),
-    courseController.getCourseAsync
+    commonValidate(getCourseByTitleValidator),
+    courseController.getCourseByTitleAsync
 );
 
 /**
@@ -141,6 +147,8 @@ router.get(
  *        in: query
  *        description: The courseCode of the course
  *        require: true
+ *        schema:
+ *          type: string
  *     responses:
  *      200:
  *        description: Fetched Successfully 
@@ -155,9 +163,7 @@ router.get(
  */
 router.get(
     "/getByCode",
-    commonValidate([
-        query("courseCode").notEmpty().withMessage("not a valid courseCode"),
-    ]),
+    commonValidate(getCourseByCodeValidator),
     courseController.getCourseByCourseCodeAsync
 );
 
@@ -178,6 +184,8 @@ router.get(
  *        in: query
  *        description: The id of the course
  *        require: true
+ *        schema:
+ *          type: integer
  *     responses:
  *      200:
  *        description: Fetched Successfully 
@@ -191,33 +199,54 @@ router.get(
  *        description: Server Error
  */
 router.get("/getById",
-    commonValidate([
-    query("id").notEmpty().withMessage("not a valid id"),
-]),
+    commonValidate(getCourseByIdValidator),
 courseController.getCourseByIdAsync);
 
 /**
  * @openapi
- * '/api/courses/{page}/{pageSize}':
+ * '/api/courses':
  *  get:
  *     tags:
  *     - Course Controller
- *     summary: Get all courses
+ *     summary: Get courses with filters and pagination
+ *     description: Returns a paginated list of courses optionally filtered by title, courseCode, and category.
  *     # security:
  *     #   - BearerAuth: []
  *     parameters:
- *      - name: page
- *        in: path
- *        description: the page number
- *        required: true
- *        schema:
- *          type: integer
- *      - name: pageSize
- *        in: path
- *        description: the number of courses per page
- *        required: true
- *        schema:
- *          type: integer
+ *       - name: page
+ *         in: query
+ *         description: the page number
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - name: pageSize
+ *         in: query
+ *         description: the number of courses per page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - name: title
+ *         in: query
+ *         description: Filter courses by title (partial match)
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: courseCode
+ *         in: query
+ *         description: Filter courses by course code (partial match)
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: categories
+ *         in: query
+ *         description: Filter courses by an array of category IDs
+ *         required: false
+ *         schema:
+ *           type: array
+ *           items:
+ *             types: integer
  *     responses:
  *      200:
  *        description: Fetched Successfully
@@ -232,11 +261,10 @@ courseController.getCourseByIdAsync);
  */
 
 router.get(
-    "/:page/:pageSize",
-    commonValidate([
-        param("page").notEmpty().isInt({allow_leading_zeroes: false, min: 1}).withMessage("not a valid page"),
-        param("pageSize").notEmpty().isInt({allow_leading_zeroes: false, min : 1}).withMessage("not a valid page size"),
-    ]),
+    "/",
+    commonValidate(
+        getCourseListValidator
+    ),
     courseController.getCourseListAsync
 );
 
@@ -295,11 +323,7 @@ router.get(
  */
 router.put(
     "",
-    commonValidate([
-      body("id").notEmpty().withMessage("Not a valid id"),
-      body("title").notEmpty().withMessage("Not a valid title"),
-      body("courseCode").notEmpty().withMessage("Not a valid courseCode")
-    ]),
+    commonValidate(updateCourseValidator),
     courseController.updateCourseAsync
   );
 
@@ -332,9 +356,7 @@ router.put(
  */
 router.delete(
     "/:id",
-    commonValidate([
-        param("id").notEmpty().isInt({min: 1}).withMessage("not a valid course id")
-    ]),
+    commonValidate(deleteCourseValidator),
     courseController.deleteCourseAsync
 );
   
@@ -371,10 +393,7 @@ router.delete(
  *         description: Server Error
  */
 router.delete("/bulk",
-    commonValidate([
-    body("ids").isArray({min: 1}).withMessage("ids must be a non-empty array"), //the array must contain at least one element
-    body("ids.*").isInt({min :1}).withMessage("each id must be a valid integer"),//"ids.*" means “for every item inside the ids(property) array, apply the following validations; { min: 1 } means each integer must be at least 1 (so negative numbers or zero are not allowed)
-]),
+    commonValidate(bulkDeleteCoursesValidator),
 courseController.bulkDeleteCoursesAsync);
 
 module.exports = router;
