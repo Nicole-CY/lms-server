@@ -24,7 +24,7 @@ const addSessionAsync = async (req, res) => {
  */
 const getSessionByIdAsync = async (req, res) => {
     try {
-        const sessionId = req.params.id;
+        const sessionId = req.query.id;
         const result = await sessionService.getSessionByIdAsync(sessionId);
 
         if (result.isSuccess) {

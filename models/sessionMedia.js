@@ -15,7 +15,7 @@ const Media = sequelize.define(
             allowNull: false,
             field: 'session_id',
             references: {
-                model: "Session",
+                model: "session",
                 key: "id",
             },
             onDelete: "CASCADE",
@@ -45,7 +45,7 @@ const Media = sequelize.define(
             allowNull: false,
             field: 'uploder_id',
             references: {
-                model: "Users",
+                model: "User",
                 key: "id",
             },
             onDelete: "CASCADE",
@@ -70,7 +70,7 @@ const Media = sequelize.define(
 );
 
 Media.associate = function (models) {
-    Media.belongsTo(models.Session, { foreignKey: "sessionId" });
+    Media.belongsTo(models.session, { foreignKey: "sessionId" });
 };
 
 module.exports = Media;
