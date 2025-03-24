@@ -68,7 +68,7 @@ const Session = sequelize.define(
 );
 
 Session.associate = function (models) {
-    Session.belongsTo(models.courseInstance, { foreignKey: "courseInstanceId" });
+    Session.belongsTo(models.CourseInstance, { foreignKey: "courseInstanceId" });
 };
 
 module.exports = Session;

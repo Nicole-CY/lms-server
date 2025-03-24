@@ -4,6 +4,7 @@ const addCourseAsync = async(req, res) =>{
     
     try{
         const courseData = req.body;
+        console.log("req.body is:", req.body);
         const result = await courseService.addCourseAsync(courseData);
         if(result.isSuccess){
             res.sendCommonValue(result.data, "course created successfully", 1, 201)
@@ -13,14 +14,14 @@ const addCourseAsync = async(req, res) =>{
         }
     }catch(err){
         // result may not exist here, so use {} as a safe default
-        res.sendCommonValue(result.data, err.message || "Internal Server Error", 0, 500);
+        res.sendCommonValue({}, err.message || "Internal Server Error", 0, 500);
     }
     
 }
-const getCourseAsync = async(req, res)=> {
+const getCourseByTitleAsync = async(req, res)=> {
     try{
         const title = req.query.title;
-        const result = await courseService.getCourseAsync(title);
+        const result = await courseService.getCourseByTitleAsync(title);
         if(result.isSuccess){
             res.sendCommonValue(result.data, "course fetched successfully", 1, 201);
         }else{
@@ -37,7 +38,9 @@ const getCourseByCourseCodeAsync = async(req, res) => {
         const result = await courseService.getCourseByCourseCodeAsync(courseCode);
         if(result.isSuccess){
             res.sendCommonValue(result.data, "Course fetched successfully", 1, 200);
+            res.sendCommonValue(result.data, "Course fetched successfully", 1, 200);
         }else{
+            res.sendCommonValue({}, result.message, 0, 404);
             res.sendCommonValue({}, result.message, 0, 404);
         }
     }catch(err){
@@ -49,7 +52,7 @@ const getCourseByCourseCodeAsync = async(req, res) => {
 const getCourseByIdAsync = async(req, res) => {
     try{
         const courseId = req.query.id;
-        const result = await courseService(courseId);
+        const result = await courseService.getCourseByIdAsync(courseId);
         if(result.isSuccess){
             res.sendCommonValue(result.data, "Course fetched successfully", 1, 200);
         }else{
@@ -62,9 +65,7 @@ const getCourseByIdAsync = async(req, res) => {
 
 const getCourseListAsync = async(req, res) => {
     try{
-        const page = parseInt(req.params.page);
-        const pageSize = parseInt(req.params.pageSize);
-        const result = await courseService.getCourseListAsync(page, pageSize);
+        const result = await courseService.getCourseListAsync(req.query);
         if(result.isSuccess){
             res.sendCommonValue(result.data, "Courses fetched successfully", 1, 200);
         }else{
@@ -80,7 +81,7 @@ const updateCourseAsync= async(req, res) => {
         const courseData = req.body;
         const courseId = req.body.id;
         const courseCode = req.body.courseCode;
-        const result = await courseService.updateCourseAsync(courseData, courseId, courseCode);
+        const result = await courseService.updateCourseAsync(courseData, courseId);
         if(result.isSuccess){
             res.sendCommonValue(result.data, "course updated successfully", 1, 200);
         }else{
@@ -108,7 +109,7 @@ const deleteCourseAsync = async(req, res) => {
 const bulkDeleteCoursesAsync = async(req, res) => {
     try{
         const ids = req.body.ids;
-        const result = await courseService.bulkDeleteCourseAsync(ids);
+        const result = await courseService.bulkDeleteCoursesAsync(ids);
         if(result.isSuccess){
             res.sendCommonValue({},"Courses deleted successfully", 1, 200);
         }else{
@@ -120,7 +121,7 @@ const bulkDeleteCoursesAsync = async(req, res) => {
 }
 module.exports = {
     addCourseAsync,
-    getCourseAsync,
+    getCourseByTitleAsync,
     getCourseByCourseCodeAsync,
     getCourseByIdAsync,
     getCourseListAsync,

@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
 const User = sequelize.define(
-  "user",
+  "User",
   {
     // Model attributes are defined here
     id: {
@@ -53,7 +53,8 @@ const User = sequelize.define(
       defaultValue: [],
     },
   },
-  { timestamps: false, tableName: 'users' }
+  { timestamps: false, tableName: 'User' }
 );
 
+module.exports = User;
 module.exports = User;

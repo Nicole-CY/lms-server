@@ -1,4 +1,4 @@
-const roleService = require("../service/roleservice");
+const roleService = require("../service/roleService");
 
 const addRoleAsync = async (req, res) => {
   let dbResult = await roleService.getRoleByNameAsync(req.body.role_name);

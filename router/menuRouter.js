@@ -5,16 +5,18 @@ var router = express.Router();
 const { body, query, param } = require("express-validator");
 const { commonValidate } = require("../middleware/expressValidator");
 
-const democontroller = require("../controller/democontroller");
+const menuController = require("../controller/menucontroller");
 
 /**
  * @openapi
- * '/api/demos':
+ * '/api/menus':
  *  post:
  *     tags:
- *     - demo Controller
- *     summary: add demo
- *     description: add demo
+ *     - Menu Controller
+ *     summary: Create a new menu
+ *     description: Add a new menu item
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *      required: true
  *      content:
@@ -22,23 +24,19 @@ const democontroller = require("../controller/democontroller");
  *           schema:
  *            type: object
  *            required:
- *              - title
+ *              - menuName
+ *              - routePath
  *            properties:
- *              title:
+ *              menuName:
  *                type: string
- *                default: test
- *              mark:
+ *                default: Dashboard
+ *              parentId:
+ *                type: integer
+ *                nullable: true
+ *                default: null
+ *              routePath:
  *                type: string
- *                default: mark123
- *              count:
- *                type: number
- *                default: 122
- *              active:
- *                type: boolean
- *                default: true
- *              dataTime:
- *                type: datetime
- *                default: 2022-02-02 23:10:15
+ *                default: /dashboard
  *     responses:
  *      201:
  *        description: Created
@@ -53,17 +51,22 @@ const democontroller = require("../controller/democontroller");
  */
 router.post(
   "",
-  commonValidate([body("title").notEmpty().withMessage("Not a valid title")]),
-  democontroller.createAsync
+  commonValidate([
+    body("menuName").notEmpty().withMessage("Menu name is required"),
+    body("routePath").notEmpty().withMessage("Route path is required"),
+  ]),
+  menuController.createMenuAsync
 );
 
 /**
  * @openapi
- * '/api/demos':
+ * '/api/menus':
  *  get:
  *     tags:
- *     - demo Controller
- *     summary: Get all demos
+ *     - Menu Controller
+ *     summary: Get all menus
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *      200:
  *        description: Fetched Successfully
@@ -76,6 +79,6 @@ router.post(
  *      500:
  *        description: Server Error
  */
-router.get("", democontroller.getAllAsync);
+router.get("", menuController.getMenuAsync);
 
 module.exports = router;

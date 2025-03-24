@@ -5,7 +5,7 @@ var router = express.Router();
 const { body, query, param } = require("express-validator");
 const { commonValidate } = require("../middleware/expressValidator");
 
-var usercontroller = require("../controller/usercontroller");
+var userController = require("../controller/userController");
 
 /**
  * @openapi
@@ -62,7 +62,7 @@ router.post(
     body("password").notEmpty().isLength({ min: 6 }),
     body("email").isEmail().withMessage("Not a valid email"),
   ]),
-  usercontroller.addUserAsync
+  userController.addUserAsync
 );
 
 /**
@@ -96,7 +96,7 @@ router.get(
   commonValidate([
     query("username").notEmpty().withMessage("Not a valid username"),
   ]),
-  usercontroller.getUserAsync
+  userController.getUserAsync
 );
 
 /**
@@ -141,7 +141,7 @@ router.get(
 
       .withMessage("Not a valid page"),
   ]),
-  usercontroller.getUserListAsync
+  userController.getUserListAsync
 );
 
 /**
@@ -171,7 +171,7 @@ router.get(
 router.delete(
   "/:ids",
   param([param("ids").notEmpty().withMessage("Not a valid id")]),
-  usercontroller.deUserByIdAsync
+  userController.deUserByIdAsync
 );
 
 /**
@@ -228,7 +228,7 @@ router.put(
     body("username").notEmpty().withMessage("Not a valid username"),
     body("id").notEmpty().withMessage("Not a valid id"),
   ]),
-  usercontroller.updateUserAsync
+  userController.updateUserAsync
 );
 
 /**
@@ -259,7 +259,7 @@ router.put(
   commonValidate([
     query("id").notEmpty().withMessage("Not a valid id"),
   ]),
-  usercontroller.getUserByIdAsync
+  userController.getUserByIdAsync
 );
 
 module.exports = router;

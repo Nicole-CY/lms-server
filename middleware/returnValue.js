@@ -1,4 +1,4 @@
-const returnvalue = (req, res, next) => {
+const returnValue = (req, res, next) => {
   res.sendCommonValue = function (data, message, status = 0, httpStatus = 200) {
     if (typeof httpStatus !== "undefined") {
       res.status(httpStatus).json({
@@ -19,5 +19,5 @@ const returnvalue = (req, res, next) => {
 };
 
 module.exports = {
-  returnvalue,
+  returnValue,
 };

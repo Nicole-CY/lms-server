@@ -1,5 +1,5 @@
 const Session = require("../../models/session");
-const logger = require("../../common/logsetting");
+const logger = require("../../common/logSetting");
 
 const addSessionAsync = async (sessionData) => {
     try {
