@@ -1,0 +1,129 @@
+const sessionService = require("../../service/Course/sessionService");
+
+/**
+ * Add Session
+ */
+const addSessionAsync = async (req, res) => {
+    try {
+        const sessionData = req.body;
+        const result = await sessionService.addSessionAsync(sessionData);
+
+        if (result.isSuccess) {
+            res.sendCommonValue(result.data, "session created successfully", 1, 201);
+        } else {
+            res.sendCommonValue({}, result.message, 0, 400);
+        };
+
+    } catch (err) {
+        res.sendCommonValue({}, err.message || "Internal Server Error", 0, 500);
+    }
+};
+
+/**
+ * Get single Sessions by Id
+ */
+const getSessionByIdAsync = async (req, res) => {
+    try {
+        const sessionId = req.query.id;
+        const result = await sessionService.getSessionByIdAsync(sessionId);
+
+        if (result.isSuccess) {
+            res.sendCommonValue(result.data, "Session fetched successfully", 1, 200);
+        } else {
+            res.sendCommonValue({}, result.message, 0, 404);
+        };
+
+    } catch (err) {
+        res.sendCommonValue({}, err.message || "Internal Server Error", 0, 500);
+    }
+};
+
+/**
+ * Get all Sessions by courseInstanceId 
+ */
+const getSessionsByCourseInstanceIdAsync = async (req, res) => {
+    try {
+        const courseInstanceId = req.query.courseInstanceId;
+        const result = await sessionService.getSessionsByCourseInstanceIdAsync(courseInstanceId);
+
+        if (result.isSuccess) {
+            res.sendCommonValue(result.data, "Sessions fetched successfully", 1, 200);
+        } else {
+            res.sendCommonValue({}, result.message, 0, 404);
+        };
+
+    } catch (err) {
+        res.sendCommonValue({}, err.message || "Internal Server Error", 0, 500);
+    }
+};
+
+/**
+ * Get paged Session list
+ */
+const getSessionListAsync = async (req, res) => {
+    try {
+        let { page, pageSize } = req.query;
+
+        page = parseInt(page, 10) || 1;
+        pageSize = parseInt(pageSize, 10) || 10;
+
+        const result = await sessionService.getSessionListAsync(page, pageSize);
+
+        if (result.isSuccess) {
+            res.sendCommonValue(result.data, "Sessions fetched successfully", 1, 200);
+        } else {
+            res.sendCommonValue({}, result.message, 0, 400);
+        };
+
+    } catch (err) {
+        res.sendCommonValue({}, err.message || "Internal Server Error", 0, 500);
+    }
+};
+
+/**
+ * Update Session
+ */
+const updateSessionAsync = async (req, res) => {
+    try {
+        const sessionId = req.params.id;
+        const sessionData = req.body;
+        const result = await sessionService.updateSessionAsync(sessionId, sessionData);
+
+        if (result.isSuccess) {
+            res.sendCommonValue(result.data, "Session update successfully", 1, 200);
+        } else {
+            res.sendCommonValue({}, result.message, 0, 400);
+        };
+
+    } catch (err) {
+        res.sendCommonValue({}, err.message || "Internal Server Error", 0, 500);
+    }
+};
+
+/**
+ * Delete Session
+ */
+const deleteSessionAsync = async (req, res) => {
+    try {
+        const sessionId = req.params.id;
+        const result = await sessionService.deleteSessionAsync(sessionId);
+
+        if (result.isSuccess) {
+            res.sendCommonValue({}, "Session deleted successfully", 1, 200);
+        } else {
+            res.sendCommonValue({}, result.message, 0, 400);
+        };
+
+    } catch (err) {
+        res.sendCommonValue({}, err.message || "Internal Server Error", 0, 500);
+    }
+};
+
+module.exports = {
+    addSessionAsync,
+    getSessionByIdAsync,
+    getSessionsByCourseInstanceIdAsync,
+    getSessionListAsync,
+    updateSessionAsync,
+    deleteSessionAsync,
+}

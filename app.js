@@ -73,6 +73,10 @@ app.use("/api/categories", categoryRouter);
 const courseRouter = require("./router/courseRouter");
 app.use("/api/courses", courseRouter);
 
+//config sessionRouter
+const sessionRouter = require("./router/sessionrouter");
+app.use("/api/sessions", sessionRouter);
+
 //config courseOfferingRouter
 const courseOfferingRouter = require("./router/courseOfferingRouter");
 app.use("/api/courseOfferings", courseOfferingRouter);
