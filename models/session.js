@@ -64,7 +64,7 @@ const Session = sequelize.define(
             },
         },
     },
-    { timestamps: false, tableName: "sessions" }
+    { timestamps: false, tableName: "session" }
 );
 
 Session.associate = function (models) {
