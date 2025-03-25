@@ -30,6 +30,19 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
+      active: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      avatar: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
+      roles: {
+        type: Sequelize.JSON,
+        allowNull: true,
+      },
     });
   },
 

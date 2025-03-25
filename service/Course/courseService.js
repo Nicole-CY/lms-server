@@ -1,6 +1,10 @@
-const Course = require("../../models/course");
-const CourseCategory = require("../../models/courseCategory");
-const logger = require("../../common/logSetting");
+// const Course = require("../../models/course");
+// const CourseCategory = require("../../models/courseCategory");
+const { Course, CourseCategory } = require("../../models");
+const logger = require("../../common/logsetting");
+const {getPagination} = require("../../common/pagination");
+const {courseFilter} = require("../../filters/courseFilter");
+const { sequelize } = require("../../db/sequelizedb");
 
 const addCourseAsync = async(courseData) => {
     try{
@@ -10,16 +14,33 @@ const addCourseAsync = async(courseData) => {
             coverImage: courseData.coverImage,
             description: courseData.description,
         });
-        if(courseData.categories  && Array.isArray(courseData.categories)){
-            for(let categoryId of courseData.categories){
-                await CourseCategory.create({
-                    courseId: newCourse.id,
-                    categoryId: categoryId,
-                });
-            }
+        // if(courseData.categories  && Array.isArray(courseData.categories && courseData.categories.length > 0)){
+        //     for(let categoryId of courseData.categories){
+        //         await CourseCategory.create({
+        //             courseId: newCourse.id,
+        //             categoryId: categoryId,
+        //         });
+        //     }
+        // }
+        //use bulk create for CourseCategory records
+        if(courseData.categories && Array.isArray(courseData.categories) && courseData.categories.length > 0){
+            const courseCategories = courseData.categories.map((categoryId)=> ({
+                    courseId : newCourse.id,
+                    categoryId,
+            }));
+             // Bulk create the CourseCategory records.
+            await CourseCategory.bulkCreate(courseCategories);
         }
+        // Re-fetch the course with its associated categories so the returned data includes them
+        const courseWithCategories = await Course.findByPk(newCourse.id, {
+            include: [{
+                model: CourseCategory,
+                attributes: ["categoryId"],
+                required: false,
+            }]
+        })
         return {
-            isSuccess: true, message: "", data: newCourse
+            isSuccess: true, message: "", data: courseWithCategories
         }
     }catch(err){
         logger.error("addCourseAsync error:", err);
@@ -27,6 +48,190 @@ const addCourseAsync = async(courseData) => {
     }
 };
 
+const getCourseByTitleAsync = async(title) => {
+    try{
+        const course = await Course.findOne({
+            where: {title},
+            include: [{
+                model: CourseCategory,
+                attributes: ["categoryId"],
+                required: false,
+            }]    
+        });
+        if(!course){
+            return {isSuccess: false, message: "course not found", data: null};
+        }
+        return{isSuccess: true, message: "", data: course};
+    }catch(err){
+        logger.error("getCourseAsync error:", err);
+        return{isSuccess: false, message:"failed to fetch course by title", data: null};
+    }
+};
+
+const getCourseByCourseCodeAsync = async(code) => {
+    try{
+        const course = await Course.findOne({
+            where:{courseCode: code},
+            include:[{
+                model: CourseCategory,
+                attributes: ["categoryId"],
+                required: false,
+            }]
+        });
+        if(!course){
+            return{isSuccess: false, message: "course not found", data: null};
+        }
+        return{isSuccess: true, message: "", data: course};
+    }catch(err){
+        logger.error("getCourseByCourseCodeAsync error:", err);
+        return{isSuccess: false, message:"failed to fetch course by courseCode", data: null};
+    }
+};
+
+const getCourseByIdAsync = async(id) => {
+    try{
+        const course = await Course.findByPk(id,{
+            include: [{
+                model: CourseCategory,
+                attributes: ["categoryId"],
+                required: false,
+            }]
+        });
+        if(!course){
+            return{isSuccess: false, message: "course not found", data: null};
+        }
+        return{isSuccess: true, message: "", data: course};
+    }catch(err){
+        logger.error("getCourseByIdAsync error:", err);
+        return{isSuccess: false, message:"failed to fetch course by id", data: null};
+    }
+};
+
+const getCourseListAsync = async(query) => {
+    try{
+        const {page, pageSize, offset, limit} = getPagination(query);
+        const {where, include} = courseFilter(query);
+        const {count, rows: courses} = await Course.findAndCountAll({
+            where,
+            include,
+            limit,
+            offset,
+            order: [["id", "ASC"]],
+        });
+        return{
+            isSuccess: true,
+            message: "",
+            data:{
+                courses,
+                total:count,
+                page,
+                pageSize,
+            }
+        }
+    }catch(err){
+        logger.error("getCourseListAsync error:", err);
+        return { isSuccess: false, message: "Failed to get course list", data: null};
+    }
+};
+
+// using transaction for atomicity
+const  updateCourseAsync = async(courseData, courseId) => {
+    const t = await sequelize.transaction();
+    try{
+        const course = await Course.findByPk(courseId, {transaction: t});
+        if(!course){
+            await t.rollback();
+            return {isSuccess: false, message: "course not found", data: null}
+        };
+        course.title = courseData.title;
+        course.courseCode = courseData.courseCode;
+        course.coverImage = courseData.coverImage;
+        course.description = courseData.description;
+        await course.save({transaction: t});
+        if(courseData.categories && Array.isArray(courseData.categories) && courseData.categories.length > 0){
+            await CourseCategory.destroy({where: {
+                courseId
+            }, transaction: t});
+            const courseCategories = courseData.categories.map((categoryId) => ({
+                courseId : courseId,
+                categoryId : Number(categoryId),
+            }));
+            await CourseCategory.bulkCreate(courseCategories, {transaction: t});
+        }
+        await t.commit();
+        // Re-fetch the course with its associated categories (not part of the transaction)
+        const courseWithCategories = await Course.findByPk(courseId, {
+            include: [{
+                model: CourseCategory,
+                attributes: ["categoryId"],
+                required: false,
+            }]
+        })
+        return {isSuccess: true, message: "", data: courseWithCategories}
+
+    }catch(err){
+        await t.rollback();
+        logger.error("updateCourseAsync error:", err);
+        return{ isSuccess: false, message: "Failed to update course", data: null };
+    }
+};
+
+const deleteCourseAsync = async(id) => {
+    const t = await sequelize.transaction();
+    try{
+        const course = await Course.findByPk(id, {transaction: t});
+        if(!course){
+            await t.rollback();
+            return{isSuccess: false, message: "course not found", data: null};
+        }
+         //no need if onDelete: CASCADE configured in model
+    //     await CourseCategory.destroy({
+    //         where: {courseId: id},
+    //         transaction: t,  
+    // });
+        await course.destroy({transaction: t});
+        await t.commit();
+        return { isSuccess: true, message: "", data: course };
+    }catch(err){
+        await t.rollback();
+        logger.error("deleteCourseAsync error:", err);
+        return { isSuccess: false, message: "Failed to delete course", data: null };
+    }
+};
+
+const bulkDeleteCoursesAsync = async(ids) => {
+    const t = await sequelize.transaction();
+    try{
+        //no need if onDelete: CASCADE configured in model
+        // await CourseCategory.destroy({
+        //     where: {courseId: ids},
+        //     transaction: t,
+        // });
+        const deletedCount = await Course.destroy({
+            where: {id: ids},
+            transaction: t,
+        });
+        if (deletedCount === 0){
+            await t.rollback();
+            return { isSuccess: false, message: "No courses found to delete", data: null };
+    }
+        await t.commit();
+        return { isSuccess: false, message: "No courses found to delete", data: null };
+    }catch(err){
+        await t.rollback();
+        logger.error("bulkDeleteCoursesAsync error:", err);
+        return { isSuccess: false, message: "Failed to bulk delete courses", data: null };
+    }
+};
+
+
 module.exports = {
     addCourseAsync,
+    getCourseByTitleAsync,
+    getCourseByCourseCodeAsync,
+    getCourseByIdAsync,
+    getCourseListAsync,
+    updateCourseAsync,
+    deleteCourseAsync,
+    bulkDeleteCoursesAsync,
 };

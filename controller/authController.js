@@ -83,7 +83,7 @@ const registerAsync = async (req, res) => {
     const newUser = {
       email,
       password: hashedPassword,
-      roles: ['user'],
+      roles: ["user"],
     };
 
     const result = await userService.addUserAsync(newUser);
@@ -108,9 +108,7 @@ const registerAsync = async (req, res) => {
   }
 };
 
-
 const meAsync = async (req, res) => {
-
   try {
     const user = req.auth;
 

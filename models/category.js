@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
 const Category = sequelize.define(
-  "category",
+  "Category",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -10,33 +10,33 @@ const Category = sequelize.define(
       autoIncrement: true,
       allowNull: false,
     },
-    CategoryName: {
+    categoryName: {
       type: DataTypes.STRING(50),
       allowNull: false,
     },
-    Description: {
+    description: {
       type: DataTypes.STRING(255),
       allowNull: true,
     },
-    ParentId: {
+    parentId: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    Created_By: {
+    createdBy: {
       type: DataTypes.INTEGER,
       references: {
         model: "Users",
         key: "id",
       },
     },
-    Updated_By: {
+    updatedBy: {
       type: DataTypes.INTEGER,
       references: {
         model: "Users",
         key: "id",
       },
     },
-    IconUrl: {
+    iconUrl: {
       type: DataTypes.STRING(255),
       allowNull: false,
     },

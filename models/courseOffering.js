@@ -21,10 +21,10 @@ const CourseOffering = sequelize.define(
         teacher_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            // references: {
-            //     model: "User",
-            //     key: "id",
-            // },
+            references: {
+                model: "User",
+                key: "id",
+            },
         },
         start_date: {
             type: DataTypes.DATE,
