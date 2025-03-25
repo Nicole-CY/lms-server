@@ -1,7 +1,7 @@
 // const Course = require("../../models/course");
 // const CourseCategory = require("../../models/courseCategory");
 const { Course, CourseCategory } = require("../../models");
-const logger = require("../../common/logsetting");
+const logger = require("../../common/logSetting");
 const {getPagination} = require("../../common/pagination");
 const {courseFilter} = require("../../filters/courseFilter");
 const { sequelize } = require("../../db/sequelizedb");
