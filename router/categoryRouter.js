@@ -15,7 +15,7 @@ const categoryController = require("../controller/Course/categoryController");
  *     - Category Controller
  *     summary: Get a category by name
  *     parameters:
- *      - name: categoryname
+ *      - name: category_name
  *        in: query
  *        description: Name of the category to retrieve
  *        required: true
@@ -96,31 +96,31 @@ router.get(
  *           schema:
  *            type: object
  *            required:
- *              - categoryName
+ *              - category_name
  *              - description
- *              - parentId
- *              - createdAt
- *              - updatedAt
- *              - createdBy
- *              - updatedBy
- *              - iconUrl
+ *              - parent_id
+ *              - created_at
+ *              - updated_at
+ *              - created_by
+ *              - updated_by
+ *              - icon_url
  *            properties:
- *              categoryName:
+ *              category_name:
  *                type: string
  *                example: Electronics
  *              description:
  *                type: string
  *                example: Category for electronic items
- *              parentId:
+ *              parent_id:
  *                type: integer
  *                example: 1
- *              createdBy:
+ *              created_by:
  *                type: integer
  *                example: 1
- *              updatedBy:
+ *              updated_by:
  *                type: integer
  *                example: 1
- *              iconUrl:
+ *              icon_url:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
@@ -236,31 +236,31 @@ router.get(
  *            type: object
  *            required:
  *              - id
- *              - categoryName
+ *              - category_name
  *              - description
- *              - parentId
- *              - createdAt
- *              - updatedAt
- *              - createdBy
- *              - updatedBy
- *              - iconUrl
+ *              - parent_id
+ *              - created_at
+ *              - updated_at
+ *              - created_by
+ *              - updated_by
+ *              - icon_url
  *            properties:
- *              categoryName:
+ *              category_name:
  *                type: string
  *                example: Electronics
  *              description:
  *                type: string
  *                example: Category for electronic items
- *              parentId:
+ *              parent_id:
  *                type: integer
  *                example: 1
- *              createdBy:
+ *              created_by:
  *                type: integer
  *                example: 1
- *              updatedBy:
+ *              updated_by:
  *                type: integer
  *                example: 1
- *              iconUrl:
+ *              icon_url:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
@@ -302,31 +302,31 @@ router.put(
  *           schema:
  *            type: object
  *            required:
- *              - categoryName
+ *              - category_name
  *              - description
- *              - parentId
- *              - createdAt
- *              - updatedAt
- *              - createdBy
- *              - updatedBy
- *              - iconUrl
+ *              - parent_id
+ *              - created_at
+ *              - updated_at
+ *              - created_by
+ *              - updated_by
+ *              - icon_url
  *            properties:
- *              categoryName:
+ *              category_name:
  *                type: string
  *                example: Electronics
  *              description:
  *                type: string
  *                example: Category for electronic items
- *              parentId:
+ *              parent_id:
  *                type: integer
  *                example: 1
- *              createdBy:
+ *              created_by:
  *                type: integer
  *                example: 1
- *              updatedBy:
+ *              updated_by:
  *                type: integer
  *                example: 1
- *              iconUrl:
+ *              icon_url:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
