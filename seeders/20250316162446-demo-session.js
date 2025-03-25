@@ -3,7 +3,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert("sessions", [
+    await queryInterface.bulkInsert("session", [
       {
         course_instance_id: 1,
         session_title: "Introduction to Data Science",
@@ -57,6 +57,6 @@ module.exports = {
     ]);
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("sessions", null, {});
+    await queryInterface.bulkDelete("session", null, {});
   },
 };
