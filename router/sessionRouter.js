@@ -17,8 +17,6 @@ const sessionController = require("../controller/Course/sessionController");
  *     - Session Controller
  *     summary: Add a new session
  *     description: Create a new session for a specific course instance.
- *     # security:
- *     #   - BearerAuth: []
  *     requestBody:
  *      required: true
  *      content:
@@ -217,7 +215,7 @@ sessionRouter.get(
  *        description: Server Error
  */
 sessionRouter.get(
-    "/?page/?pageSize",
+    "/",
     commonValidate([
         query("page").notEmpty().isInt({ min: 1 }).withMessage("not a valid page"),
         query("pageSize").notEmpty().isInt({ min: 1 }).withMessage("not a valid page size"),

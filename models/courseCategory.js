@@ -25,7 +25,7 @@ const CourseCategory = sequelize.define(
 
 CourseCategory.associate = function(models){
     CourseCategory.belongsTo(models.Course, {foreignKey: "courseId", onDelete: "CASCADE"});
-    CourseCategory.belongsTo(models.Category, {foreignKey:"categoryId", onDelete: "CASCADE"});
+    CourseCategory.belongsTo(models.category, {foreignKey:"categoryId", onDelete: "CASCADE"});
 };
 
 module.exports = CourseCategory;

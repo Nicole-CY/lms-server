@@ -89,6 +89,10 @@ app.use("/api/courseNotifications", courseNotificationRouter);
 const menuRouter = require("./router/menuRouter");
 app.use("/api/menus", menuRouter);
 
+//config permissionRouter
+const permissionRouter = require("./router/permissionRouter");
+app.use("/api/permissions", permissionRouter);
+
 //config erorhandle
 const erorhandle = require("./middleware/errorHandling");
 app.use(erorhandle.errorHandling);

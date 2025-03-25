@@ -25,9 +25,9 @@ const authController = require("../controller/authController");
 *              - username
 *              - password
 *            properties:
-*              username:
+*              email:
 *                type: string
-*                default: admin
+*                default: superadmin@example.com
 *              password:
 *                type: string
 *                default: 123456
@@ -62,13 +62,9 @@ router.post(
 *           schema:
 *            type: object
 *            required:
-*              - username
 *              - password
 *              - email
 *            properties:
-*              username:
-*                type: string
-*                example: newuser
 *              email:
 *                type: string
 *                example: newuser@gmail.com
