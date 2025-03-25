@@ -44,7 +44,7 @@ const Session = sequelize.define(
             type: DataTypes.INTEGER,
             field: 'created_by',
             references: {
-                model: "User",
+                model: "user",
                 key: "id",
             },
         },
@@ -59,12 +59,12 @@ const Session = sequelize.define(
             type: DataTypes.INTEGER,
             field: 'updated_by',
             references: {
-                model: "User",
+                model: "user",
                 key: "id",
             },
         },
     },
-    { timestamps: false, tableName: "sessions" }
+    { timestamps: false, tableName: "session" }
 );
 
 Session.associate = function (models) {

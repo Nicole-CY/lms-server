@@ -45,7 +45,7 @@ const Media = sequelize.define(
             allowNull: false,
             field: 'uploder_id',
             references: {
-                model: "User",
+                model: "user",
                 key: "id",
             },
             onDelete: "CASCADE",
