@@ -17,7 +17,7 @@ const getPaginatedResults = async (
     page = 1,
     pageSize = 10,
     where = {},
-    order = [["createdAt", "DESC"]],
+    order = [["created_at", "DESC"]],
     include = [],
   }
 ) => {

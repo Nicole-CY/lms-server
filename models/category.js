@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
 const Category = sequelize.define(
-  "Category",
+  "category",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -13,6 +13,7 @@ const Category = sequelize.define(
     categoryName: {
       type: DataTypes.STRING(50),
       allowNull: false,
+      field: "category_name",
     },
     description: {
       type: DataTypes.STRING(255),
@@ -21,27 +22,36 @@ const Category = sequelize.define(
     parentId: {
       type: DataTypes.INTEGER,
       allowNull: true,
+      field: "parent_id",
     },
     createdBy: {
       type: DataTypes.INTEGER,
+      field: "created_by",
       references: {
-        model: "Users",
+        model: "user",
         key: "id",
       },
     },
     updatedBy: {
       type: DataTypes.INTEGER,
+      field: "updated_by",
       references: {
-        model: "Users",
+        model: "user",
         key: "id",
       },
     },
     iconUrl: {
       type: DataTypes.STRING(255),
       allowNull: false,
+      field: "icon_url",
     },
   },
-  { timestamps: false, tableName: "Category" }
+  {
+    timestamps: true,
+    tableName: "category",
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+  }
 );
 
 module.exports = Category;

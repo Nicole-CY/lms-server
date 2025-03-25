@@ -1,22 +1,17 @@
 const Permission = require("../models/permission");
 const logger = require("../common/logSetting");
+const { getPaginatedResults } = require("../utils/pagination");
 
-// 获取所有权限（分页）
-const getPermissionListAsync = async (page = 1, pageSize = 10) => {
+const getPermissionListAsync = async (page = 1, pageSize = 10, search = "") => {
     try {
-        const { count, rows } = await Permission.findAndCountAll({
-            limit: pageSize,
-            offset: (page - 1) * pageSize,
-        });
+        const where = search ? { permissionName: { [Op.like]: `%${search}%` } } : {};
 
-        return {
-            isSuccess: true,
-            message: "",
-            data: {
-                items: rows,
-                total: count,
-            },
-        };
+        const result = await getPaginatedResults(Permission, {
+            page,
+            pageSize,
+            where,
+        });
+        return result;
     } catch (error) {
         logger.error("getPermissionListAsync error:", error);
         return {
