@@ -11,7 +11,7 @@ const permissionController = require("../controller/permissionController");
  * '/api/permissions':
  *  post:
  *     tags:
- *     - Permission Controller
+ *       - Permission Controller
  *     summary: Add a permission
  *     description: add Permission
  *     requestBody:
@@ -26,10 +26,10 @@ const permissionController = require("../controller/permissionController");
  *            properties:
  *              name:
  *                type: string
- *                default: test
+ *                default: UPDATE_USER
  *              description:
  *                type: string
- *                default: test
+ *                default: Update user data
  *     responses:
  *      201:
  *        description: Created
@@ -52,20 +52,26 @@ router.post(
 
 /**
  * @openapi
- * '/api/permissions/{page}/{pageSize}':
+ * '/api/permissions':
  *  get:
  *     tags:
  *       - Permission Controller
  *     summary: Get paginated permission list
  *     parameters:
- *      - name: page
- *        in: path
- *        description: page
- *        required: true
- *      - name: pageSize
- *        in: path
- *        description: pageSize
- *        required: true
+ *       - name: page
+ *         in: query
+ *         description: The page number
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - name: pageSize
+ *         in: query
+ *         description: The number of sessions per page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 10
  *     responses:
  *      200:
  *        description: Fetched Successfully
@@ -79,10 +85,10 @@ router.post(
  *        description: Server Error
  */
 router.get(
-    "/:page/:pageSize",
+    "/",
     commonValidate([
-        param("page").notEmpty().isInt({ min: 1 }),
-        param("pageSize").notEmpty().isInt({ min: 1 }),
+        query("page").notEmpty().isInt({ min: 1 }),
+        query("pageSize").notEmpty().isInt({ min: 1 }),
     ]),
     permissionController.getPermissionListAsync
 );

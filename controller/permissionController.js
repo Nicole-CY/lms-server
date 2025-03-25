@@ -17,8 +17,10 @@ const addPermissionAsync = async (req, res) => {
 };
 
 const getPermissionListAsync = async (req, res) => {
-  let page = parseInt(req.params.page);
-  let pageSize = parseInt(req.params.pageSize);
+  let { page, pageSize } = req.query;
+
+  page = parseInt(page, 10) || 1;
+  pageSize = parseInt(pageSize, 10) || 10;
   let result = await permissionService.getPermissionListAsync(page, pageSize);
   if (result.isSuccess) {
     res.sendCommonValue(result.data, "success", 1);
