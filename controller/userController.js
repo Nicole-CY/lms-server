@@ -3,13 +3,6 @@ const bcrypt = require("bcryptjs");
 const { bcryptConfig } = require("../appConfig");
 
 const addUserAsync = async (req, res) => {
-  //check username not in db
-  let dbResult = await userService.getUserbyNameAsync(req.body.username);
-  if (dbResult.isSuccess && dbResult.data.id > 0) {
-    res.sendCommonValue({}, "Username already exists", 400, 400);
-    return;
-  }
-
   const existingEmail = await userService.getUserbyEmailAsync(req.body.email);
 
   if (existingEmail.isSuccess && existingEmail.data.id > 0) {
@@ -17,7 +10,6 @@ const addUserAsync = async (req, res) => {
   }
 
   let user = {};
-  user.username = req.body.username;
   user.password = req.body.password;
   user.email = req.body.email;
   user.address = req.body.address;

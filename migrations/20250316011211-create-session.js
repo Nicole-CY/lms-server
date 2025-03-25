@@ -42,14 +42,14 @@ module.exports = {
             CreatedBy: {
                 type: Sequelize.INTEGER,
                 references: {
-                    model: "users",
+                    model: "user",
                     key: "id",
                 },
             },
             UpdatedBy: {
                 type: Sequelize.INTEGER,
                 references: {
-                    model: "users",
+                    model: "user",
                     key: "id",
                 },
             },

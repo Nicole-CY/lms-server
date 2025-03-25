@@ -6,31 +6,30 @@ const userService = require("../service/userService");
 const crypto = require("crypto");
 const { bcryptConfig } = require("../appConfig");
 
-
 const loginAsync = async (req, res) => {
   try {
-    const username = req.body.username;
+    const email = req.body.email;
     const password = req.body.password;
 
-    if (!username || !password) {
-      return res.sendCommonValue(null, "Username and password are required", 0);
+    if (!email || !password) {
+      return res.sendCommonValue(null, "Email and password are required", 0);
     }
 
-    const result = await userService.getUserbyNameAsync(username);
+    const result = await userService.getUserbyEmailAsync(email);
 
     if (!result.isSuccess) {
-      logger.warn(`Login failed for username: ${username}`);
+      logger.warn(`Login failed for email: ${email}`);
       return res.sendCommonValue(null, "Authentication failed", 0);
     }
 
     const isMatch = await bcrypt.compare(password, result.data.password);
 
     if (!isMatch) {
-      logger.warn(`Password mismatch for username: ${username}`);
+      logger.warn(`Password mismatch for email: ${email}`);
       return res.sendCommonValue(null, "Authentication failed", 0);
     }
 
-    const user = { id: result.data.id, role: [result.data.roles], username: result.data.username };
+    const user = { id: result.data.id, role: [result.data.roles], email: result.data.email };
 
     const tokenStr = jwt.sign(user, jwtConfig.secret, {
       expiresIn: `${jwtConfig.expiresIn}s`,
@@ -54,30 +53,24 @@ const loginAsync = async (req, res) => {
 
     return res.sendCommonValue(
       {
-        username: username,
+        email: email,
       },
       "Login successful",
       1
     );
   } catch (err) {
-    logger.error(`Login error for username: ${req.body.username}, error: ${err}`);
+    logger.error(`Login error for email: ${req.body.email}, error: ${err}`);
     return res.sendCommonValue(null, "Internal server error", 0);
   }
 };
 
 const registerAsync = async (req, res) => {
   try {
-    const { email, username, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!username || !password || !email) {
-      return res.sendCommonValue({}, "Username, password, and email are required", 400, 400);
+    if (!email || !password) {
+      return res.sendCommonValue({}, "email and password are required", 400, 400);
     }
-
-    const existingUsername = await userService.getUserbyNameAsync(username);
-    if (existingUsername.isSuccess && existingUsername.data) {
-      return res.sendCommonValue({}, "Username already exists", 400, 400);
-    }
-
 
     const existingEmail = await userService.getUserbyEmailAsync(email);
     if (existingEmail.isSuccess && existingEmail.data) {
@@ -89,31 +82,28 @@ const registerAsync = async (req, res) => {
 
     const newUser = {
       email,
-      username,
       password: hashedPassword,
       roles: ['user'],
     };
 
-
-
     const result = await userService.addUserAsync(newUser);
 
     if (!result.isSuccess) {
-      logger.error(`User registration failed for username: ${username}`);
+      logger.error(`User registration failed for email: ${email}`);
       return res.sendCommonValue(null, "Registration failed", 0);
     }
 
-    logger.info(`New user registered: ${username}`);
+    logger.info(`New user registered: ${email}`);
 
     return res.status(201).sendCommonValue(
       {
-        username: username,
+        email: email,
       },
       "Registration successful",
       1
     );
   } catch (err) {
-    logger.error(`Register error for username: ${req.body.username}, error: ${err}`);
+    logger.error(`Register error for email: ${req.body.email}, error: ${err}`);
     return res.sendCommonValue(null, "Internal server error", 0);
   }
 };
@@ -128,7 +118,7 @@ const meAsync = async (req, res) => {
       return res.status(401).sendCommonValue(null, "Not logged in", 0);
     }
 
-    const result = await userService.getUserbyNameAsync(user.username);
+    const result = await userService.getUserbyEmailAsync(user.email);
 
     if (!result.isSuccess) {
       return res.status(404).sendCommonValue(null, "User does not exist.", 0);
@@ -136,7 +126,7 @@ const meAsync = async (req, res) => {
 
     return res.sendCommonValue({
       id: result.data.id,
-      username: result.data.username,
+      email: result.data.email,
       roles: result.data.roles || [],
     }, "User information retrieved successfully.", 1);
   } catch (err) {

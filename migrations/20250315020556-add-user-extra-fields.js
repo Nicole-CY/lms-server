@@ -2,26 +2,26 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn("users", "avatar", {
+    await queryInterface.addColumn("user", "avatar", {
       type: Sequelize.STRING(255),
       allowNull: true,
     });
 
-    await queryInterface.addColumn("users", "active", {
+    await queryInterface.addColumn("user", "active", {
       type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: true,
     });
 
-    await queryInterface.addColumn("users", "roles", {
+    await queryInterface.addColumn("user", "roles", {
       type: Sequelize.JSON,
       allowNull: true,
     });
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeColumn("users", "avatar");
-    await queryInterface.removeColumn("users", "active");
-    await queryInterface.removeColumn("users", "roles");
+    await queryInterface.removeColumn("user", "avatar");
+    await queryInterface.removeColumn("user", "active");
+    await queryInterface.removeColumn("user", "roles");
   },
 };
