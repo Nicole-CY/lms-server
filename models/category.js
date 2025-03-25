@@ -2,7 +2,7 @@ const { DataTypes, Sequelize } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
 const Category = sequelize.define(
-  "Category",
+  "category",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -13,7 +13,7 @@ const Category = sequelize.define(
     categoryName: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      field:"category_name", //Maps JavaScript name to DB column
+      field: "category_name",
     },
     description: {
       type: DataTypes.STRING(255),
@@ -26,27 +26,32 @@ const Category = sequelize.define(
     },
     createdBy: {
       type: DataTypes.INTEGER,
-      field:"created_by",
+      field: "created_by",
       references: {
-        model: "Users",
+        model: "user",
         key: "id",
       },
     },
     updatedBy: {
       type: DataTypes.INTEGER,
-      field:"updated_by",
+      field: "updated_by",
       references: {
-        model: "Users",
+        model: "user",
         key: "id",
       },
     },
     iconUrl: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      field:"icon_url",
+      field: "icon_url",
     },
   },
-  { timestamps: false, tableName: "category" }
+  {
+    timestamps: true,
+    tableName: "category",
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+  }
 );
 
 module.exports = Category;
