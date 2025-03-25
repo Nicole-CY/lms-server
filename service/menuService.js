@@ -1,5 +1,5 @@
 const Menu = require("../models/menu");
-const logger = require("../common/logsetting");
+const logger = require("../common/logSetting");
 
 const createMenuAsync = async (menu) => {
   try {

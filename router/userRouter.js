@@ -12,7 +12,7 @@ var userController = require("../controller/userController");
  * '/api/users':
  *  post:
  *     tags:
- *     - User Controller
+ *       - User Controller
  *     summary: add user
  *     description: add user
  *     requestBody:
