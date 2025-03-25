@@ -6,8 +6,10 @@ const Sequelize = require('sequelize');
 const process = require('process');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
+
+console.log("Models index __dirname:", __dirname);
 
 let sequelize;
 if (config.use_env_variable) {
@@ -27,9 +29,19 @@ fs
     );
   })
   .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
+    try {
+      const model = require(path.join(__dirname, file));
+      if (model && model.name) {
+        db[model.name] = model;
+      } else {
+        console.warn(`Skipping ${file} as it does not export a valid model.`);
+      }
+    } catch (err) {
+      console.error(`Error loading model from ${file}:`, err);
+    }
   });
+
+console.log("Loaded models:", Object.keys(db));
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {

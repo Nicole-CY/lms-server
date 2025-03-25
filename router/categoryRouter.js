@@ -4,7 +4,6 @@ const router = express.Router();
 
 const { body, query, param } = require("express-validator");
 const { commonValidate } = require("../middleware/expressValidator");
-
 const categoryController = require("../controller/Course/categoryController");
 
 /**
@@ -143,13 +142,11 @@ router.post(
     body("parentId")
       .optional()
       .isInt()
-      .withMessage("parentId must be a string"),
-    body("createdBy").notEmpty().withMessage("createdBy is required"),
-    body("updatedBy").notEmpty().withMessage("updatedBy is required"),
+      .withMessage("parentId must be an integer"),
     body("iconUrl")
       .optional()
       .isURL()
-      .withMessage("iconUrl must be a valid URL"),
+      .withMessage("iconUrl must be a valid URL"),  
   ]),
   categoryController.addCategoryAsync
 );

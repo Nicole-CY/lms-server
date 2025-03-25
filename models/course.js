@@ -10,7 +10,7 @@ const Course = sequelize.define('Course', {
 
     },
     title:{
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(150),
         allowNull: false
     },
     courseCode:{
@@ -35,11 +35,17 @@ const Course = sequelize.define('Course', {
     },
     createdBy: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        references:{
+          model: "Users",
+          key:"id",
+        }
       },
       updatedBy: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        references:{
+          model: "Users",
+          key:"id",
+        }
       }
 }, {
     tableName: "Course",
@@ -47,7 +53,7 @@ const Course = sequelize.define('Course', {
   });
 
   Course.associate = function (models){
-    Course.hasMany(models.CourseInstance, {foreignKey: "courseId"});
-    Course.hasMany(models.CourseCategory, {foreignKey: "courseId"});
+    Course.hasMany(models.CourseInstance, {foreignKey: "courseId", onDelete: "CASCADE"});
+    Course.hasMany(models.CourseCategory, {foreignKey: "courseId", onDelete: "CASCADE"});
   };
   module.exports = Course;

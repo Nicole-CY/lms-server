@@ -24,7 +24,7 @@ module.exports = {
       created_by: {
         type: Sequelize.INTEGER,
         references: {
-          model: "users",
+          model: "user",
           key: "id",
         },
         onDelete: "CASCADE",
@@ -32,7 +32,7 @@ module.exports = {
       updated_by: {
         type: Sequelize.INTEGER,
         references: {
-          model: "users",
+          model: "user",
           key: "id",
         },
         onDelete: "CASCADE",

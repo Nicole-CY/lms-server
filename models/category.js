@@ -2,7 +2,7 @@ const { DataTypes, Sequelize } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
 const Category = sequelize.define(
-  "category",
+  "Category",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -44,18 +44,6 @@ const Category = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: false,
       field:"icon_url",
-    },
-    createdAt: {
-      allowNull: false,
-      type: Sequelize.DATE,
-      defaultValue: Sequelize.NOW,
-      filed:"created_at",
-    },
-    updatedAt: {
-      allowNull: false,
-      type: Sequelize.DATE,
-      defaultValue: Sequelize.NOW,
-      filed:"updated_at",
     },
   },
   { timestamps: false, tableName: "category" }

@@ -21,10 +21,10 @@ const CourseNotification = sequelize.define(
         course_offering_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            // references: {
-            //     model: "CourseOffering",
-            //     key: "id",
-            // },
+            references: {
+                model: "CourseOffering",
+                key: "id",
+            },
         },
         message: {
             type: DataTypes.TEXT,

@@ -1,9 +1,9 @@
 const { body } = require("express-validator");
 
 const loginValidator = [
-  body("username")
+  body("email")
     .notEmpty()
-    .withMessage("Not a valid username")
+    .withMessage("Not a valid email")
     .isLength({ min: 3, max: 50 })
     .withMessage("The username length must be between 3 and 50"),
     

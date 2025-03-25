@@ -16,7 +16,7 @@ const CourseInstance = sequelize.define(
         },
         startDate:{
             type: DataTypes.DATE,
-            allowNull: True
+            allowNull: true
         },
         endDate: {
             type: DataTypes.DATE,
@@ -40,11 +40,17 @@ const CourseInstance = sequelize.define(
           },
           createdBy: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            references:{
+              model:"Users",
+              key:"id",
+            },
           },
           updatedBy: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            references:{
+              model:"Users",
+              key:"id",
+            }
           }
 
     }, {

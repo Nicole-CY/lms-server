@@ -22,15 +22,11 @@ var userController = require("../controller/userController");
  *           schema:
  *            type: object
  *            required:
- *              - username
  *              - password
  *              - email
  *              - age
  *              - gender
  *            properties:
- *              username:
- *                type: string
- *                default: admin
  *              password:
  *                type: string
  *                default: 123456
@@ -58,7 +54,6 @@ var userController = require("../controller/userController");
 router.post(
   "",
   commonValidate([
-    body("username").notEmpty().withMessage("Not a valid username"),
     body("password").notEmpty().isLength({ min: 6 }),
     body("email").isEmail().withMessage("Not a valid email"),
   ]),
@@ -71,11 +66,11 @@ router.post(
  *  get:
  *     tags:
  *     - User Controller
- *     summary: Get a user by username
+ *     summary: Get a user by user id
  *     security:
  *       - security: []
  *     parameters:
- *      - name: username
+ *      - name: id
  *        in: query
  *        description: The username of the user
  *        required: true
@@ -94,7 +89,7 @@ router.post(
 router.get(
   "/getUser",
   commonValidate([
-    query("username").notEmpty().withMessage("Not a valid username"),
+    query("id").notEmpty().withMessage("Not a valid user id"),
   ]),
   userController.getUserAsync
 );

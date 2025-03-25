@@ -3,61 +3,61 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Session", {
+    await queryInterface.createTable("session", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      courseInstanceId: {
+      course_instance_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "courseInstance",
+          model: "CourseInstance",
           key: "id",
         },
         onDelete: "CASCADE",
       },
-      SessionTitle: {
+      session_title: {
         type: Sequelize.STRING(50),
         allowNull: false,
       },
-      SessionDescription: {
+      session_description: {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
-      Order: {
+      order: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
       },
-      CreatedAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      UpdatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      CreatedBy: {
+      created_by: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
-          model: "users",
+          model: "user",
           key: "id",
         },
-        onDelete: "CASCADE",
       },
-      UpdatedBy: {
+      updated_by: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
-          model: "users",
+          model: "user",
           key: "id",
         },
-        onDelete: "CASCADE",
       },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Session");
+    await queryInterface.dropTable("session");
   },
 };

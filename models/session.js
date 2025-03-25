@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
 const Session = sequelize.define(
-    "Session",
+    "session",
     {
         id: {
             type: DataTypes.INTEGER,
@@ -13,43 +13,62 @@ const Session = sequelize.define(
         courseInstanceId: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            field: 'course_instance_id',
             references: {
-                model: "courseInstance",
+                model: "CourseInstance",
                 key: "id",
             }
         },
-        SessionTitle: {
+        sessionTitle: {
             type: DataTypes.STRING(50),
             allowNull: false,
+            field: 'session_title',
         },
-        SessionDescription: {
+        sessionDescription: {
             type: DataTypes.STRING(255),
             allowNull: true,
+            field: 'session_description',
         },
-        Order: {
+        order: {
             type: DataTypes.INTEGER,
-            allowNull: true,
+            allowNull: false,
         },
-        CreatedBy: {
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+            field: 'created_at',
+        },
+        createdBy: {
+            allowNull: false,
             type: DataTypes.INTEGER,
+            field: 'created_by',
             references: {
-                model: "Users",
+                model: "User",
                 key: "id",
             },
         },
-        UpdatedBy: {
+        updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+            field: 'updated_at',
+        },
+        updatedBy: {
+            allowNull: false,
             type: DataTypes.INTEGER,
+            field: 'updated_by',
             references: {
-                model: "Users",
+                model: "User",
                 key: "id",
             },
         },
     },
-    { timestamps: false, tableName: "Session" }
+    { timestamps: false, tableName: "session" }
 );
 
 Session.associate = function (models) {
-    Session.belongsTo(models.courseInstance, { foreignKey: "courseInstanceId" });
+    Session.belongsTo(models.CourseInstance, { foreignKey: "courseInstanceId" });
 };
 
 module.exports = Session;
