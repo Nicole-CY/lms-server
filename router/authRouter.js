@@ -32,8 +32,8 @@ const authController = require("../controller/authController");
 *                type: string
 *                default: 123456
 *     responses:
-*      201:
-*        description: Created
+*      200:
+*        description: Login Success
 *      400:
 *        description: Bad Request
 *      401:
@@ -52,7 +52,7 @@ router.post(
 * '/api/auth/register':
 *  post:
 *     tags:
-*     - auth Controller
+*       - auth Controller
 *     summary: Register a new user
 *     description: Register a new user by providing a email, firstName, lastName, and password.
 *     requestBody:
