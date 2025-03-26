@@ -6,6 +6,28 @@ const loginValidator = [
     .withMessage("Not a valid email")
     .isLength({ min: 3, max: 50 })
     .withMessage("The username length must be between 3 and 50"),
+
+  body("password")
+    .notEmpty()
+    .withMessage("Not a valid password")
+    .isLength({ min: 6, max: 50 })
+    .withMessage("The password length must be between 6 and 50"),
+];
+
+const registerValidator = [
+  body("email")
+    .notEmpty()
+    .withMessage("Not a valid email")
+    .isLength({ min: 3, max: 50 })
+    .withMessage("The username length must be between 3 and 50"),
+
+  body("firstName")
+    .notEmpty()
+    .withMessage("Not a valid first name"),
+
+  body("lastName")
+    .notEmpty()
+    .withMessage("Not a valid last name"),
     
   body("password")
     .notEmpty()
@@ -15,5 +37,5 @@ const loginValidator = [
 ];
 
 module.exports = {
-  loginValidator,
+  loginValidator, registerValidator
 };
