@@ -10,11 +10,11 @@ const addSessionAsync = async (sessionData) => {
 
         const newSession = await Session.create({
             courseInstanceId: sessionData.courseInstanceId,
-            sessionTitle: sessionData.SessionTitle,
-            sessionDescription: sessionData.SessionDescription || null,
-            order: sessionData.Order,
-            createdBy: sessionData.CreatedBy,
-            createdAt: new Date(),
+            sessionTitle: sessionData.sessionTitle,
+            sessionDescription: sessionData.sessionDescription || null,
+            order: sessionData.order,
+            createdBy: sessionData.createdBy,
+            updatedBy: sessionData.updatedBy,
         });
 
         return { isSuccess: true, message: "Session added successfully", data: newSession };
@@ -62,7 +62,7 @@ const getSessionsByCourseInstanceIdAsync = async (courseInstanceId) => {
 
         const sessions = await Session.findAll({
             where: { courseInstanceId },
-            order: [['order', 'ASC']],
+            order: [['order', 'DESC']],
         });
         if (sessions.length === 0) {
             return { isSuccess: false, message: "No sessions found for this course instance", data: [] };
@@ -89,7 +89,7 @@ const getSessionListAsync = async (page = 1, pageSize = 10) => {
         const { count, rows: sessions } = await Session.findAndCountAll({
             limit: pageSize,
             offset,
-            order: [['order', 'ASC']],
+            order: [['order', 'DESC']],
         });
 
         return { isSuccess: true, message: "Sessions fetched successfully", data: { total: count, sessions, } };

@@ -15,7 +15,7 @@ const Session = sequelize.define(
             allowNull: false,
             field: 'course_instance_id',
             references: {
-                model: "CourseInstance",
+                model: "courseInstance",
                 key: "id",
             }
         },
@@ -64,7 +64,12 @@ const Session = sequelize.define(
             },
         },
     },
-    { timestamps: false, tableName: "session" }
+    {
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+        tableName: "session"
+    }
 );
 
 Session.associate = function (models) {
