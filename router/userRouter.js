@@ -74,8 +74,8 @@ router.post(
             .isString()
             .isLength({ min: 6 })
             .withMessage("Password too short"),
-        body("firstName").optional().isString(),
-        body("lastName").optional().isString(),
+        body("firstName").isString(),
+        body("lastName").isString(),
         body("gender").optional().isInt(),
         body("address").optional().isString(),
         body("birthDate").optional().isISO8601().toDate(),

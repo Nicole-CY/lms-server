@@ -22,8 +22,8 @@ const Permission = sequelize.define(
         }
     },
     {
-        timestamps: true, 
-        tableName: 'permission', 
+        timestamps: true,
+        tableName: 'permission',
         createdAt: 'created_at',
         updatedAt: 'updated_at',
     }
