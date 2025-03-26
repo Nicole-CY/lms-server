@@ -1,11 +1,10 @@
-var express = require("express");
+const express = require("express");
 require("express-async-errors");
-var router = express.Router();
+const router = express.Router();
 
 const { body, query, param } = require("express-validator");
 const { commonValidate } = require("../middleware/expressValidator");
-
-var userController = require("../controller/userController");
+const userController = require("../controller/userController");
 
 /**
  * @openapi
@@ -13,8 +12,7 @@ var userController = require("../controller/userController");
  *  post:
  *     tags:
  *       - User Controller
- *     summary: add user
- *     description: add user
+ *     summary: Add user
  *     requestBody:
  *      required: true
  *      content:
@@ -22,151 +20,70 @@ var userController = require("../controller/userController");
  *           schema:
  *            type: object
  *            required:
- *              - password
  *              - email
- *              - age
- *              - gender
+ *              - password
  *            properties:
- *              password:
- *                type: string
- *                default: 123456
  *              email:
  *                type: string
- *                default: demo@demo.com
- *              age:
- *                type: number
- *                default: 30
+ *                example: demo@example.com
+ *              password:
+ *                type: string
+ *                example: 123456
+ *              firstName:
+ *                type: string
+ *                example: John
+ *              lastName:
+ *                type: string
+ *                example: Doe
  *              gender:
  *                type: number
- *                default: 1
+ *                example: 1
+ *              address:
+ *                type: string
+ *                example: Sydney
+ *              birthDate:
+ *                type: string
+ *                format: date
+ *                example: 1990-01-01
+ *              avatar:
+ *                type: string
+ *                example: http://example.com/avatar.png
+ *              roles:
+ *                type: array
+ *                items:
+ *                  type: string
+ *                example: ["admin", "user"]
+ *              active:
+ *                type: boolean
+ *                example: true
  *     responses:
  *      201:
  *        description: Created
  *      400:
  *        description: Bad Request
- *      404:
- *        description: Not Found
  *      409:
  *        description: Conflict
  *      500:
  *        description: Server Error
  */
 router.post(
-  "",
-  commonValidate([
-    body("password").notEmpty().isLength({ min: 6 }),
-    body("email").isEmail().withMessage("Not a valid email"),
-  ]),
-  userController.addUserAsync
-);
-
-/**
- * @openapi
- * '/api/users/getUser':
- *  get:
- *     tags:
- *     - User Controller
- *     summary: Get a user by user id
- *     security:
- *       - security: []
- *     parameters:
- *      - name: id
- *        in: query
- *        description: The username of the user
- *        required: true
- *     responses:
- *      200:
- *        description: Fetched Successfully
- *      400:
- *        description: Bad Request
- *      401:
- *        description: Unauthorized
- *      404:
- *        description: Not Found
- *      500:
- *        description: Server Error
- */
-router.get(
-  "/getUser",
-  commonValidate([
-    query("id").notEmpty().withMessage("Not a valid user id"),
-  ]),
-  userController.getUserAsync
-);
-
-/**
- * @openapi
- * '/api/users/{page}/{pageSize}':
- *  get:
- *     tags:
- *     - User Controller
- *     summary: Get all users
- *     parameters:
- *      - name: page
- *        in: path
- *        description: page
- *        required: true
- *      - name: pageSize
- *        in: path
- *        description: pageSize
- *        required: true
- *     responses:
- *      200:
- *        description: Fetched Successfully
- *      400:
- *        description: Bad Request
- *      401:
- *        description: Unauthorized
- *      404:
- *        description: Not Found
- *      500:
- *        description: Server Error
- */
-router.get(
-  "/:page/:pageSize",
-  commonValidate([
-    param("page")
-      .notEmpty()
-      .isInt({ allow_leading_zeroes: false, min: 1 })
-
-      .withMessage("Not a valid page"),
-    param("pageSize")
-      .notEmpty()
-      .isInt({ allow_leading_zeroes: false, min: 1 })
-
-      .withMessage("Not a valid page"),
-  ]),
-  userController.getUserListAsync
-);
-
-/**
- * @openapi
- * '/api/users/{ids}':
- *  delete:
- *     tags:
- *     - User Controller
- *     summary: delete a user by Id
- *     parameters:
- *      - name: ids
- *        in: path
- *        description: The id of the user
- *        required: true
- *     responses:
- *      200:
- *        description: Fetched Successfully
- *      400:
- *        description: Bad Request
- *      401:
- *        description: Unauthorized
- *      404:
- *        description: Not Found
- *      500:
- *        description: Server Error
- */
-router.delete(
-  "/:ids",
-  param([param("ids").notEmpty().withMessage("Not a valid id")]),
-  userController.deUserByIdAsync
+    "",
+    commonValidate([
+        body("email").isEmail().withMessage("Invalid email"),
+        body("password")
+            .isString()
+            .isLength({ min: 6 })
+            .withMessage("Password too short"),
+        body("firstName").optional().isString(),
+        body("lastName").optional().isString(),
+        body("gender").optional().isInt(),
+        body("address").optional().isString(),
+        body("birthDate").optional().isISO8601().toDate(),
+        body("avatar").optional().isString(),
+        body("roles").optional().isArray(),
+        body("active").optional().isBoolean(),
+    ]),
+    userController.addUserAsync
 );
 
 /**
@@ -175,8 +92,7 @@ router.delete(
  *  put:
  *     tags:
  *     - User Controller
- *     summary: update user
- *     description: update user
+ *     summary: Update user
  *     requestBody:
  *      required: true
  *      content:
@@ -185,45 +101,90 @@ router.delete(
  *            type: object
  *            required:
  *              - id
- *              - username
- *              - email
- *              - age
- *              - gender
  *            properties:
  *              id:
  *                type: number
- *                default: 0
- *              username:
- *                type: string
- *                default: admin
+ *                example: 1
  *              email:
  *                type: string
- *                default: demo@demo.com
- *              age:
- *                type: number
- *                default: 30
+ *                example: updated@example.com
+ *              password:
+ *                type: string
+ *                example: newpassword123
+ *              firstName:
+ *                type: string
+ *              lastName:
+ *                type: string
  *              gender:
  *                type: number
- *                default: 1
+ *              address:
+ *                type: string
+ *              birthDate:
+ *                type: string
+ *                format: date
+ *              avatar:
+ *                type: string
+ *              roles:
+ *                type: array
+ *                items:
+ *                  type: string
+ *              active:
+ *                type: boolean
  *     responses:
- *      201:
- *        description: Created
+ *      200:
+ *        description: Updated successfully
  *      400:
  *        description: Bad Request
  *      404:
  *        description: Not Found
- *      409:
- *        description: Conflict
  *      500:
  *        description: Server Error
  */
 router.put(
-  "",
-  commonValidate([
-    body("username").notEmpty().withMessage("Not a valid username"),
-    body("id").notEmpty().withMessage("Not a valid id"),
-  ]),
-  userController.updateUserAsync
+    "",
+    commonValidate([
+        body("id").notEmpty().isInt().withMessage("User ID is required"),
+        body("email").optional().isEmail(),
+        body("password").optional().isString().isLength({ min: 6 }),
+        body("firstName").optional().isString(),
+        body("lastName").optional().isString(),
+        body("gender").optional().isInt(),
+        body("address").optional().isString(),
+        body("birthDate").optional().isISO8601().toDate(),
+        body("avatar").optional().isString(),
+        body("roles").optional().isArray(),
+        body("active").optional().isBoolean(),
+    ]),
+    userController.updateUserAsync
+);
+
+/**
+ * @openapi
+ * '/api/users/getUser':
+ *  get:
+ *     tags:
+ *     - User Controller
+ *     summary: Get user by query id
+ *     parameters:
+ *      - name: id
+ *        in: query
+ *        required: true
+ *        schema:
+ *          type: integer
+ *     responses:
+ *      200:
+ *        description: Fetched successfully
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ */
+router.get(
+    "/getUser",
+    commonValidate([
+        query("id").notEmpty().isInt().withMessage("User ID is required"),
+    ]),
+    userController.getUserAsync
 );
 
 /**
@@ -232,29 +193,91 @@ router.put(
  *  get:
  *     tags:
  *     - User Controller
- *     summary: Get a user by id
+ *     summary: Get user by ID (query)
  *     parameters:
  *      - name: id
  *        in: query
- *        description: The id of the user
  *        required: true
+ *        schema:
+ *          type: integer
  *     responses:
  *      200:
- *        description: Fetched Successfully
+ *        description: Success
  *      400:
  *        description: Bad Request
- *      401:
- *        description: Unauthorized
- *      404:
- *        description: Not Found
- *      500:
- *        description: Server Error
  */
- router.get("/getUserById",
-  commonValidate([
-    query("id").notEmpty().withMessage("Not a valid id"),
-  ]),
-  userController.getUserByIdAsync
+router.get(
+    "/getUserById",
+    commonValidate([
+        query("id").notEmpty().isInt().withMessage("User ID is required"),
+    ]),
+    userController.getUserByIdAsync
+);
+
+/**
+ * @openapi
+ * '/api/users/{page}/{pageSize}':
+ *  get:
+ *     tags:
+ *     - User Controller
+ *     summary: Get paginated user list
+ *     parameters:
+ *      - name: page
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: integer
+ *      - name: pageSize
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: integer
+ *     responses:
+ *      200:
+ *        description: Success
+ *      400:
+ *        description: Bad Request
+ */
+router.get(
+    "/:page/:pageSize",
+    commonValidate([
+        param("page")
+            .notEmpty()
+            .isInt({ min: 1 })
+            .withMessage("Invalid page number"),
+        param("pageSize")
+            .notEmpty()
+            .isInt({ min: 1 })
+            .withMessage("Invalid page size"),
+    ]),
+    userController.getUserListAsync
+);
+
+/**
+ * @openapi
+ * '/api/users/{ids}':
+ *  delete:
+ *     tags:
+ *     - User Controller
+ *     summary: Delete user by ID(s)
+ *     parameters:
+ *      - name: ids
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: string
+ *     responses:
+ *      200:
+ *        description: Deleted successfully
+ *      400:
+ *        description: Bad Request
+ */
+router.delete(
+    "/:ids",
+    commonValidate([
+        param("ids").notEmpty().withMessage("User ID(s) required"),
+    ]),
+    userController.deUserByIdAsync
 );
 
 module.exports = router;
