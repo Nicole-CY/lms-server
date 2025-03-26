@@ -3,7 +3,7 @@ require("express-async-errors");
 var router = express.Router();
 
 const { commonValidate } = require("../middleware/expressValidator");
-const { loginValidator } = require("../validator/authValidator");
+const { loginValidator, registerValidator } = require("../validator/authValidator");
 
 const authController = require("../controller/authController");
 
@@ -14,7 +14,7 @@ const authController = require("../controller/authController");
 *     tags:
 *       - auth Controller
 *     summary: Login as a user and return token via cookie
-*     description: Login returns JWT in HttpOnly cookie + CSRF token
+*     description: Login returns JWT in HttpOnly cookie
 *     requestBody:
 *      required: true
 *      content:
@@ -22,7 +22,7 @@ const authController = require("../controller/authController");
 *           schema:
 *            type: object
 *            required:
-*              - username
+*              - email
 *              - password
 *            properties:
 *              email:
@@ -32,8 +32,8 @@ const authController = require("../controller/authController");
 *                type: string
 *                default: 123456
 *     responses:
-*      201:
-*        description: Created
+*      200:
+*        description: Login Success
 *      400:
 *        description: Bad Request
 *      401:
@@ -52,9 +52,9 @@ router.post(
 * '/api/auth/register':
 *  post:
 *     tags:
-*     - auth Controller
+*       - auth Controller
 *     summary: Register a new user
-*     description: Register a new user by providing a username, email, and password.
+*     description: Register a new user by providing a email, firstName, lastName, and password.
 *     requestBody:
 *      required: true
 *      content:
@@ -62,12 +62,20 @@ router.post(
 *           schema:
 *            type: object
 *            required:
-*              - password
 *              - email
+*              - firstName
+*              - lastName
+*              - password
 *            properties:
 *              email:
 *                type: string
 *                example: newuser@gmail.com
+*              firstName:
+*                type: string
+*                example: John
+*              lastName:
+*                type: string
+*                example: Doe
 *              password:
 *                type: string
 *                example: 123456
@@ -81,7 +89,7 @@ router.post(
 */
 router.post(
   "/register",
-  commonValidate(loginValidator), 
+  commonValidate(registerValidator), 
   authController.registerAsync
 );
 

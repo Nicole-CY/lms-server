@@ -1,5 +1,5 @@
 const User = require("../models/user");
-const logger = require("../common/logsetting");
+const logger = require("../common/logSetting");
 const { Op } = require("sequelize");
 
 /**
@@ -129,7 +129,8 @@ const getUserbyEmailAsync = async (email) => {
 const addUserAsync = async (user) => {
     try {
         const newUser = await User.create({
-            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
             password: user.password,
             email: user.email,
             address: user.address,

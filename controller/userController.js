@@ -12,6 +12,8 @@ const addUserAsync = async (req, res) => {
   let user = {};
   user.password = req.body.password;
   user.email = req.body.email;
+  user.firstName = req.body.firstName;
+  user.lastName = req.body.lastName;
   user.address = req.body.address;
   user.birthDate = req.body.birthDate;
   user.gender = req.body.gender;
