@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
 const Menu = sequelize.define(
-  "menu",
+  "Menu",
   {
     // Model attributes are defined here
     id: {
@@ -35,9 +35,9 @@ const Menu = sequelize.define(
   { timestamps: false, tableName: "menu" }
 );
 
-menu.associate = function (models) {
-  menu.belongsTo(models.menu, { foreignKey: "parentId", as: "parentMenu" });
-  menu.hasMany(models.menu, { foreignKey: "parentId", as: "submenus" });
+Menu.associate = function (models) {
+  Menu.belongsTo(models.Menu, { foreignKey: "parentId", as: "parentMenu" });
+  Menu.hasMany(models.Menu, { foreignKey: "parentId", as: "submenus" });
 };
 
 module.exports = Menu;
