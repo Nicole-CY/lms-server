@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
-const menu = sequelize.define(
+const Menu = sequelize.define(
   "menu",
   {
     // Model attributes are defined here
@@ -11,12 +11,14 @@ const menu = sequelize.define(
       autoIncrement: true,
       allowNull: false,
     },
-    menu_name: {
+    menuName: {
       type: DataTypes.STRING,
+      field: "menu_name",
       allowNull: false,
     },
-    parent_id: {
+    parentId: {
       type: DataTypes.INTEGER,
+      field: "parent_id",
       allowNull: true,
       references: {
         model: "menu",
@@ -24,8 +26,9 @@ const menu = sequelize.define(
       },
       onDelete: "CASCADE",
     },
-    route_path: {
+    routePath: {
       type: DataTypes.STRING,
+      field: "route_path",
       allowNull: false,
     },
   },
@@ -33,8 +36,8 @@ const menu = sequelize.define(
 );
 
 menu.associate = function (models) {
-  menu.belongsTo(models.menu, { foreignKey: "parent_id", as: "parentMenu" });
-  menu.hasMany(models.menu, { foreignKey: "parent_id", as: "submenus" });
+  menu.belongsTo(models.menu, { foreignKey: "parentId", as: "parentMenu" });
+  menu.hasMany(models.menu, { foreignKey: "parentId", as: "submenus" });
 };
 
-module.exports = menu;
+module.exports = Menu;
