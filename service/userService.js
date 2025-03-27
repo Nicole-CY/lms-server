@@ -129,7 +129,6 @@ const getUserbyEmailAsync = async (email) => {
 const addUserAsync = async (user) => {
     try {
         const newUser = await User.create({
-            username: user.username,
             firstName: user.firstName,
             lastName: user.lastName,
             password: user.password,
@@ -184,7 +183,6 @@ const updateUserByIdAsync = async (user) => {
 
         const result = await User.update(
             {
-                username: user.username,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 password: user.password,
