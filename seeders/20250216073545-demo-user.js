@@ -21,8 +21,6 @@ module.exports = {
             avatar: "https://via.placeholder.com/150",
             active: true,
             roles: JSON.stringify(["super_admin", "user"]),
-            created_at: new Date(),
-            updated_at: new Date(),
           },
           {
             email: "admin@example.com",
@@ -35,8 +33,6 @@ module.exports = {
             avatar: "https://via.placeholder.com/150",
             active: true,
             roles: JSON.stringify(["admin", "user"]),
-            created_at: new Date(),
-            updated_at: new Date(),
           },
         ],
         {}
