@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.bulkInsert("courseCategory", [
+    await queryInterface.bulkInsert("course_category", [
       {
         courseId: 1,  // Associates with the first course
         categoryId: 101  // Example category id
@@ -20,6 +20,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("courseCategory", null, {});
+    await queryInterface.bulkDelete("course_category", null, {});
   }
 };

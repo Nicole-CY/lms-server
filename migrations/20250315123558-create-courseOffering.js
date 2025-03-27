@@ -4,7 +4,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
 
-    await queryInterface.createTable("CourseOffering", {
+    await queryInterface.createTable("course_offering", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -15,7 +15,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "CourseInstance",
+          model: "course_instance",
           key: "id",
         },
         onDelete: "CASCADE",
@@ -45,6 +45,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("CourseOffering");
+    await queryInterface.dropTable("course_offering");
   }
 };
