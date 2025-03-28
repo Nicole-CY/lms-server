@@ -4,7 +4,7 @@ const router = express.Router();
 
 const { body, query, param } = require("express-validator");
 const { commonValidate } = require("../middleware/expressValidator");
-const userController = require("../controller/userController");
+const userController = require("../controller/usercontroller");
 
 /**
  * @openapi
@@ -277,7 +277,7 @@ router.delete(
     commonValidate([
         param("ids").notEmpty().withMessage("User ID(s) required"),
     ]),
-    userController.deUserByIdAsync
+    userController.deleteUserByIdAsync
 );
 
 module.exports = router;

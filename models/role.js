@@ -2,17 +2,18 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/sequelizedb");
 
 const Role = sequelize.define(
-  "Role",
+  "role",
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    role_name: {
+    roleName: {
       type: DataTypes.STRING(50),
       unique: true,
       allowNull: false,
+      field:'role_name'
     },
     description: {
       type: DataTypes.TEXT,
@@ -20,8 +21,10 @@ const Role = sequelize.define(
     },
   },
   {
-    tableName: "roles", 
+    tableName: "role", 
     timestamps: false, 
+    createdAt: "created_at",
+    updatedAt: "updated_at"
   }
 );
 

@@ -151,18 +151,22 @@ const addUserAsync = async (user) => {
 /**
  * 根据 ID 删除用户
  */
-const delUserByIdAsync = async (idsString) => {
+const deleteUserByIdAsync = async (idsString) => {
     try {
         const ids = idsString.split(",").map((id) => parseInt(id));
         const result = await User.destroy({ where: { id: ids } });
 
         if (result > 0) {
-            return { isSuccess: true, message: "Delete successful" };
+            return {
+                isSuccess: true,
+                message: "Delete successful",
+                data: null,
+            };
         }
 
         return { isSuccess: false, message: "Delete failed, no user found" };
     } catch (error) {
-        logger.error("delUserByIdAsync error:", error);
+        logger.error("deleteUserByIdAsync error:", error);
         return { isSuccess: false, message: "Delete failed", data: null };
     }
 };
@@ -170,7 +174,7 @@ const delUserByIdAsync = async (idsString) => {
 /**
  * 更新用户信息
  */
-const uptUserByIdAsync = async (user) => {
+const updateUserByIdAsync = async (user) => {
     try {
         const existingUser = await User.findByPk(user.id);
         if (!existingUser) {
@@ -179,7 +183,9 @@ const uptUserByIdAsync = async (user) => {
 
         const result = await User.update(
             {
-                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                password: user.password,
                 email: user.email,
                 address: user.address,
                 birthDate: user.birthDate,
@@ -252,8 +258,8 @@ module.exports = {
     getUserbyNameAsync,
     getUserbyEmailAsync,
     addUserAsync,
-    delUserByIdAsync,
-    uptUserByIdAsync,
+    deleteUserByIdAsync,
+    updateUserByIdAsync,
     checkUserNameAsync,
     getUserbyIdAsync,
 };
