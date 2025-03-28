@@ -1,31 +1,34 @@
-const  {DataTypes} = require("sequelize");
-const {sequelize} = require("../db/sequelizedb");
+const { DataTypes } = require('sequelize');
+
+const { sequelize } = require('../db/sequelizedb');
 
 const CourseCategory = sequelize.define(
-    "CourseCategory", {
-        id:{
+    'CourseCategory',
+    {
+        id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
-            allowNull: false
+            allowNull: false,
         },
-        courseId:{
+        courseId: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
         },
-        categoryId:{
+        categoryId: {
             type: DataTypes.INTEGER,
-            allowNull: false
-        }
-    },{
-        tableName: "course_category",
-        timestamps: false
+            allowNull: false,
+        },
+    },
+    {
+        tableName: 'course_category',
+        timestamps: false,
     }
 );
 
-CourseCategory.associate = function(models){
-    CourseCategory.belongsTo(models.Course, {foreignKey: "courseId", onDelete: "CASCADE"});
-    CourseCategory.belongsTo(models.category, {foreignKey:"categoryId", onDelete: "CASCADE"});
+CourseCategory.associate = function (models) {
+    CourseCategory.belongsTo(models.Course, { foreignKey: 'courseId', onDelete: 'CASCADE' });
+    CourseCategory.belongsTo(models.category, { foreignKey: 'categoryId', onDelete: 'CASCADE' });
 };
 
 module.exports = CourseCategory;

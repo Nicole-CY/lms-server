@@ -1,8 +1,9 @@
-const { DataTypes } = require("sequelize");
-const { sequelize } = require("../db/sequelizedb");
+const { DataTypes } = require('sequelize');
+
+const { sequelize } = require('../db/sequelizedb');
 
 const CourseOffering = sequelize.define(
-    "CourseOffering",
+    'CourseOffering',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -14,16 +15,16 @@ const CourseOffering = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: "course_instance",
-                key: "id",
+                model: 'course_instance',
+                key: 'id',
             },
         },
         teacher_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: "user",
-                key: "id",
+                model: 'user',
+                key: 'id',
             },
         },
         start_date: {
@@ -35,12 +36,12 @@ const CourseOffering = sequelize.define(
             allowNull: false,
         },
         status: {
-            type: DataTypes.ENUM("Pending Start", "Active", "Completed"),
+            type: DataTypes.ENUM('Pending Start', 'Active', 'Completed'),
             allowNull: false,
         },
     },
     {
-        tableName: "course_offering",
+        tableName: 'course_offering',
         timestamps: false,
     }
 );

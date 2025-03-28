@@ -1,8 +1,9 @@
-const { DataTypes } = require("sequelize");
-const { sequelize } = require("../db/sequelizedb");
+const { DataTypes } = require('sequelize');
+
+const { sequelize } = require('../db/sequelizedb');
 
 const Media = sequelize.define(
-    "media",
+    'media',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -15,13 +16,13 @@ const Media = sequelize.define(
             allowNull: false,
             field: 'session_id',
             references: {
-                model: "session",
-                key: "id",
+                model: 'session',
+                key: 'id',
             },
-            onDelete: "CASCADE",
+            onDelete: 'CASCADE',
         },
         fileType: {
-            type: DataTypes.ENUM("video", "pdf"),
+            type: DataTypes.ENUM('video', 'pdf'),
             allowNull: false,
             field: 'file_type',
         },
@@ -45,10 +46,10 @@ const Media = sequelize.define(
             allowNull: false,
             field: 'uploder_id',
             references: {
-                model: "User",
-                key: "id",
+                model: 'User',
+                key: 'id',
             },
-            onDelete: "CASCADE",
+            onDelete: 'CASCADE',
         },
         uploadedAt: {
             type: DataTypes.DATE,
@@ -57,20 +58,20 @@ const Media = sequelize.define(
             field: 'uploader_at',
         },
         approvalStatus: {
-            type: DataTypes.ENUM("Pending", "Approved", "Rejected"),
+            type: DataTypes.ENUM('Pending', 'Approved', 'Rejected'),
             allowNull: false,
-            defaultValue: "Pending",
+            defaultValue: 'Pending',
             field: 'approval_status',
         },
     },
     {
         timestamps: false,
-        tableName: "media",
+        tableName: 'media',
     }
 );
 
 Media.associate = function (models) {
-    Media.belongsTo(models.session, { foreignKey: "sessionId" });
+    Media.belongsTo(models.session, { foreignKey: 'sessionId' });
 };
 
 module.exports = Media;
