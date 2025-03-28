@@ -29,7 +29,7 @@ const CourseInstanceUser = sequelize.define("CourseInstanceUser", {
         allowNull: true,
       },
     }, {
-      tableName: 'courseInstanceUser',
+      tableName: 'course_instance_user',
       timestamps: false
     });
 

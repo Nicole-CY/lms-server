@@ -41,20 +41,20 @@ const CourseInstance = sequelize.define(
           createdBy: {
             type: DataTypes.INTEGER,
             references:{
-              model:"Users",
+              model:"user",
               key:"id",
             },
           },
           updatedBy: {
             type: DataTypes.INTEGER,
             references:{
-              model:"Users",
+              model:"user",
               key:"id",
             }
           }
 
     }, {
-        tableName: "CourseInstance",
+        tableName: "course_instance",
         timestamps: false
     }
 );

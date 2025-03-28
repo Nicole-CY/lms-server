@@ -22,7 +22,7 @@ const CourseNotification = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: "CourseOffering",
+                model: "course_offering",
                 key: "id",
             },
         },
@@ -41,7 +41,7 @@ const CourseNotification = sequelize.define(
         },
     },
     {
-        tableName: "CourseNotification",
+        tableName: "course_notification",
         timestamps: false,
     }
 );

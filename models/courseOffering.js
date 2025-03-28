@@ -14,7 +14,7 @@ const CourseOffering = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: "CourseInstance",
+                model: "course_instance",
                 key: "id",
             },
         },
@@ -22,7 +22,7 @@ const CourseOffering = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: "User",
+                model: "user",
                 key: "id",
             },
         },
@@ -40,7 +40,7 @@ const CourseOffering = sequelize.define(
         },
     },
     {
-        tableName: "CourseOffering",
+        tableName: "course_offering",
         timestamps: false,
     }
 );
