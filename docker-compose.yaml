@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  express:
+    build: .
+    ports:
+      - "3000:9000"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    user: root
+    ports:
+      - "8080:8080"
+    volumes:
+      - jenkins-data:/var/jenkins_home
+
+volumes:
+  redis-data:
+  jenkins-data:
