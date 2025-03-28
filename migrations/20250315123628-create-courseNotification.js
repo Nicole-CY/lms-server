@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("CourseNotification", {
+    await queryInterface.createTable("courseNotification", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -13,17 +13,17 @@ module.exports = {
       recipient_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        // references: {
-        //   model: "User",
-        //   key: "id",
-        // },
-        // onDelete: "CASCADE",
+        references: {
+          model: "user",
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
       course_offering_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "CourseOffering",
+          model: "courseOffering",
           key: "id",
         },
         onDelete: "CASCADE",
@@ -41,10 +41,15 @@ module.exports = {
         allowNull: false,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
+      updated_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      }
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("CourseNotification");
+    await queryInterface.dropTable("courseNotification");
   },
 };

@@ -4,7 +4,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
 
-    await queryInterface.createTable("CourseOffering", {
+    await queryInterface.createTable("courseOffering", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -15,19 +15,19 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "CourseInstance",
+          model: "courseInstance",
           key: "id",
         },
         onDelete: "CASCADE",
       },
       teacher_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        // references: {
-        //   model: "User",
-        //   key: "id",
-        // },
-        // onDelete: "SET NULL",
+        allowNull: true,
+        references: {
+          model: "user",
+          key: "id",
+        },
+        onDelete: "SET NULL",
       },
       start_date: {
         type: Sequelize.DATE,
@@ -41,10 +41,20 @@ module.exports = {
         type: Sequelize.ENUM("Pending Start", "Active", "Completed"),
         allowNull: false,
       },
+      created_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
+      updated_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      }
     });
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("CourseOffering");
+    await queryInterface.dropTable("courseOffering");
   }
 };
