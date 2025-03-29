@@ -13,11 +13,11 @@ module.exports = {
       recipient_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        // references: {
-        //   model: "User",
-        //   key: "id",
-        // },
-        // onDelete: "CASCADE",
+        references: {
+          model: "user",
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
       course_offering_id: {
         type: Sequelize.INTEGER,
@@ -41,6 +41,11 @@ module.exports = {
         allowNull: false,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
+      updated_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      }
     });
   },
 
