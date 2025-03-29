@@ -5,7 +5,8 @@
     "main": "index.js",
     "scripts": {
         "test": "jest --runInBand",
-        "test:integration": "jest test/integration",
+        "test:unit": "jest --selectProjects unit",
+        "test:integration": "jest --selectProjects integration",
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage",
         "reset-db": "sequelize-cli db:migrate:undo:all &&  sequelize-cli db:seed:undo:all  && sequelize-cli db:migrate && sequelize-cli db:seed:all",
