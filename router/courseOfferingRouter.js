@@ -11,7 +11,7 @@ const courseOfferingController = require("../controller/Course/courseOfferingCon
 
 /**
  * @openapi
- * '/api/course-offerings/list/{page}/{pageSize}':
+ * '/api/courseOfferings/list/{page}/{pageSize}':
  *  get:
  *     tags:
  *     - CourseOffering
@@ -40,7 +40,7 @@ router.get("/list/:page/:pageSize", courseOfferingController.getCourseOfferingLi
 
 /**
  * @openapi
- * '/api/course-offerings/detail':
+ * '/api/courseOfferings/detail':
  *  get:
  *     tags:
  *     - CourseOffering
@@ -61,7 +61,7 @@ router.get("/detail", courseOfferingController.getCourseOfferingByIdAsync);
 
 /**
  * @openapi
- * '/api/course-offerings/add':
+ * '/api/courseOfferings/add':
  *  post:
  *     tags:
  *     - CourseOffering
@@ -101,7 +101,7 @@ router.post("/add", courseOfferingController.addCourseOfferingAsync);
 
 /**
  * @openapi
- * '/api/course-offerings/update':
+ * '/api/courseOfferings/update':
  *  put:
  *     tags:
  *     - CourseOffering
@@ -132,7 +132,7 @@ router.put("/update", courseOfferingController.updateCourseOfferingByIdAsync);
 
 /**
  * @openapi
- * '/api/course-offerings/delete/{id}':
+ * '/api/courseOfferings/delete/{id}':
  *  delete:
  *     tags:
  *     - CourseOffering

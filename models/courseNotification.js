@@ -11,17 +11,19 @@ const CourseNotification = sequelize.define(
             autoIncrement: true,
             allowNull: false,
         },
-        recipient_id: {
+        recipientId: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            field: "recipient_id",
             references: {
                 model: 'user',
                 key: 'id',
             },
         },
-        course_offering_id: {
+        courseOfferingId: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            field: "course_offering_id",
             references: {
                 model: 'course_offering',
                 key: 'id',
@@ -35,15 +37,18 @@ const CourseNotification = sequelize.define(
             type: DataTypes.ENUM('Unread', 'Read'),
             allowNull: false,
         },
-        created_at: {
+        createdAt: {
             type: DataTypes.DATE,
             allowNull: false,
+            field: "created_at",
             defaultValue: DataTypes.NOW,
         },
+
     },
     {
         tableName: 'course_notification',
         timestamps: false,
+        updatedAt: 'updated_at',
     }
 );
 

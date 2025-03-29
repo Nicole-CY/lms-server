@@ -2,9 +2,9 @@ const CategoryService = require("../../service/Course/categoryService");
 
 // Get categories by name
 const getCategoryByNameAsync = async (req, res) => {
-  const { categoryname } = req.query;
+  const { categoryName } = req.query;
 
-  const result = await CategoryService.getCategoryByNameAsync(categoryname);
+  const result = await CategoryService.getCategoryByNameAsync(categoryName);
 
   if (result.isSuccess) {
     res.sendCommonValue(result.data, "Category found", 1);
@@ -15,8 +15,8 @@ const getCategoryByNameAsync = async (req, res) => {
 
 // Get categories lists
 const getCategoryListAsync = async (req, res) => {
-  const page = parseInt(req.params.page, 10) || 1;
-  const pageSize = parseInt(req.params.pageSize, 10) || 10;
+  const page = parseInt(req.query.page, 10) || 1;
+  const pageSize = parseInt(req.query.pageSize, 10) || 10;
   const result = await CategoryService.getCategoryListAsync(page, pageSize);
 
   if (result.isSuccess) {
@@ -29,17 +29,16 @@ const getCategoryListAsync = async (req, res) => {
 // Add categories
 const addCategoryAsync = async (req, res) => {
   const { categoryName } = req.body;
+  const checkCategoryNameResult = await CategoryService.getCategoryByNameAsync(categoryName);
 
-  const dbResult = await CategoryService.getCategoryByNameAsync(categoryName);
-
-  if (dbResult.isSuccess) {
+  if (checkCategoryNameResult.isSuccess) {
     return res.sendCommonValue({}, "Category name already exists", 0);
   }
 
-  const result = await CategoryService.addCategoryAsync(req.body);
+  const addCategoryResult = await CategoryService.addCategoryAsync(req.body);
 
-  if (result.isSuccess) {
-    res.sendCommonValue(result.data, "Category added successfully", 1);
+  if (addCategoryResult.isSuccess) {
+    res.sendCommonValue(addCategoryResult.data, "Category added successfully", 1);
   } else {
     res.sendCommonValue({}, "Failed to add category", 0);
   }
@@ -47,8 +46,8 @@ const addCategoryAsync = async (req, res) => {
 
 // Delete categories by id
 const deleteCategoryByIdAsync = async (req, res) => {
-  const { ids } = req.params;
-  const result = await CategoryService.deleteCategoryByIdAsync(ids);
+  const { id } = req.params;
+  const result = await CategoryService.deleteCategoryByIdAsync(id);
 
   if (result.isSuccess) {
     res.sendCommonValue({}, "Category deleted successfully", 1);
@@ -73,12 +72,17 @@ const getCategoryByIdAsync = async (req, res) => {
 // Update categories by id
 const updateCategoryByIdAsync = async (req, res) => {
   const id = parseInt(req.query.id, 10);
-  const updateData = req.body;
+  const newCategoryData = req.body;
+  const checkCategoryNameResult = await CategoryService.getCategoryByNameAsync(newCategoryData.categoryName);
 
-  const result = await CategoryService.updateCategoryByIdAsync(id, updateData);
+  if (checkCategoryNameResult.isSuccess) {
+    return res.sendCommonValue({}, "Category name already exists", 0);
+  }
 
-  if (result.isSuccess) {
-    res.sendCommonValue(result.data, "Category updated successfully", 1);
+  const updateCategoryResult = await CategoryService.updateCategoryByIdAsync(id, newCategoryData);
+
+  if (updateCategoryResult.isSuccess) {
+    res.sendCommonValue(updateCategoryResult.data, "Category updated successfully", 1);
   } else {
     res.sendCommonValue({}, "Failed to update category", 0);
   }
@@ -87,15 +91,20 @@ const updateCategoryByIdAsync = async (req, res) => {
 // Update categories by name
 const updateCategoryByNameAsync = async (req, res) => {
   const { name } = req.query;
-  const updateData = req.body;
+  const newCategoryData = req.body;
+  const checkCategoryNameResult = await CategoryService.getCategoryByNameAsync(newCategoryData.categoryName);
 
-  const result = await CategoryService.updateCategoryByNameAsync(
+  if (checkCategoryNameResult.isSuccess) {
+    return res.sendCommonValue({}, "Category name already exists", 0);
+  }
+
+  const updateCategoryResult = await CategoryService.updateCategoryByNameAsync(
     name,
-    updateData
+    newCategoryData
   );
 
-  if (result.isSuccess) {
-    res.sendCommonValue(result.data, "Category updated successfully", 1);
+  if (updateCategoryResult.isSuccess) {
+    res.sendCommonValue(updateCategoryResult.data, "Category updated successfully", 1);
   } else {
     res.sendCommonValue({}, "Failed to update category", 0);
   }
