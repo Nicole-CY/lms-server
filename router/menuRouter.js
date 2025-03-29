@@ -5,7 +5,7 @@ var router = express.Router();
 const { body, query, param } = require("express-validator");
 const { commonValidate } = require("../middleware/expressValidator");
 
-const menuController = require("../controller/menucontroller");
+const menuController = require("../controller/menuController");
 
 /**
  * @openapi

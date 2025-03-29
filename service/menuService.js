@@ -4,9 +4,9 @@ const logger = require("../common/logSetting");
 const createMenuAsync = async (menu) => {
   try {
     const newMenu = await Menu.create({
-      menu_name: menu.menuName,
-      parent_id: menu.parentId,
-      route_path: menu.routePath,
+      menuName: menu.menuName,
+      parentId: menu.parentId,
+      routePath: menu.routePath,
     });
 
     return { isSuccess: true, message: "", data: newMenu };

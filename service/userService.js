@@ -1,75 +1,21 @@
 const User = require("../models/user");
 const logger = require("../common/logSetting");
+const { Op } = require("sequelize");
 
-const getUserbyNameAsync = async (name) => {
+/**
+ * 获取用户列表（支持搜索 & 分页）
+ */
+const getUserListAsync = async (page = 1, pageSize = 10, search = "") => {
     try {
-        const user = await User.findOne({
-            where: { username: name },
-        });
+        const whereCondition = search
+            ? { username: { [Op.like]: `%${search}%` } } // 🔹 支持搜索
+            : {};
 
-        if (!user) {
-            return {
-                isSuccess: false,
-                message: "User not found",
-                data: { id: 0 },
-            };
-        }
-
-        return { isSuccess: true, message: "", data: user };
-    } catch (error) {
-        logger.error("getUserbyNameAsync error:", error);
-        return { isSuccess: false, message: "Server error", data: null };
-    }
-};
-
-const getUserbyEmailAsync = async (email) => {
-    try {
-        const user = await User.findOne({
-            where: { email: email },
-        });
-
-        if (!user) {
-            return {
-                isSuccess: false,
-                message: "User not found",
-                data: { id: 0 },
-            };
-        }
-
-        return { isSuccess: true, message: "", data: user };
-    } catch (error) {
-        logger.error("getUserbyEmailAsync error:", error);
-        return { isSuccess: false, message: "Server error", data: null };
-    }
-};
-
-const addUserAsync = async (user) => {
-    try {
-        const newUser = await User.create({
-            username: user.username,
-            password: user.password,
-            email: user.email,
-            address: user.address,
-            birthDate: user.birthDate,
-            gender: user.gender,
-            avatar: user.avatar,
-            active: user.active ?? true,
-            roles: user.roles || ["user"],
-        });
-
-        return { isSuccess: true, message: "", data: newUser };
-    } catch (error) {
-        logger.error("addUserAsync error:", error);
-        return { isSuccess: false, message: "Add user failed", data: null };
-    }
-};
-
-const getUserListAsync = async (page = 1, pageSize = 10) => {
-    try {
         const { count, rows } = await User.findAndCountAll({
+            where: whereCondition,
             limit: pageSize,
             offset: (page - 1) * pageSize,
-            attributes: { exclude: ["password"] },
+            attributes: { exclude: ["password"] }, // 🔹 避免返回敏感信息
         });
 
         return {
@@ -90,32 +36,156 @@ const getUserListAsync = async (page = 1, pageSize = 10) => {
     }
 };
 
-const delUserByIdAsync = async (idsString) => {
+/**
+ * 只获取 `Teacher` & `Student`（Admin 专用）
+ */
+const getFilteredUserListAsync = async (
+    page = 1,
+    pageSize = 10,
+    search = "",
+    allowedRoles = []
+) => {
     try {
-        const ids = idsString.split(",").map((id) => parseInt(id));
+        const whereCondition = {
+            roles: { [Op.overlap]: allowedRoles }, // 🔹 限制角色
+        };
 
-        const result = await User.destroy({
-            where: {
-                id: ids,
-            },
+        if (search) {
+            whereCondition.username = { [Op.like]: `%${search}%` };
+        }
+
+        const { count, rows } = await User.findAndCountAll({
+            where: whereCondition,
+            limit: pageSize,
+            offset: (page - 1) * pageSize,
+            attributes: { exclude: ["password"] },
         });
 
+        return {
+            isSuccess: true,
+            message: "",
+            data: {
+                items: rows,
+                total: count,
+            },
+        };
+    } catch (error) {
+        logger.error("getFilteredUserListAsync error:", error);
+        return {
+            isSuccess: false,
+            message: "Get filtered user list failed",
+            data: null,
+        };
+    }
+};
+
+/**
+ * 根据用户名获取用户
+ */
+const getUserbyNameAsync = async (name) => {
+    try {
+        const user = await User.findOne({ where: { username: name } });
+
+        if (!user) {
+            return {
+                isSuccess: false,
+                message: "User not found",
+                data: { id: 0 },
+            };
+        }
+
+        return { isSuccess: true, message: "", data: user };
+    } catch (error) {
+        logger.error("getUserbyNameAsync error:", error);
+        return { isSuccess: false, message: "Server error", data: null };
+    }
+};
+
+/**
+ * 根据邮箱获取用户
+ */
+const getUserbyEmailAsync = async (email) => {
+    try {
+        const user = await User.findOne({ where: { email } });
+
+        if (!user) {
+            return {
+                isSuccess: false,
+                message: "User not found",
+                data: { id: 0 },
+            };
+        }
+
+        return { isSuccess: true, message: "", data: user };
+    } catch (error) {
+        logger.error("getUserbyEmailAsync error:", error);
+        return { isSuccess: false, message: "Server error", data: null };
+    }
+};
+
+/**
+ * 创建用户
+ */
+const addUserAsync = async (user) => {
+    try {
+        const newUser = await User.create({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            password: user.password,
+            email: user.email,
+            address: user.address,
+            birthDate: user.birthDate,
+            gender: user.gender,
+            avatar: user.avatar,
+            active: user.active ?? true,
+            roles: user.roles || ["user"],
+        });
+
+        return { isSuccess: true, message: "", data: newUser };
+    } catch (error) {
+        logger.error("addUserAsync error:", error);
+        return { isSuccess: false, message: "Add user failed", data: null };
+    }
+};
+
+/**
+ * 根据 ID 删除用户
+ */
+const deleteUserByIdAsync = async (idsString) => {
+    try {
+        const ids = idsString.split(",").map((id) => parseInt(id));
+        const result = await User.destroy({ where: { id: ids } });
+
         if (result > 0) {
-            return { isSuccess: true, message: "Delete successful" };
+            return {
+                isSuccess: true,
+                message: "Delete successful",
+                data: null,
+            };
         }
 
         return { isSuccess: false, message: "Delete failed, no user found" };
     } catch (error) {
-        logger.error("delUserByIdAsync error:", error);
+        logger.error("deleteUserByIdAsync error:", error);
         return { isSuccess: false, message: "Delete failed", data: null };
     }
 };
 
-const uptUserByIdAsync = async (user) => {
+/**
+ * 更新用户信息
+ */
+const updateUserByIdAsync = async (user) => {
     try {
+        const existingUser = await User.findByPk(user.id);
+        if (!existingUser) {
+            return { isSuccess: false, message: "User not found", data: null };
+        }
+
         const result = await User.update(
             {
-                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                password: user.password,
                 email: user.email,
                 address: user.address,
                 birthDate: user.birthDate,
@@ -124,29 +194,26 @@ const uptUserByIdAsync = async (user) => {
                 active: user.active,
                 roles: user.roles,
             },
-            {
-                where: {
-                    id: user.id,
-                },
-            }
+            { where: { id: user.id } }
         );
 
         if (result[0] > 0) {
             return { isSuccess: true, message: "Update successful" };
         }
 
-        return { isSuccess: false, message: "Update failed, user not found" };
+        return { isSuccess: false, message: "Update failed" };
     } catch (error) {
         logger.error("uptUserByIdAsync error:", error);
         return { isSuccess: false, message: "Update failed", data: null };
     }
 };
 
+/**
+ * 检查用户名是否已存在
+ */
 const checkUserNameAsync = async (username, id) => {
     try {
-        const user = await User.findOne({
-            where: { username },
-        });
+        const user = await User.findOne({ where: { username } });
 
         if (user && user.id !== id) {
             return {
@@ -163,6 +230,9 @@ const checkUserNameAsync = async (username, id) => {
     }
 };
 
+/**
+ * 根据 ID 获取用户
+ */
 const getUserbyIdAsync = async (id) => {
     try {
         const user = await User.findByPk(id);
@@ -183,12 +253,13 @@ const getUserbyIdAsync = async (id) => {
 };
 
 module.exports = {
+    getUserListAsync,
+    getFilteredUserListAsync,
     getUserbyNameAsync,
     getUserbyEmailAsync,
     addUserAsync,
-    getUserListAsync,
-    delUserByIdAsync,
-    uptUserByIdAsync,
+    deleteUserByIdAsync,
+    updateUserByIdAsync,
     checkUserNameAsync,
     getUserbyIdAsync,
 };

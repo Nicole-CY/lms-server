@@ -66,7 +66,7 @@ const loginAsync = async (req, res) => {
 
 const registerAsync = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, firstName, lastName } = req.body;
 
     if (!email || !password) {
       return res.sendCommonValue({}, "email and password are required", 400, 400);
@@ -82,6 +82,8 @@ const registerAsync = async (req, res) => {
 
     const newUser = {
       email,
+      firstName,
+      lastName,
       password: hashedPassword,
       roles: ["user"],
     };

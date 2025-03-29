@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       menu_name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
       },
       parent_id: {
@@ -26,7 +26,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       route_path: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
       },
     });
