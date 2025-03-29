@@ -1,8 +1,8 @@
 const express = require("express");
 require("express-async-errors");
 const router = express.Router();
+
 const { commonValidate } = require("../middleware/expressValidator");
-const categoryController = require("../controller/Course/categoryController");
 const {getCategoryByNameValidator,
   getCategoryListValidator,
   addCategoryValidator,
@@ -11,7 +11,8 @@ const {getCategoryByNameValidator,
   updateCategoryByIdValidator,
   updateCategoryByNameValidator, } = require("../validator/categoryValidator")
 
-
+const categoryController = require("../controller/Course/categoryController");
+  
 /**
  * @openapi
  * '/api/categories/getCategory':
