@@ -1,4 +1,4 @@
-const { body, query, param } = require("express-validator");
+const { body, query, param, path } = require("express-validator");
 
 const getCategoryByNameValidator = [
   query("categoryName")
@@ -48,7 +48,7 @@ const getCategoryByIdValidator = [
 ];
 
 const updateCategoryByIdValidator = [
-  param("id")
+  query("id")
     .notEmpty().withMessage("Category ID is required")
     .isInt({ min: 1 }).withMessage("Category ID must be a valid integer"),
   body("categoryName")

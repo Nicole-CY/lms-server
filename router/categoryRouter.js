@@ -45,18 +45,18 @@ router.get(
 
 /**
  * @openapi
- * '/api/categories/{page}/{pageSize}':
+ * '/api/categories':
  *  get:
  *     tags:
  *     - Category Controller
  *     summary: Get all categories
  *     parameters:
  *       - name: page
- *         in: path
+ *         in: query
  *         description: page
  *         required: true
  *       - name: pageSize
- *         in: path
+ *         in: query
  *         description: pageSize
  *         required: true
  *     responses:
@@ -72,7 +72,7 @@ router.get(
  *        description: Server Error
  */
 router.get(
-  "/:page/:pageSize",
+  "/",
   commonValidate(getCategoryListValidator),
   categoryController.getCategoryListAsync
 );
@@ -91,31 +91,31 @@ router.get(
  *           schema:
  *            type: object
  *            required:
- *              - category_name
+ *              - categoryName
  *              - description
- *              - parent_id
- *              - created_at
- *              - updated_at
- *              - created_by
- *              - updated_by
- *              - icon_url
+ *              - parentId
+ *              - createdAt
+ *              - updatedAt
+ *              - createdBy
+ *              - updatedBy
+ *              - iconUrl
  *            properties:
- *              category_name:
+ *              categoryName:
  *                type: string
  *                example: Electronics
  *              description:
  *                type: string
  *                example: Category for electronic items
- *              parent_id:
+ *              parentId:
  *                type: integer
  *                example: 1
- *              created_by:
+ *              createdBy:
  *                type: integer
  *                example: 1
- *              updated_by:
+ *              updatedBy:
  *                type: integer
  *                example: 1
- *              icon_url:
+ *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
@@ -218,31 +218,31 @@ router.get(
  *            type: object
  *            required:
  *              - id
- *              - category_name
+ *              - categoryName
  *              - description
- *              - parent_id
- *              - created_at
- *              - updated_at
- *              - created_by
- *              - updated_by
- *              - icon_url
+ *              - parentId
+ *              - createdAt
+ *              - updatedAt
+ *              - createdBy
+ *              - updatedBy
+ *              - iconUrl
  *            properties:
- *              category_name:
+ *              categoryName:
  *                type: string
  *                example: Electronics
  *              description:
  *                type: string
  *                example: Category for electronic items
- *              parent_id:
+ *              parentId:
  *                type: integer
  *                example: 1
- *              created_by:
+ *              createdBy:
  *                type: integer
  *                example: 1
- *              updated_by:
+ *              updatedBy:
  *                type: integer
  *                example: 1
- *              icon_url:
+ *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
@@ -284,31 +284,31 @@ router.put(
  *           schema:
  *            type: object
  *            required:
- *              - category_name
+ *              - categoryName
  *              - description
- *              - parent_id
- *              - created_at
- *              - updated_at
- *              - created_by
- *              - updated_by
- *              - icon_url
+ *              - parentId
+ *              - createdAt
+ *              - updatedAt
+ *              - createdBy
+ *              - updatedBy
+ *              - iconUrl
  *            properties:
- *              category_name:
+ *              categoryName:
  *                type: string
  *                example: Electronics
  *              description:
  *                type: string
  *                example: Category for electronic items
- *              parent_id:
+ *              parentId:
  *                type: integer
  *                example: 1
- *              created_by:
+ *              createdBy:
  *                type: integer
  *                example: 1
- *              updated_by:
+ *              updatedBy:
  *                type: integer
  *                example: 1
- *              icon_url:
+ *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
