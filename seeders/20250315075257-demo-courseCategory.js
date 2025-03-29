@@ -2,26 +2,22 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-    async up(queryInterface, Sequelize) {
-        await queryInterface.bulkInsert(
-            'course_category',
-            [
-                {
-                    courseId: 1, // Associates with the first course
-                    categoryId: 101, // Example category id
-                },
-                {
-                    courseId: 1,
-                    categoryId: 102, // Another category for the first course
-                },
-                {
-                    courseId: 2,
-                    categoryId: 101, // First course category also assigned to the second course
-                },
-            ],
-            {}
-        );
-    },
+  async up (queryInterface, Sequelize) {
+    await queryInterface.bulkInsert("course_category", [
+      {
+        course_id: 1,  // Introduction to Node.js
+        category_id: 1  // Programming
+      },
+      {
+        course_id: 1,
+        category_id: 2  // Web Development
+      },
+      {
+        course_id: 2,  // Advanced Sequelize
+        category_id: 1  // Programming
+      }
+    ], {});
+  },
 
     async down(queryInterface, Sequelize) {
         await queryInterface.bulkDelete('course_category', null, {});
