@@ -326,39 +326,6 @@ router.put(
     commonValidate(updateCourseValidator),
     courseController.updateCourseAsync
   );
-
-/**
- * @openapi
- * '/api/courses/{id}':
- *  delete:
- *     tags:
- *       - Course Controller
- *     summary: Delete course
- *     description: Delete a single course by its id.
- *     # security:
- *     #   - BearerAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         description: The id of the course to delete.
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Course deleted successfully
- *       400:
- *         description: Bad Request
- *       404:
- *         description: Not Found
- *       500:
- *         description: Server Error
- */
-router.delete(
-    "/:id",
-    commonValidate(deleteCourseValidator),
-    courseController.deleteCourseAsync
-);
   
 /**
  * @openapi
@@ -392,9 +359,46 @@ router.delete(
  *       500:
  *         description: Server Error
  */
+
+// First: More specific route for bulk delete
 router.delete("/bulk",
     commonValidate(bulkDeleteCoursesValidator),
 courseController.bulkDeleteCoursesAsync);
+
+/**
+ * @openapi
+ * '/api/courses/{id}':
+ *  delete:
+ *     tags:
+ *       - Course Controller
+ *     summary: Delete course
+ *     description: Delete a single course by its id.
+ *     # security:
+ *     #   - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: The id of the course to delete.
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Course deleted successfully
+ *       400:
+ *         description: Bad Request
+ *       404:
+ *         description: Not Found
+ *       500:
+ *         description: Server Error
+ */
+
+// Then: Generic route for single course delete
+router.delete(
+    "/:id",
+    commonValidate(deleteCourseValidator),
+    courseController.deleteCourseAsync
+);
 
 module.exports = router;
 

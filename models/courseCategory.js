@@ -14,21 +14,24 @@ const CourseCategory = sequelize.define(
         courseId: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            field: "course_id",
         },
         categoryId: {
             type: DataTypes.INTEGER,
             allowNull: false,
-        },
-    },
-    {
-        tableName: 'course_category',
-        timestamps: false,
+            field: "category_id",
+        }
+    },{
+        tableName: "course_category",
+        timestamps: true,
+        createdAt: "created_at",
+        updatedAt: "updated_at",
     }
 );
 
-CourseCategory.associate = function (models) {
-    CourseCategory.belongsTo(models.Course, { foreignKey: 'courseId', onDelete: 'CASCADE' });
-    CourseCategory.belongsTo(models.category, { foreignKey: 'categoryId', onDelete: 'CASCADE' });
+CourseCategory.associate = function(models){
+    CourseCategory.belongsTo(models.Course, {foreignKey: "course_id", onDelete: "CASCADE"});
+    CourseCategory.belongsTo(models.Category, {foreignKey:"category_id", onDelete: "CASCADE"});
 };
 
 module.exports = CourseCategory;

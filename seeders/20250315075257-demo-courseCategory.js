@@ -2,29 +2,21 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert(
-      "course_category",
-      [
-        {
-          courseId: 1, // "Introduction to Node.js"
-          categoryId: 8, // "Node.js"
-        },
-        {
-          courseId: 1,
-          categoryId: 6, // "JavaScript"
-        },
-        {
-          courseId: 2, // "Advanced Sequelize"
-          categoryId: 1, // "Programming"
-        },
-        {
-          courseId: 2,
-          categoryId: 4, // "Data Science"
-        },
-      ],
-      {}
-    );
+  async up (queryInterface, Sequelize) {
+    await queryInterface.bulkInsert("course_category", [
+      {
+        course_id: 1,  // Introduction to Node.js
+        category_id: 1  // Programming
+      },
+      {
+        course_id: 1,
+        category_id: 2  // Web Development
+      },
+      {
+        course_id: 2,  // Advanced Sequelize
+        category_id: 1  // Programming
+      }
+    ], {});
   },
 
   async down(queryInterface, Sequelize) {
