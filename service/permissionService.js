@@ -1,8 +1,5 @@
 const Permission = require("../models/permission");
-const logger = require("../common/logSetting");
 const { getPaginatedResults } = require("../utils/pagination");
-
-const Permission = require('../models/permission');
 const logger = require('../common/logSetting');
 const pagination = require('../utils/pagination');
 

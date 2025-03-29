@@ -156,6 +156,44 @@ const updateCategoryByNameAsync = async (name, updateData) => {
   }
 };
 
+// Get category tree
+const getCategoryTreeAsync = async () => {
+  try {
+    const categories = await Category.findAll();
+
+    const categoryTree = createCategoryTree(categories);
+
+    console.log("categoryTree", categoryTree)
+    return { isSuccess: true, message: "", data: categoryTree };
+  } catch (error) {
+    logger.error("getCategoryByNameAsync error:", error);
+    return { isSuccess: false, message: "Server error", data: null };
+  }
+}
+
+const createCategoryTree = (categories, parentId = null) => {
+  const tree = [];
+
+  if (categories.length === 0) return tree;
+
+  categories.filter(
+    category => category.parentId === parentId
+  ).forEach(category => {
+    const children = createCategoryTree(categories, category.id);
+    const newCategory = {
+      id: category.id,
+      categoryName: category.categoryName,
+      children: []
+    }
+    if (children.length) {
+      newCategory.children = children;
+    }
+    tree.push(newCategory);
+  })
+
+  return tree;
+}
+
 module.exports = {
   getCategoryByNameAsync,
   getCategoryListAsync,
@@ -164,4 +202,5 @@ module.exports = {
   getCategoryByIdAsync,
   updateCategoryByIdAsync,
   updateCategoryByNameAsync,
+  getCategoryTreeAsync
 };

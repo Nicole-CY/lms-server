@@ -9,7 +9,8 @@
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage",
         "reset-db": "sequelize-cli db:migrate:undo:all &&  sequelize-cli db:seed:undo:all  && sequelize-cli db:migrate && sequelize-cli db:seed:all",
-        "init-db": "sequelize-cli db:migrate && sequelize-cli db:seed:all"
+        "init-db": "sequelize-cli db:migrate && sequelize-cli db:seed:all",
+        "dev": "nodemon server.js"
     },
     "keywords": [],
     "author": "",

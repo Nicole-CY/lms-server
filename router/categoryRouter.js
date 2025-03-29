@@ -329,4 +329,29 @@ router.put(
   categoryController.updateCategoryByNameAsync
 );
 
+/**
+ * @openapi
+ * '/api/categories/getCategoryTree':
+ *  get:
+ *     tags:
+ *     - Category Controller
+ *     summary: Get category tree obj
+ *     responses:
+ *      200:
+ *        description: Fetched Successfully
+ *      400:
+ *        description: Bad Request
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Not Found
+ *      500:
+ *        description: Server Error
+ */
+router.get(
+  "/getCategoryTree",
+  commonValidate([]),
+  categoryController.getCategoryTreeAsync
+);
+
 module.exports = router;
