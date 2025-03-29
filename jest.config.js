@@ -2,7 +2,7 @@ module.exports = {
     testEnvironment: 'node',
     verbose: true,
     clearMocks: true,
-    testMatch: ['**/test/**/*.(test|spec).js'],
+    testMatch: ['**/test/**/*.{test,spec}.js'],
     collectCoverage: true,
     collectCoverageFrom: [
         '!**/node_modules/**',
