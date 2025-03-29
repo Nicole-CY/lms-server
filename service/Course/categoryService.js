@@ -182,7 +182,7 @@ const createCategoryTree = (categories, parentId = null) => {
     const children = createCategoryTree(categories, category.id);
     const newCategory = {
       id: category.id,
-      categoryName: category.categoryName,
+      label: category.categoryName,
       children: []
     }
     if (children.length) {
