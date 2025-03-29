@@ -1,8 +1,9 @@
-const { DataTypes } = require("sequelize");
-const { sequelize } = require("../db/sequelizedb");
+const { DataTypes } = require('sequelize');
+
+const { sequelize } = require('../db/sequelizedb');
 
 const User = sequelize.define(
-    "User",
+    'User',
     {
         // Model attributes are defined here
         id: {
@@ -13,12 +14,12 @@ const User = sequelize.define(
         },
         firstName: {
             type: DataTypes.STRING(255),
-            field: "first_name",
+            field: 'first_name',
             allowNull: true,
         },
         lastName: {
             type: DataTypes.STRING(255),
-            field: "last_name",
+            field: 'last_name',
             allowNull: true,
         },
         email: {
@@ -36,7 +37,7 @@ const User = sequelize.define(
         },
         birthDate: {
             type: DataTypes.DATEONLY,
-            field: "birth_date",
+            field: 'birth_date',
             allowNull: true,
         },
         password: {
@@ -60,9 +61,9 @@ const User = sequelize.define(
     },
     {
         timestamps: true,
-        createdAt: "created_at",
-        updatedAt: "updated_at",
-        tableName: "user",
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+        tableName: 'user',
     }
 );
 

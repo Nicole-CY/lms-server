@@ -1,10 +1,10 @@
-const express = require("express");
-require("express-async-errors");
+const express = require('express');
+require('express-async-errors');
 const router = express.Router();
-const { body, param, query } = require("express-validator");
-const { commonValidate } = require("../middleware/expressValidator");
+const { body, param, query } = require('express-validator');
 
-const permissionController = require("../controller/permissionController");
+const { commonValidate } = require('../middleware/expressValidator');
+const permissionController = require('../controller/permissionController');
 
 /**
  * @openapi
@@ -43,10 +43,8 @@ const permissionController = require("../controller/permissionController");
  *        description: Server Error
  */
 router.post(
-    "",
-    commonValidate([
-        body("name").notEmpty().withMessage("Permission name is required"),
-    ]),
+    '',
+    commonValidate([body('name').notEmpty().withMessage('Permission name is required')]),
     permissionController.addPermissionAsync
 );
 
@@ -85,10 +83,10 @@ router.post(
  *        description: Server Error
  */
 router.get(
-    "/",
+    '/',
     commonValidate([
-        query("page").notEmpty().isInt({ min: 1 }),
-        query("pageSize").notEmpty().isInt({ min: 1 }),
+        query('page').notEmpty().isInt({ min: 1 }),
+        query('pageSize').notEmpty().isInt({ min: 1 }),
     ]),
     permissionController.getPermissionListAsync
 );
@@ -134,10 +132,10 @@ router.get(
  *        description: Server Error
  */
 router.put(
-    "",
+    '',
     commonValidate([
-        body("id").notEmpty().isInt({ min: 1 }),
-        body("name").notEmpty().withMessage("Permission name is required"),
+        body('id').notEmpty().isInt({ min: 1 }),
+        body('name').notEmpty().withMessage('Permission name is required'),
     ]),
     permissionController.updatePermissionAsync
 );
@@ -167,10 +165,8 @@ router.put(
  *        description: Server Error
  */
 router.get(
-    "/getPermissionById",
-    commonValidate([
-        query("id").notEmpty().isInt({ min: 1 }).withMessage("Valid ID required"),
-    ]),
+    '/getPermissionById',
+    commonValidate([query('id').notEmpty().isInt({ min: 1 }).withMessage('Valid ID required')]),
     permissionController.getPermissionByIdAsync
 );
 
