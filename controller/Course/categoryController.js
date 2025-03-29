@@ -29,17 +29,16 @@ const getCategoryListAsync = async (req, res) => {
 // Add categories
 const addCategoryAsync = async (req, res) => {
   const { categoryName } = req.body;
+  const checkCategoryNameResult = await CategoryService.getCategoryByNameAsync(categoryName);
 
-  const dbResult = await CategoryService.getCategoryByNameAsync(categoryName);
-
-  if (dbResult.isSuccess) {
+  if (checkCategoryNameResult.isSuccess) {
     return res.sendCommonValue({}, "Category name already exists", 0);
   }
 
-  const result = await CategoryService.addCategoryAsync(req.body);
+  const addCategoryResult = await CategoryService.addCategoryAsync(req.body);
 
-  if (result.isSuccess) {
-    res.sendCommonValue(result.data, "Category added successfully", 1);
+  if (addCategoryResult.isSuccess) {
+    res.sendCommonValue(addCategoryResult.data, "Category added successfully", 1);
   } else {
     res.sendCommonValue({}, "Failed to add category", 0);
   }
@@ -73,11 +72,16 @@ const getCategoryByIdAsync = async (req, res) => {
 // Update categories by id
 const updateCategoryByIdAsync = async (req, res) => {
   const id = parseInt(req.query.id, 10);
-  const updateData = req.body;
+  const newCategoryData = req.body;
+  const checkCategoryNameResult = await CategoryService.getCategoryByNameAsync(newCategoryData.category_name);
 
-  const result = await CategoryService.updateCategoryByIdAsync(id, updateData);
+  if (checkCategoryNameResult.isSuccess) {
+    return res.sendCommonValue({}, "Category name already exists", 0);
+  }
 
-  if (result.isSuccess) {
+  const updateCategoryResult = await CategoryService.updateCategoryByIdAsync(id, newCategoryData);
+
+  if (updateCategoryResult.isSuccess) {
     res.sendCommonValue(result.data, "Category updated successfully", 1);
   } else {
     res.sendCommonValue({}, "Failed to update category", 0);
@@ -87,15 +91,20 @@ const updateCategoryByIdAsync = async (req, res) => {
 // Update categories by name
 const updateCategoryByNameAsync = async (req, res) => {
   const { name } = req.query;
-  const updateData = req.body;
+  const newCategoryData = req.body;
+  const checkCategoryNameResult = await CategoryService.getCategoryByNameAsync(newCategoryData.category_name);
 
-  const result = await CategoryService.updateCategoryByNameAsync(
+  if (checkCategoryNameResult.isSuccess) {
+    return res.sendCommonValue({}, "Category name already exists", 0);
+  }
+
+  const updateCategoryResult = await CategoryService.updateCategoryByNameAsync(
     name,
-    updateData
+    newCategoryData
   );
 
-  if (result.isSuccess) {
-    res.sendCommonValue(result.data, "Category updated successfully", 1);
+  if (updateCategoryResult.isSuccess) {
+    res.sendCommonValue(updateCategoryResult.data, "Category updated successfully", 1);
   } else {
     res.sendCommonValue({}, "Failed to update category", 0);
   }

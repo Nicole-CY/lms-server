@@ -1,10 +1,16 @@
 const express = require("express");
 require("express-async-errors");
 const router = express.Router();
-
-const { body, query, param } = require("express-validator");
 const { commonValidate } = require("../middleware/expressValidator");
 const categoryController = require("../controller/Course/categoryController");
+const {getCategoryByNameValidator,
+  getCategoryListValidator,
+  addCategoryValidator,
+  deleteCategoryByIdValidator,
+  getCategoryByIdValidator,
+  updateCategoryByIdValidator,
+  updateCategoryByNameValidator, } = require("../validator/categoryValidator")
+
 
 /**
  * @openapi
@@ -14,7 +20,7 @@ const categoryController = require("../controller/Course/categoryController");
  *     - Category Controller
  *     summary: Get a category by name
  *     parameters:
- *      - name: category_name
+ *      - name: categoryName
  *        in: query
  *        description: Name of the category to retrieve
  *        required: true
@@ -32,9 +38,7 @@ const categoryController = require("../controller/Course/categoryController");
  */
 router.get(
   "/getCategory",
-  commonValidate([
-    query("categoryname").notEmpty().withMessage("Category name is required"),
-  ]),
+  commonValidate(getCategoryByNameValidator),
   categoryController.getCategoryByNameAsync
 );
 
@@ -68,16 +72,7 @@ router.get(
  */
 router.get(
   "/:page/:pageSize",
-  commonValidate([
-    param("page")
-      .notEmpty()
-      .isInt({ allow_leading_zeroes: false, min: 1 })
-      .withMessage("Not a valid page"),
-    param("pageSize")
-      .notEmpty()
-      .isInt({ allow_leading_zeroes: false, min: 1 })
-      .withMessage("Not a valid page size"),
-  ]),
+  commonValidate(getCategoryListValidator),
   categoryController.getCategoryListAsync
 );
 
@@ -136,30 +131,19 @@ router.get(
  */
 router.post(
   "/",
-  commonValidate([
-    body("categoryName").notEmpty().withMessage("category name is required"),
-    body("description").notEmpty().withMessage("description is required"),
-    body("parentId")
-      .optional()
-      .isInt()
-      .withMessage("parentId must be an integer"),
-    body("iconUrl")
-      .optional()
-      .isURL()
-      .withMessage("iconUrl must be a valid URL"),  
-  ]),
+  commonValidate(addCategoryValidator),
   categoryController.addCategoryAsync
 );
 
 /**
  * @openapi
- * '/api/categories/{ids}':
+ * '/api/categories/{id}':
  *  delete:
  *     tags:
  *     - Category Controller
  *     summary: Delete a category by Id
  *     parameters:
- *      - name: ids
+ *      - name: id
  *        in: path
  *        description: The id of the category
  *        required: true
@@ -176,8 +160,8 @@ router.post(
  *        description: Server Error
  */
 router.delete(
-  "/:ids",
-  param([param("ids").notEmpty().withMessage("Not a valid id")]),
+  "/:id",
+  commonValidate(deleteCategoryByIdValidator),
   categoryController.deleteCategoryByIdAsync
 );
 
@@ -207,7 +191,7 @@ router.delete(
  */
 router.get(
   "/getCategoriesById",
-  commonValidate([query("id").notEmpty().withMessage("Not a valid id")]),
+  commonValidate(getCategoryByIdValidator),
   categoryController.getCategoryByIdAsync
 );
 
@@ -274,7 +258,7 @@ router.get(
  */
 router.put(
   "/updateCategoriesById",
-  commonValidate([query("id").notEmpty().withMessage("Not a valid id")]),
+  commonValidate(updateCategoryByIdValidator),
   categoryController.updateCategoryByIdAsync
 );
 
@@ -340,9 +324,7 @@ router.put(
  */
 router.put(
   "/updateCategoriesByName",
-  commonValidate([
-    body("categoryName").notEmpty().withMessage("Not a valid categoryName"),
-  ]),
+  commonValidate(updateCategoryByNameValidator),
   categoryController.updateCategoryByNameAsync
 );
 
