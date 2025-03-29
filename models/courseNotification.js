@@ -45,7 +45,7 @@ const CourseNotification = sequelize.define(
 
     },
     {
-        tableName: "courseNotification",
+        tableName: "course_notification",
         timestamps: false,
         updatedAt: 'updated_at',
     }

@@ -44,7 +44,7 @@ const CourseOffering = sequelize.define(
         },
     },
     {
-        tableName: "courseOffering",
+        tableName: "course_offering",
         timestamps: false,
         createdAt: 'created_at',
         updatedAt: 'updated_at',
