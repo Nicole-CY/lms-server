@@ -14,7 +14,7 @@ const CourseOffering = sequelize.define(
         courseInstanceId: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            field: "course_instance_id",
+            field: 'course_instance_id',
             references: {
                 model: 'course_instance',
                 key: 'id',
@@ -23,7 +23,7 @@ const CourseOffering = sequelize.define(
         teacherId: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            field: "teacher_id",
+            field: 'teacher_id',
             references: {
                 model: 'user',
                 key: 'id',
@@ -31,12 +31,12 @@ const CourseOffering = sequelize.define(
         },
         startDate: {
             type: DataTypes.DATE,
-            field: "start_date",
+            field: 'start_date',
             allowNull: false,
         },
         studentCapacity: {
             type: DataTypes.INTEGER,
-            field: "student_capacity",
+            field: 'student_capacity',
             allowNull: false,
         },
         status: {
