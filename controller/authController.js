@@ -8,6 +8,16 @@ const { jwtConfig } = require('../appConfig');
 const userService = require('../service/userService');
 const { bcryptConfig } = require('../appConfig');
 
+/**
+ * Handles user login.
+ * Verifies email and password, generates JWT and CSRF tokens, and sets cookies.
+ *
+ * @async
+ * @function loginAsync
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 const loginAsync = async (req, res) => {
     try {
         const email = req.body.email;
@@ -66,6 +76,16 @@ const loginAsync = async (req, res) => {
     }
 };
 
+/**
+ * Handles user registration.
+ * Validates input, hashes password, stores user in DB, and returns status.
+ *
+ * @async
+ * @function registerAsync
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 const registerAsync = async (req, res) => {
     try {
         const { email, password, firstName, lastName } = req.body;
@@ -112,6 +132,15 @@ const registerAsync = async (req, res) => {
     }
 };
 
+/**
+ * Retrieves the currently authenticated user's information.
+ *
+ * @async
+ * @function meAsync
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 const meAsync = async (req, res) => {
     try {
         const user = req.auth;

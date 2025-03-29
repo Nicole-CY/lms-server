@@ -24,7 +24,6 @@ const getPermissionListAsync = async (page = 1, pageSize = 10, search = '') => {
     }
 };
 
-// 通过ID获取权限
 const getPermissionByIdAsync = async id => {
     try {
         const permission = await Permission.findByPk(id);
@@ -48,7 +47,6 @@ const getPermissionByIdAsync = async id => {
     }
 };
 
-// 通过名称查找权限（用于检查唯一性）
 const getPermissionByNameAsync = async name => {
     try {
         const permission = await Permission.findOne({
@@ -74,7 +72,6 @@ const getPermissionByNameAsync = async name => {
     }
 };
 
-// 添加权限
 const addPermissionAsync = async permission => {
     try {
         const newPermission = await Permission.create({
@@ -93,7 +90,6 @@ const addPermissionAsync = async permission => {
     }
 };
 
-// 更新权限
 const uptPermissionByIdAsync = async permission => {
     try {
         const result = await Permission.update(
@@ -119,7 +115,6 @@ const uptPermissionByIdAsync = async permission => {
     }
 };
 
-// 检查权限名是否存在（可用于更新时检查冲突）
 const checkPermissionNameAsync = async (name, id) => {
     try {
         const permission = await Permission.findOne({
