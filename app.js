@@ -96,4 +96,8 @@ app.use('/api/permissions', permissionRouter);
 const erorhandle = require('./middleware/errorHandling');
 app.use(erorhandle.errorHandling);
 
-module.exports = app;
+const port = appConfig.serverConfig.port;
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server is running on port ${port},http://localhost:${port}`);
+    console.log(`Swagger is running on http://localhost:${port}/api-docs/`);
+});
