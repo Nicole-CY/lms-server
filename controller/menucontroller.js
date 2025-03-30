@@ -1,4 +1,4 @@
-const menuService = require('../service/menuService');
+const menuService = require("../service/menuService");
 
 /**
  * create a new menu
@@ -24,9 +24,9 @@ const createMenuAsync = async (req, res) => {
 
     let result = await menuService.createMenuAsync(menu);
     if (result.isSuccess) {
-        res.sendCommonValue(result.data, 'success', 1);
+        res.sendCommonValue(result.data, "success", 1);
     } else {
-        res.sendCommonValue({}, 'Create menu failed', 0);
+        res.sendCommonValue({}, "Create menu failed", 0);
     }
 };
 
