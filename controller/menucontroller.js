@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 const menuService = require("../service/menuService");
-=======
-const menuService = require('../service/menuService');
->>>>>>> dev
 
 /**
  * create a new menu
@@ -10,19 +6,6 @@ const menuService = require('../service/menuService');
  * @param {*} res
  */
 const createMenuAsync = async (req, res) => {
-<<<<<<< HEAD
-  let menu = {};
-  menu.menuName = req.body.menuName;
-  menu.parentId = req.body.parentId;
-  menu.routePath = req.body.routePath;
-
-  let result = await menuService.createMenuAsync(menu);
-  if (result.isSuccess) {
-    res.sendCommonValue(result.data, "success", 1);
-  } else {
-    res.sendCommonValue({}, "Create menu failed", 0);
-  }
-=======
     const parentId = req.body.parentId;
 
     // check if parent ID exist
@@ -41,11 +24,10 @@ const createMenuAsync = async (req, res) => {
 
     let result = await menuService.createMenuAsync(menu);
     if (result.isSuccess) {
-        res.sendCommonValue(result.data, 'success', 1);
+        res.sendCommonValue(result.data, "success", 1);
     } else {
-        res.sendCommonValue({}, 'Create menu failed', 0);
+        res.sendCommonValue({}, "Create menu failed", 0);
     }
->>>>>>> dev
 };
 
 /**
@@ -54,19 +36,6 @@ const createMenuAsync = async (req, res) => {
  * @param {*} res
  */
 const getMenuAsync = async (req, res) => {
-<<<<<<< HEAD
-  let result = await menuService.getMenuAsync();
-  if (result.isSuccess) {
-    res.sendCommonValue(result.data, "success", 1);
-  } else {
-    res.sendCommonValue({}, "Get menu failed", 0);
-  }
-};
-
-module.exports = {
-  createMenuAsync,
-  getMenuAsync,
-=======
     let result = await menuService.getMenuAsync();
     if (result.isSuccess) {
         res.sendCommonValue(result.data, 'success', 1);
@@ -78,5 +47,4 @@ module.exports = {
 module.exports = {
     createMenuAsync,
     getMenuAsync,
->>>>>>> dev
 };
