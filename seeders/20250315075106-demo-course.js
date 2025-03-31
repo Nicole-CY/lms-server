@@ -3,103 +3,131 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert(
-      "course",
-      [
-        {
-          id: 1,
-          title: "Introduction to Node.js",
-          course_code: "NODE101",
-          cover_image: "node101.jpg",
-          description: "Learn the basics of Node.js, from setting up a server to building basic APIs.",
-          created_at: new Date(),
-          updated_at: new Date(),
-          created_by: 1,
-          updated_by: 1,
-        },
-        {
-          id: 2,
-          title: "Advanced Sequelize",
-          course_code: "SEQL202",
-          cover_image: "sequelize.jpg",
-          description: "Master Sequelize ORM for advanced database handling, including associations and migrations.",
-          created_at: new Date(),
-          updated_at: new Date(),
-          created_by: 1,
-          updated_by: 1,
-        },
-        {
-          id: 3,
-          title: "React for Beginners",
-          course_code: "REACT101",
-          cover_image: "react101.jpg",
-          description: "A beginner-friendly course that teaches you how to build interactive UIs with React.",
-          created_at: new Date(),
-          updated_at: new Date(),
-          created_by: 1,
-          updated_by: 1,
-        },
-        {
-          id: 4,
-          title: "Database Design with MySQL",
-          course_code: "DBDES301",
-          cover_image: "mysql.jpg",
-          description: "Learn the principles of database design and how to optimize queries in MySQL.",
-          created_at: new Date(),
-          updated_at: new Date(),
-          created_by: 1,
-          updated_by: 1,
-        },
-        {
-          id: 5,
-          title: "Introduction to Python",
-          course_code: "PY101",
-          cover_image: "python101.jpg",
-          description: "Start learning Python, one of the most popular programming languages in the world.",
-          created_at: new Date(),
-          updated_at: new Date(),
-          created_by: 1,
-          updated_by: 1,
-        },
-        {
-          id: 6,
-          title: "Web Development with Django",
-          course_code: "DJANGO202",
-          cover_image: "django.jpg",
-          description: "Learn to build robust and scalable web applications using the Django framework in Python.",
-          created_at: new Date(),
-          updated_at: new Date(),
-          created_by: 1,
-          updated_by: 1,
-        },
-        {
-          id: 7,
-          title: "Understanding Machine Learning",
-          course_code: "ML101",
-          cover_image: "ml101.jpg",
-          description: "An introductory course to machine learning concepts and algorithms using Python.",
-          created_at: new Date(),
-          updated_at: new Date(),
-          created_by: 1,
-          updated_by: 1,
-        },
-        {
-          id: 8,
-          title: "Building RESTful APIs with Express",
-          course_code: "EXPRESS301",
-          cover_image: "express.jpg",
-          description: "Learn how to build scalable RESTful APIs using Express.js and Node.js.",
-          created_at: new Date(),
-          updated_at: new Date(),
-          created_by: 1,
-          updated_by: 1,
-        },
-      ],
-      {}
-    );
+    // Start transaction
+    const transaction = await queryInterface.sequelize.transaction();
+    
+    try {
+      await queryInterface.bulkInsert(
+        "course",
+        [
+          // Programming - JavaScript courses
+          {
+            id: 1,
+            title: "JavaScript Fundamentals",
+            course_code: "JS101",
+            cover_image: "javascript_basics.jpg",
+            description: "Learn the basics of JavaScript programming language including syntax, variables, and functions",
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: 1,
+            updated_by: 1,
+          },
+          {
+            id: 2,
+            title: "React.js for Beginners",
+            course_code: "REACT101",
+            cover_image: "react_basics.jpg",
+            description: "Build modern user interfaces with React.js - components, state management, and hooks",
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: 1,
+            updated_by: 1,
+          },
+          {
+            id: 3,
+            title: "Node.js Backend Development",
+            course_code: "NODE101",
+            cover_image: "node_basics.jpg",
+            description: "Create powerful backend applications with Node.js - RESTful APIs, database integration, and authentication",
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: 1,
+            updated_by: 1,
+          },
+          
+          // Programming - Python/Data Science courses
+          {
+            id: 4,
+            title: "Python for Data Science",
+            course_code: "PYDS101",
+            cover_image: "python_ds.jpg",
+            description: "Learn Python for data analysis and machine learning with pandas, numpy, and scikit-learn",
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: 1,
+            updated_by: 1,
+          },
+          {
+            id: 5,
+            title: "Mobile App Development with React Native",
+            course_code: "RN101",
+            cover_image: "react_native.jpg",
+            description: "Build cross-platform mobile apps with React Native for iOS and Android",
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: 1,
+            updated_by: 1,
+          },
+          
+          // Specialized technology courses
+          {
+            id: 6,
+            title: "Cloud Computing with AWS",
+            course_code: "AWS101",
+            cover_image: "aws_basics.jpg",
+            description: "Master cloud services with Amazon Web Services - EC2, S3, Lambda, and more",
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: 1,
+            updated_by: 1,
+          },
+          {
+            id: 7,
+            title: "Cyber Security Fundamentals",
+            course_code: "SEC101",
+            cover_image: "security_basics.jpg",
+            description: "Learn the basics of cyber security including threat assessment, encryption, and ethical hacking",
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: 1,
+            updated_by: 1,
+          },
+          {
+            id: 8,
+            title: "DevOps with Docker and Kubernetes",
+            course_code: "DEVOPS101",
+            cover_image: "devops_basics.jpg",
+            description: "Master containerization and orchestration for DevOps workflows with Docker and Kubernetes",
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: 1,
+            updated_by: 1,
+          },
+        ],
+        { transaction }
+      );
+      
+      // Commit the transaction
+      await transaction.commit();
+      
+    } catch (error) {
+      // If any error occurs, rollback the transaction
+      await transaction.rollback();
+      console.error("Error seeding courses:", error);
+      throw error;
+    }
   },
 
-    async down(queryInterface, Sequelize) {
-        await queryInterface.bulkDelete('course', null, {});
-    },
+  async down(queryInterface, Sequelize) {
+    const transaction = await queryInterface.sequelize.transaction();
+    
+    try {
+      await queryInterface.bulkDelete("course", null, { transaction });
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+      console.error("Error rolling back courses:", error);
+      throw error;
+    }
+  }
 };

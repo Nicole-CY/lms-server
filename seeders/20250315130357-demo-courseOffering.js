@@ -9,21 +9,23 @@ module.exports = {
         id: 1,
         course_instance_id: 1,
         teacher_id: 1,
-        start_date: new Date("2025-04-01"),
-        student_capacity: 50,
+        max_students: 50,
         status: "Active",
         created_at: new Date(),
         updated_at: new Date(),
+        created_by: 1,
+        updated_by: 1
       },
       {
         id: 2,
         course_instance_id: 2,
         teacher_id: 2,
-        start_date: new Date("2025-06-15"),
-        student_capacity: 30,
+        max_students: 30,
         status: "Pending Start",
         created_at: new Date(),
         updated_at: new Date(),
+        created_by: 1,
+        updated_by: 1
       },
     ]);
   },
