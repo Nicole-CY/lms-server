@@ -3,53 +3,68 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable("courseInstance", {
+    await queryInterface.createTable("course_instance", {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      courseId: {
+      course_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: "course",
+          key: "id"
+        },
+        onDelete: "CASCADE"
       },
-      startDate: {
+      start_date: {
         type: Sequelize.DATE,
         allowNull: true,
       },
-      endDate: {
+      end_date: {
         type: Sequelize.DATE,
         allowNull: true,
       },
-      totalSessions: {
+      total_sessions: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
-      launchStatus: {
+      launch_status: {
         type: Sequelize.ENUM("Scheduled", "In Progress", "Completed", "Cancelled"),
         allowNull: true,
       },
-      createdAt: {
+      created_at: {
+        allowNull: false,
         type: Sequelize.DATE,
-        allowNull: true,
-      },
-      updatedAt: {
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+    },
+      updated_at: {
+        allowNull: false,
         type: Sequelize.DATE,
-        allowNull: true,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+    },
+    created_by: {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "user",
+        key: "id",
       },
-      createdBy: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
+      onDelete: "CASCADE",
+    },
+    updated_by: {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "user",
+        key: "id",
       },
-      updatedBy: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
+      onDelete: "CASCADE",
+    },
     });
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable("courseInstance");
-  }
+    async down(queryInterface, Sequelize) {
+        await queryInterface.dropTable('course_instance');
+    },
 };

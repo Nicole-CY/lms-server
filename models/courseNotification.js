@@ -1,8 +1,9 @@
-const { DataTypes } = require("sequelize");
-const { sequelize } = require("../db/sequelizedb");
+const { DataTypes } = require('sequelize');
+
+const { sequelize } = require('../db/sequelizedb');
 
 const CourseNotification = sequelize.define(
-    "CourseNotification",
+    'CourseNotification',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -10,20 +11,22 @@ const CourseNotification = sequelize.define(
             autoIncrement: true,
             allowNull: false,
         },
-        recipient_id: {
+        recipientId: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            field: "recipient_id",
             references: {
-                model: "User",
-                key: "id",
+                model: 'user',
+                key: 'id',
             },
         },
-        course_offering_id: {
+        courseOfferingId: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            field: "course_offering_id",
             references: {
-                model: "CourseOffering",
-                key: "id",
+                model: 'course_offering',
+                key: 'id',
             },
         },
         message: {
@@ -31,18 +34,21 @@ const CourseNotification = sequelize.define(
             allowNull: false,
         },
         status: {
-            type: DataTypes.ENUM("Unread", "Read"),
+            type: DataTypes.ENUM('Unread', 'Read'),
             allowNull: false,
         },
-        created_at: {
+        createdAt: {
             type: DataTypes.DATE,
             allowNull: false,
+            field: "created_at",
             defaultValue: DataTypes.NOW,
         },
+
     },
     {
-        tableName: "CourseNotification",
+        tableName: 'course_notification',
         timestamps: false,
+        updatedAt: 'updated_at',
     }
 );
 

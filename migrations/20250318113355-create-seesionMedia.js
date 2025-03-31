@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable("media", {
+        await queryInterface.createTable('media', {
             id: {
                 type: Sequelize.INTEGER,
                 primaryKey: true,
@@ -14,13 +14,13 @@ module.exports = {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "session",
-                    key: "id",
+                    model: 'session',
+                    key: 'id',
                 },
-                onDelete: "CASCADE",
+                onDelete: 'CASCADE',
             },
             file_type: {
-                type: Sequelize.ENUM("video", "pdf"),
+                type: Sequelize.ENUM('video', 'pdf'),
                 allowNull: false,
             },
             file_name: {
@@ -39,25 +39,25 @@ module.exports = {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
-                    model: "user",
-                    key: "id",
+                    model: 'user',
+                    key: 'id',
                 },
-                onDelete: "CASCADE",
+                onDelete: 'CASCADE',
             },
             uploaded_at: {
                 type: Sequelize.DATE,
                 allowNull: false,
-                defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
             approval_status: {
-                type: Sequelize.ENUM("Pending", "Approved", "Rejected"),
+                type: Sequelize.ENUM('Pending', 'Approved', 'Rejected'),
                 allowNull: false,
-                defaultValue: "Pending",
+                defaultValue: 'Pending',
             },
         });
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable("media");
+        await queryInterface.dropTable('media');
     },
 };

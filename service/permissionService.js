@@ -1,12 +1,13 @@
 const Permission = require("../models/permission");
-const logger = require("../common/logSetting");
 const { getPaginatedResults } = require("../utils/pagination");
+const logger = require('../common/logSetting');
+const pagination = require('../utils/pagination');
 
-const getPermissionListAsync = async (page = 1, pageSize = 10, search = "") => {
+const getPermissionListAsync = async (page = 1, pageSize = 10, search = '') => {
     try {
         const where = search ? { permissionName: { [Op.like]: `%${search}%` } } : {};
 
-        const result = await getPaginatedResults(Permission, {
+        const result = await pagination.getPaginatedResults(Permission, {
             page,
             pageSize,
             where,

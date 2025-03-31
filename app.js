@@ -1,11 +1,13 @@
-require("dotenv").config();
-const express = require("express");
-const cookieParser = require("cookie-parser");
+require('dotenv').config();
+const express = require('express');
+const cookieParser = require('cookie-parser');
 
 const app = express();
-const appConfig = require("./appConfig");
+const cors = require('cors');
+const { expressjwt: jwtMiddleware } = require('express-jwt');
+const swaggerUi = require('swagger-ui-express');
 
-const cors = require("cors");
+const appConfig = require('./appConfig');
 
 app.use(
   cors({
@@ -14,91 +16,88 @@ app.use(
   })
 );
 
-//config commonresult
-const returnValue = require("./middleware/returnValue");
+// config commonresult
+const returnValue = require('./middleware/returnValue');
 app.use(returnValue.returnValue);
 
-//config josn body
+// config josn body
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-//parse Cookie
+// parse Cookie
 app.use(cookieParser());
 
-const { expressjwt: jwtMiddleware } = require('express-jwt');
-app.use(jwtMiddleware({
-  secret: appConfig.jwtConfig.secret,
-  algorithms: appConfig.jwtConfig.algorithms,
-  getToken: (req) => req.cookies.token
-}).unless({ path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register'] }));
+app.use(
+  jwtMiddleware({
+    secret: appConfig.jwtConfig.secret,
+    algorithms: appConfig.jwtConfig.algorithms,
+    getToken: req => req.cookies.token,
+  }).unless({ path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register'] })
+);
 
 // config Swagger
-const swaggerDocument = require("./common/swagger");
-const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require('./common/swagger');
+
 // config'/api-docs'  Path to access Swagger UI
 const swaggerUiOptions = {
   explorer: true,
 };
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerDocument, swaggerUiOptions)
-);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerUiOptions));
 
-app.get("/", (req, res) => {
-  res.send("server running " + new Date().toLocaleString());
+app.get('/', (req, res) => {
+  res.send('server running ' + new Date().toLocaleString());
 });
 
-//config authRouter
-const authRouter = require("./router/authRouter");
-app.use("/api/auth", authRouter);
+// config authRouter
+const authRouter = require('./router/authRouter');
+app.use('/api/auth', authRouter);
 
-//config userRouter
-const userRouter = require("./router/userRouter");
-app.use("/api/users", userRouter);
+// config userRouter
+const userRouter = require('./router/userRouter');
+app.use('/api/users', userRouter);
 
-//config demoRouter
-const demoRouter = require("./router/demoRouter");
-app.use("/api/demos", demoRouter);
+// config demoRouter
+const demoRouter = require('./router/demoRouter');
+app.use('/api/demos', demoRouter);
 
-//config roleRouter
-const roleRouter = require("./router/roleRouter");
-app.use("/api/roles", roleRouter);
+// config roleRouter
+const roleRouter = require('./router/roleRouter');
+app.use('/api/roles', roleRouter);
 
-//config categoryRouter
-const categoryRouter = require("./router/categoryRouter");
-app.use("/api/categories", categoryRouter);
+// config categoryRouter
+const categoryRouter = require('./router/categoryRouter');
+app.use('/api/categories', categoryRouter);
 
-//config courseRouter
-const courseRouter = require("./router/courseRouter");
-app.use("/api/courses", courseRouter);
+// config courseRouter
+const courseRouter = require('./router/courseRouter');
+app.use('/api/courses', courseRouter);
 
-//config sessionRouter
-const sessionRouter = require("./router/sessionrouter");
-app.use("/api/sessions", sessionRouter);
+// config sessionRouter
+const sessionRouter = require('./router/sessionrouter');
+app.use('/api/sessions', sessionRouter);
 
-//config courseOfferingRouter
-const courseOfferingRouter = require("./router/courseOfferingRouter");
-app.use("/api/courseOfferings", courseOfferingRouter);
+// config courseOfferingRouter
+const courseOfferingRouter = require('./router/courseOfferingRouter');
+app.use('/api/courseOfferings', courseOfferingRouter);
 
-//config courseNotificationROuters
-const courseNotificationRouter = require("./router/courseNotificationRouter");
-app.use("/api/courseNotifications", courseNotificationRouter);
+// config courseNotificationROuters
+const courseNotificationRouter = require('./router/courseNotificationRouter');
+app.use('/api/courseNotifications', courseNotificationRouter);
 
-//config menuRouter
-const menuRouter = require("./router/menuRouter");
-app.use("/api/menus", menuRouter);
+// config menuRouter
+const menuRouter = require('./router/menuRouter');
+app.use('/api/menus', menuRouter);
 
-//config permissionRouter
-const permissionRouter = require("./router/permissionRouter");
-app.use("/api/permissions", permissionRouter);
+// config permissionRouter
+const permissionRouter = require('./router/permissionRouter');
+app.use('/api/permissions', permissionRouter);
 
-//config erorhandle
-const erorhandle = require("./middleware/errorHandling");
+// config erorhandle
+const erorhandle = require('./middleware/errorHandling');
 app.use(erorhandle.errorHandling);
 
-let port = appConfig.serverConfig.port;
-app.listen(port, () => {
+const port = appConfig.serverConfig.port;
+app.listen(port, '0.0.0.0', () => {
   console.log(`Server is running on port ${port},http://localhost:${port}`);
   console.log(`Swagger is running on http://localhost:${port}/api-docs/`);
 });

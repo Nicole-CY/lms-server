@@ -1,40 +1,40 @@
-"use strict";
+'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
         await queryInterface.bulkInsert(
-            "media",
+            'media',
             [
                 {
                     session_id: 1,
-                    file_type: "video",
-                    file_name: "lesson1.mp4",
-                    file_path: "/uploads/videos/lesson1.mp4",
-                    thumbnail_path: "/uploads/thumbnails/lesson1.jpg",
+                    file_type: 'video',
+                    file_name: 'lesson1.mp4',
+                    file_path: '/uploads/videos/lesson1.mp4',
+                    thumbnail_path: '/uploads/thumbnails/lesson1.jpg',
                     uploader_id: 1,
                     uploaded_at: new Date(),
-                    approval_status: "Approved",
+                    approval_status: 'Approved',
                 },
                 {
                     session_id: 2,
-                    file_type: "pdf",
-                    file_name: "lecture-notes.pdf",
-                    file_path: "/uploads/pdfs/lecture-notes.pdf",
+                    file_type: 'pdf',
+                    file_name: 'lecture-notes.pdf',
+                    file_path: '/uploads/pdfs/lecture-notes.pdf',
                     thumbnail_path: null,
                     uploader_id: 1,
                     uploaded_at: new Date(),
-                    approval_status: "Pending",
+                    approval_status: 'Pending',
                 },
                 {
                     session_id: 1,
-                    file_type: "video",
-                    file_name: "lesson2.mp4",
-                    file_path: "/uploads/videos/lesson2.mp4",
-                    thumbnail_path: "/uploads/thumbnails/lesson2.jpg",
+                    file_type: 'video',
+                    file_name: 'lesson2.mp4',
+                    file_path: '/uploads/videos/lesson2.mp4',
+                    thumbnail_path: '/uploads/thumbnails/lesson2.jpg',
                     uploader_id: 1,
                     uploaded_at: new Date(),
-                    approval_status: "Approved",
+                    approval_status: 'Approved',
                 },
             ],
             {}
@@ -42,6 +42,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.bulkDelete("media", null, {});
+        await queryInterface.bulkDelete('media', null, {});
     },
 };

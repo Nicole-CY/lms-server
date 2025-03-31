@@ -1,14 +1,14 @@
-const { createClient } = require("redis");
-const { redisConfig } = require("../appConfig");
+const { createClient } = require('redis');
+const { redisConfig } = require('../appConfig');
 let client;
 const redisClient = async () => {
-  if (client) return;
+    if (client) return;
 
-  client = await createClient({
-    url: `redis://${redisConfig.host}:${redisConfig.port}`,
-  })
-    .on("error", (err) => console.log("Redis Client Error", err))
-    .connect();
+    client = await createClient({
+        url: `redis://${redisConfig.host}:${redisConfig.port}`,
+    })
+        .on('error', err => console.log('Redis Client Error', err))
+        .connect();
 };
 
 /**
@@ -18,17 +18,17 @@ const redisClient = async () => {
  * @param {*} ttl  second
  */
 const setKey = async (key, value, ttl = null) => {
-  if (!client) await redisClient();
+    if (!client) await redisClient();
 
-  if (typeof value === "object") {
-    value = JSON.stringify(value);
-  }
+    if (typeof value === 'object') {
+        value = JSON.stringify(value);
+    }
 
-  await client.set(key, value);
-  //
-  if (ttl != null) {
-    await client.expire(key, ttl);
-  }
+    await client.set(key, value);
+    //
+    if (ttl != null) {
+        await client.expire(key, ttl);
+    }
 };
 
 /**
@@ -36,26 +36,26 @@ const setKey = async (key, value, ttl = null) => {
  * @param {*} key
  * @returns
  */
-const getKey = async (key) => {
-  if (!client) await redisClient();
+const getKey = async key => {
+    if (!client) await redisClient();
 
-  const value = await client.get(key);
-  return value;
+    const value = await client.get(key);
+    return value;
 };
 
 /**
  * Delete cache based on key
  * @param {*} key
  */
-const delKey = async (key) => {
-  if (!client) await redisClient();
+const delKey = async key => {
+    if (!client) await redisClient();
 
-  await client.del(key);
+    await client.del(key);
 };
 
 //
 module.exports = {
-  setKey,
-  getKey,
-  delKey,
+    setKey,
+    getKey,
+    delKey,
 };

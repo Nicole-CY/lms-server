@@ -2,50 +2,78 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    await queryInterface.bulkInsert("courseInstanceUser", [
-      // For courseInstance with id 1 (from courseInstance seed)
+  async up(queryInterface, Sequelize) {
+    await queryInterface.bulkInsert("course_instance_user", [
+      // User 1 (Admin) enrollments
       {
-        courseInstanceId: 1,
-        userId: 1,
-        canRead: true,
-        canUpdate: false,
-        canDelete: false
+        course_instance_id: 1, // JavaScript Fundamentals - Spring 2025
+        user_id: 1, // Admin user
+        can_read: true,
+        can_update: true,
+        can_delete: true,
+        created_at: new Date(),
+        updated_at: new Date()
       },
       {
-        courseInstanceId: 1,
-        userId: 2,
-        canRead: true,
-        canUpdate: false,
-        canDelete: false
-      },
-      // For courseInstance with id 2 (another instance of course 1)
-      {
-        courseInstanceId: 2,
-        userId: 1,
-        canRead: true,
-        canUpdate: true,
-        canDelete: false
-      },
-      // For courseInstance with id 3 (instance of course 2)
-      {
-        courseInstanceId: 3,
-        userId: 3,
-        canRead: true,
-        canUpdate: false,
-        canDelete: false
+        course_instance_id: 2, // JavaScript Fundamentals - Fall 2025
+        user_id: 1, // Admin user
+        can_read: true,
+        can_update: true,
+        can_delete: true,
+        created_at: new Date(),
+        updated_at: new Date()
       },
       {
-        courseInstanceId: 3,
-        userId: 1,
-        canRead: true,
-        canUpdate: true,
-        canDelete: true
+        course_instance_id: 3, // React.js for Beginners - Summer 2025
+        user_id: 1, // Admin user
+        can_read: true,
+        can_update: true,
+        can_delete: true,
+        created_at: new Date(),
+        updated_at: new Date()
+      },
+      {
+        course_instance_id: 4, // Node.js Backend Development - Spring 2025
+        user_id: 1, // Admin user
+        can_read: true,
+        can_update: true,
+        can_delete: true,
+        created_at: new Date(),
+        updated_at: new Date()
+      },
+
+      // User 2 enrollments
+      {
+        course_instance_id: 1, // JavaScript Fundamentals - Spring 2025
+        user_id: 2, // Regular user
+        can_read: true,
+        can_update: false,
+        can_delete: false,
+        created_at: new Date(),
+        updated_at: new Date()
+      },
+      {
+        course_instance_id: 3, // React.js for Beginners - Summer 2025
+        user_id: 2, // Regular user
+        can_read: true,
+        can_update: false,
+        can_delete: false,
+        created_at: new Date(),
+        updated_at: new Date()
+      },
+      {
+        course_instance_id: 5, // Python for Data Science - Summer 2025
+        user_id: 2, // Regular user
+        can_read: true,
+        can_update: false,
+        can_delete: false,
+        created_at: new Date(),
+        updated_at: new Date()
       }
     ], {});
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("courseInstanceUser", null, {});
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete("course_instance_user", null, {});
   }
 };

@@ -1,8 +1,9 @@
-const { DataTypes } = require("sequelize");
-const { sequelize } = require("../db/sequelizedb");
+const { DataTypes } = require('sequelize');
+
+const { sequelize } = require('../db/sequelizedb');
 
 const Permission = sequelize.define(
-    "permission",
+    'permission',
     {
         // Model attributes are defined here
         id: {
@@ -14,16 +15,16 @@ const Permission = sequelize.define(
         name: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true
+            unique: true,
         },
         description: {
             type: DataTypes.STRING,
-            allowNull: true
-        }
+            allowNull: true,
+        },
     },
     {
-        timestamps: true, 
-        tableName: 'permission', 
+        timestamps: true,
+        tableName: 'permission',
         createdAt: 'created_at',
         updatedAt: 'updated_at',
     }

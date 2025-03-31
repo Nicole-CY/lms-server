@@ -2,13 +2,13 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    /**
-     * Add altering commands here.
-     *
-     * Example:
-     * await queryInterface.createTable('user', { id: Sequelize.INTEGER });
-     */
+    async up(queryInterface, Sequelize) {
+        /**
+         * Add altering commands here.
+         *
+         * Example:
+         * await queryInterface.createTable('user', { id: Sequelize.INTEGER });
+         */
 
     await queryInterface.createTable("course", {
       id: {
@@ -21,11 +21,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      courseCode: {
+      course_code: {
         type: Sequelize.STRING(50),
         allowNull: false,
       },
-      coverImage: {
+      cover_image: {
         type: Sequelize.STRING,
         allowNull: true,
       },
@@ -33,26 +33,36 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      createdAt: {
+      created_at: {
+        allowNull: false,
         type: Sequelize.DATE,
-        allowNull: true,
-      },
-      updatedAt: {
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+    },
+      updated_at: {
+        allowNull: false,
         type: Sequelize.DATE,
-        allowNull: true,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+    },
+    created_by: {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "user",
+        key: "id",
       },
-      createdBy: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
+      onDelete: "CASCADE",
+    },
+    updated_by: {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "user",
+        key: "id",
       },
-      updatedBy: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      }
+      onDelete: "CASCADE",
+    },
     });
   },
 
-  async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable("course");
-  }
+    async down(queryInterface, Sequelize) {
+        await queryInterface.dropTable('course');
+    },
 };

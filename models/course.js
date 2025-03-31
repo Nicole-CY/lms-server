@@ -1,5 +1,6 @@
-const { DataTypes } = require("sequelize");
-const { sequelize } = require("../db/sequelizedb");
+const { DataTypes } = require('sequelize');
+
+const { sequelize } = require('../db/sequelizedb');
 
 const Course = sequelize.define('Course', {
     id:{
@@ -15,45 +16,43 @@ const Course = sequelize.define('Course', {
     },
     courseCode:{
         type: DataTypes.STRING(50),
+        field: "course_code",
         allowNull: false
     },
     coverImage:{
         type: DataTypes.STRING,
+        field: "cover_image",
         allowNull: true
     },
     description: {
         type: DataTypes.STRING,
         allowNull: true
       },
-    createdAt:{
-        type: DataTypes.DATE,
-        allowNull: true
-    },
-    updatedAt:{
-        type: DataTypes.DATE,
-        allowNull: true
-    },
     createdBy: {
         type: DataTypes.INTEGER,
+        field: "created_by",
         references:{
-          model: "Users",
+          model: "User",
           key:"id",
         }
       },
       updatedBy: {
         type: DataTypes.INTEGER,
+        field: "updated_by",
         references:{
-          model: "Users",
+          model: "User",
           key:"id",
         }
       }
 }, {
-    tableName: "Course",
-    timestamps: false // avoid automatic insertion and maintenance for createdAt/updatedAt 
+    tableName: "course",
+    timestamps: true, // automatic insertion and maintenance for createdAt/updatedAt 
+    createdAt: "created_at",
+    updatedAt: "updated_at",
   });
 
   Course.associate = function (models){
-    Course.hasMany(models.CourseInstance, {foreignKey: "courseId", onDelete: "CASCADE"});
-    Course.hasMany(models.CourseCategory, {foreignKey: "courseId", onDelete: "CASCADE"});
+    Course.hasMany(models.CourseInstance, {foreignKey: "course_id", onDelete: "CASCADE"});
+    Course.hasMany(models.CourseCategory, {foreignKey: "course_id", onDelete: "CASCADE"});
   };
   module.exports = Course;

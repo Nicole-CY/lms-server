@@ -1,8 +1,9 @@
-const  {DataTypes} = require("sequelize");
-const {sequelize} = require("../db/sequelizedb");
+const { DataTypes } = require('sequelize');
+
+const { sequelize } = require('../db/sequelizedb');
 
 const CourseInstance = sequelize.define(
-    "CourseInstance",
+    'CourseInstance',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -10,56 +11,55 @@ const CourseInstance = sequelize.define(
             autoIncrement: true,
             allowNull: false,
         },
-        courseId:{
+        courseId: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            field: "course_id",
         },
-        startDate:{
+        startDate: {
             type: DataTypes.DATE,
-            allowNull: true
+            allowNull: true,
+            field: "start_date",
         },
         endDate: {
             type: DataTypes.DATE,
-            allowNull: true
+            allowNull: true,
+            field: "end_date",
           },
         totalSessions: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: true,
+            field: "total_sessions",
           },
         launchStatus: {
             type: DataTypes.ENUM('Scheduled', 'In Progress', 'Completed', 'Cancelled'),
-            allowNull: true
-          },
-          createdAt: {
-            type: DataTypes.DATE,
-            allowNull: true
-          },
-          updatedAt: {
-            type: DataTypes.DATE,
-            allowNull: true
+            allowNull: true,
+            field: "launch_status",
           },
           createdBy: {
             type: DataTypes.INTEGER,
             references:{
-              model:"Users",
+              model:"User",
               key:"id",
             },
-          },
-          updatedBy: {
+        },
+        updatedBy: {
             type: DataTypes.INTEGER,
             references:{
-              model:"Users",
+              model:"User",
               key:"id",
             }
           }
 
     }, {
-        tableName: "CourseInstance",
-        timestamps: false
+        tableName: "course_instance",
+        timestamps: true,
+        createdAt: "created_at",
+        updatedAt: "updated_at",
     }
 );
 CourseInstance.associate = function(models){
-    CourseInstance.belongsTo(models.Course, {foreignKey: "courseId"});
-    CourseInstance.hasMany(models.CourseInstanceUser, {foreignKey: "courseInstanceId"})
+    CourseInstance.belongsTo(models.Course, {foreignKey: "course_id"});
+    CourseInstance.hasMany(models.CourseInstanceUser, {foreignKey: "course_instance_id"})
 };
 module.exports = CourseInstance;

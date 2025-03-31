@@ -2,26 +2,35 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
+
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert("CourseOffering", [
+    return queryInterface.bulkInsert('course_offering', [
       {
+        id: 1,
         course_instance_id: 1,
-        teacher_id: 2,
-        start_date: new Date("2025-04-01"),
-        student_capacity: 50,
+        teacher_id: 1,
+        max_students: 50,
         status: "Active",
+        created_at: new Date(),
+        updated_at: new Date(),
+        created_by: 1,
+        updated_by: 1
       },
       {
+        id: 2,
         course_instance_id: 2,
-        teacher_id: 3,
-        start_date: new Date("2025-06-15"),
-        student_capacity: 30,
+        teacher_id: 2,
+        max_students: 30,
         status: "Pending Start",
+        created_at: new Date(),
+        updated_at: new Date(),
+        created_by: 1,
+        updated_by: 1
       },
     ]);
   },
 
-  down: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete("CourseOffering", null, {});
-  },
+    down: async (queryInterface, Sequelize) => {
+        return queryInterface.bulkDelete('course_offering', null, {});
+    },
 };

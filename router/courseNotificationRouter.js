@@ -9,7 +9,7 @@ const courseNotificationController = require("../controller/Course/courseNotific
 
 /**
  * @openapi
- * '/api/course-notifications/list/{page}/{pageSize}':
+ * '/api/courseNotifications/list/{page}/{pageSize}':
  *  get:
  *     tags:
  *     - CourseNotification
@@ -47,7 +47,7 @@ router.get(
 
 /**
  * @openapi
- * '/api/course-notifications/detail':
+ * '/api/courseNotifications/detail':
  *  get:
  *     tags:
  *     - CourseNotification
@@ -74,7 +74,7 @@ router.get(
 
 /**
  * @openapi
- * '/api/course-notifications/add':
+ * '/api/courseNotifications/add':
  *  post:
  *     tags:
  *     - CourseNotification
@@ -116,7 +116,7 @@ router.post("/add", courseNotificationController.addCourseNotificationAsync);
 
 /**
  * @openapi
- * '/api/course-notifications/update':
+ * '/api/courseNotifications/update':
  *  put:
  *     tags:
  *     - CourseNotification
@@ -149,7 +149,7 @@ router.put("/update", courseNotificationController.updateCourseNotificationByIdA
 
 /**
  * @openapi
- * '/api/course-notifications/delete/{id}':
+ * '/api/courseNotifications/delete/{id}':
  *  delete:
  *     tags:
  *     - CourseNotification

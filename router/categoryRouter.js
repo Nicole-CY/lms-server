@@ -2,10 +2,17 @@ const express = require("express");
 require("express-async-errors");
 const router = express.Router();
 
-const { body, query, param } = require("express-validator");
 const { commonValidate } = require("../middleware/expressValidator");
-const categoryController = require("../controller/Course/categoryController");
+const {getCategoryByNameValidator,
+  getCategoryListValidator,
+  addCategoryValidator,
+  deleteCategoryByIdValidator,
+  getCategoryByIdValidator,
+  updateCategoryByIdValidator,
+  updateCategoryByNameValidator, } = require("../validator/categoryValidator")
 
+const categoryController = require("../controller/Course/categoryController");
+  
 /**
  * @openapi
  * '/api/categories/getCategory':
@@ -14,7 +21,7 @@ const categoryController = require("../controller/Course/categoryController");
  *     - Category Controller
  *     summary: Get a category by name
  *     parameters:
- *      - name: category_name
+ *      - name: categoryName
  *        in: query
  *        description: Name of the category to retrieve
  *        required: true
@@ -32,26 +39,24 @@ const categoryController = require("../controller/Course/categoryController");
  */
 router.get(
   "/getCategory",
-  commonValidate([
-    query("categoryname").notEmpty().withMessage("Category name is required"),
-  ]),
+  commonValidate(getCategoryByNameValidator),
   categoryController.getCategoryByNameAsync
 );
 
 /**
  * @openapi
- * '/api/categories/{page}/{pageSize}':
+ * '/api/categories':
  *  get:
  *     tags:
  *     - Category Controller
  *     summary: Get all categories
  *     parameters:
  *       - name: page
- *         in: path
+ *         in: query
  *         description: page
  *         required: true
  *       - name: pageSize
- *         in: path
+ *         in: query
  *         description: pageSize
  *         required: true
  *     responses:
@@ -67,17 +72,8 @@ router.get(
  *        description: Server Error
  */
 router.get(
-  "/:page/:pageSize",
-  commonValidate([
-    param("page")
-      .notEmpty()
-      .isInt({ allow_leading_zeroes: false, min: 1 })
-      .withMessage("Not a valid page"),
-    param("pageSize")
-      .notEmpty()
-      .isInt({ allow_leading_zeroes: false, min: 1 })
-      .withMessage("Not a valid page size"),
-  ]),
+  "/",
+  commonValidate(getCategoryListValidator),
   categoryController.getCategoryListAsync
 );
 
@@ -95,31 +91,31 @@ router.get(
  *           schema:
  *            type: object
  *            required:
- *              - category_name
+ *              - categoryName
  *              - description
- *              - parent_id
- *              - created_at
- *              - updated_at
- *              - created_by
- *              - updated_by
- *              - icon_url
+ *              - parentId
+ *              - createdAt
+ *              - updatedAt
+ *              - createdBy
+ *              - updatedBy
+ *              - iconUrl
  *            properties:
- *              category_name:
+ *              categoryName:
  *                type: string
  *                example: Electronics
  *              description:
  *                type: string
  *                example: Category for electronic items
- *              parent_id:
+ *              parentId:
  *                type: integer
  *                example: 1
- *              created_by:
+ *              createdBy:
  *                type: integer
  *                example: 1
- *              updated_by:
+ *              updatedBy:
  *                type: integer
  *                example: 1
- *              icon_url:
+ *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
@@ -136,30 +132,19 @@ router.get(
  */
 router.post(
   "/",
-  commonValidate([
-    body("categoryName").notEmpty().withMessage("category name is required"),
-    body("description").notEmpty().withMessage("description is required"),
-    body("parentId")
-      .optional()
-      .isInt()
-      .withMessage("parentId must be an integer"),
-    body("iconUrl")
-      .optional()
-      .isURL()
-      .withMessage("iconUrl must be a valid URL"),  
-  ]),
+  commonValidate(addCategoryValidator),
   categoryController.addCategoryAsync
 );
 
 /**
  * @openapi
- * '/api/categories/{ids}':
+ * '/api/categories/{id}':
  *  delete:
  *     tags:
  *     - Category Controller
  *     summary: Delete a category by Id
  *     parameters:
- *      - name: ids
+ *      - name: id
  *        in: path
  *        description: The id of the category
  *        required: true
@@ -176,8 +161,8 @@ router.post(
  *        description: Server Error
  */
 router.delete(
-  "/:ids",
-  param([param("ids").notEmpty().withMessage("Not a valid id")]),
+  "/:id",
+  commonValidate(deleteCategoryByIdValidator),
   categoryController.deleteCategoryByIdAsync
 );
 
@@ -207,7 +192,7 @@ router.delete(
  */
 router.get(
   "/getCategoriesById",
-  commonValidate([query("id").notEmpty().withMessage("Not a valid id")]),
+  commonValidate(getCategoryByIdValidator),
   categoryController.getCategoryByIdAsync
 );
 
@@ -233,31 +218,31 @@ router.get(
  *            type: object
  *            required:
  *              - id
- *              - category_name
+ *              - categoryName
  *              - description
- *              - parent_id
- *              - created_at
- *              - updated_at
- *              - created_by
- *              - updated_by
- *              - icon_url
+ *              - parentId
+ *              - createdAt
+ *              - updatedAt
+ *              - createdBy
+ *              - updatedBy
+ *              - iconUrl
  *            properties:
- *              category_name:
+ *              categoryName:
  *                type: string
  *                example: Electronics
  *              description:
  *                type: string
  *                example: Category for electronic items
- *              parent_id:
+ *              parentId:
  *                type: integer
  *                example: 1
- *              created_by:
+ *              createdBy:
  *                type: integer
  *                example: 1
- *              updated_by:
+ *              updatedBy:
  *                type: integer
  *                example: 1
- *              icon_url:
+ *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
@@ -274,7 +259,7 @@ router.get(
  */
 router.put(
   "/updateCategoriesById",
-  commonValidate([query("id").notEmpty().withMessage("Not a valid id")]),
+  commonValidate(updateCategoryByIdValidator),
   categoryController.updateCategoryByIdAsync
 );
 
@@ -299,31 +284,31 @@ router.put(
  *           schema:
  *            type: object
  *            required:
- *              - category_name
+ *              - categoryName
  *              - description
- *              - parent_id
- *              - created_at
- *              - updated_at
- *              - created_by
- *              - updated_by
- *              - icon_url
+ *              - parentId
+ *              - createdAt
+ *              - updatedAt
+ *              - createdBy
+ *              - updatedBy
+ *              - iconUrl
  *            properties:
- *              category_name:
+ *              categoryName:
  *                type: string
  *                example: Electronics
  *              description:
  *                type: string
  *                example: Category for electronic items
- *              parent_id:
+ *              parentId:
  *                type: integer
  *                example: 1
- *              created_by:
+ *              createdBy:
  *                type: integer
  *                example: 1
- *              updated_by:
+ *              updatedBy:
  *                type: integer
  *                example: 1
- *              icon_url:
+ *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
  *     responses:
@@ -340,10 +325,33 @@ router.put(
  */
 router.put(
   "/updateCategoriesByName",
-  commonValidate([
-    body("categoryName").notEmpty().withMessage("Not a valid categoryName"),
-  ]),
+  commonValidate(updateCategoryByNameValidator),
   categoryController.updateCategoryByNameAsync
+);
+
+/**
+ * @openapi
+ * '/api/categories/getCategoryTree':
+ *  get:
+ *     tags:
+ *     - Category Controller
+ *     summary: Get category tree obj
+ *     responses:
+ *      200:
+ *        description: Fetched Successfully
+ *      400:
+ *        description: Bad Request
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Not Found
+ *      500:
+ *        description: Server Error
+ */
+router.get(
+  "/getCategoryTree",
+  commonValidate([]),
+  categoryController.getCategoryTreeAsync
 );
 
 module.exports = router;

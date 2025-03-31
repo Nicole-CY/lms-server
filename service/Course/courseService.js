@@ -7,44 +7,77 @@ const {courseFilter} = require("../../filters/courseFilter");
 const { sequelize } = require("../../db/sequelizedb");
 
 const addCourseAsync = async(courseData) => {
-    try{
+    const t = await sequelize.transaction();
+    try {
+        // check if courseCode exists
+        const existingCourse = await Course.findOne({
+            where: { courseCode: courseData.courseCode },
+            transaction: t
+        });
+        
+        if (existingCourse) {
+            await t.rollback();
+            return { 
+                isSuccess: false, 
+                message: `Course with code "${courseData.courseCode}" already exists`, 
+                data: null 
+            };
+        }
+        
+        // check if title exists
+        const existingTitle = await Course.findOne({
+            where: { title: courseData.title },
+            transaction: t
+        });
+        
+        if (existingTitle) {
+            await t.rollback();
+            return { 
+                isSuccess: false, 
+                message: `Course with title "${courseData.title}" already exists`, 
+                data: null 
+            };
+        }
+        
+        // create new course
         const newCourse = await Course.create({
             title: courseData.title,
             courseCode: courseData.courseCode,
             coverImage: courseData.coverImage,
             description: courseData.description,
-        });
-        // if(courseData.categories  && Array.isArray(courseData.categories && courseData.categories.length > 0)){
-        //     for(let categoryId of courseData.categories){
-        //         await CourseCategory.create({
-        //             courseId: newCourse.id,
-        //             categoryId: categoryId,
-        //         });
-        //     }
-        // }
-        //use bulk create for CourseCategory records
-        if(courseData.categories && Array.isArray(courseData.categories) && courseData.categories.length > 0){
-            const courseCategories = courseData.categories.map((categoryId)=> ({
-                    courseId : newCourse.id,
-                    categoryId,
+            createdBy: courseData.createdBy,
+            updatedBy: courseData.updatedBy
+        }, { transaction: t });
+        
+        // create course and category association
+        if (courseData.categories && Array.isArray(courseData.categories) && courseData.categories.length > 0) {
+            const courseCategories = courseData.categories.map((categoryId) => ({
+                courseId: newCourse.id,
+                categoryId,
             }));
-             // Bulk create the CourseCategory records.
-            await CourseCategory.bulkCreate(courseCategories);
+            await CourseCategory.bulkCreate(courseCategories, { transaction: t });
         }
-        // Re-fetch the course with its associated categories so the returned data includes them
+        
+        await t.commit();
+        
+        // get course and its associated categories
         const courseWithCategories = await Course.findByPk(newCourse.id, {
             include: [{
                 model: CourseCategory,
                 attributes: ["categoryId"],
                 required: false,
             }]
-        })
+        });
+        
         return {
-            isSuccess: true, message: "", data: courseWithCategories
-        }
-    }catch(err){
+            isSuccess: true, 
+            message: "", 
+            data: courseWithCategories
+        };
+    } catch (err) {
+        await t.rollback();
         logger.error("addCourseAsync error:", err);
-        return{isSuccess: false, message: "add course failed", data: null}
+        return { isSuccess: false, message: "Add course failed", data: null };
     }
 };
 
@@ -216,7 +249,7 @@ const bulkDeleteCoursesAsync = async(ids) => {
             return { isSuccess: false, message: "No courses found to delete", data: null };
     }
         await t.commit();
-        return { isSuccess: false, message: "No courses found to delete", data: null };
+        return { isSuccess: true, message: "courses deleted successfully", data: null };
     }catch(err){
         await t.rollback();
         logger.error("bulkDeleteCoursesAsync error:", err);
