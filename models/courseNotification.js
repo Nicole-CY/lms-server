@@ -37,12 +37,6 @@ const CourseNotification = sequelize.define(
             type: DataTypes.ENUM('Unread', 'Read'),
             allowNull: false,
         },
-        createdAt: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            field: 'created_at',
-            defaultValue: DataTypes.NOW,
-        },
     },
     {
         tableName: 'course_notification',

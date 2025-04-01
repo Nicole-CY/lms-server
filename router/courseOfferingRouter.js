@@ -97,7 +97,37 @@ router.get("/detail", courseOfferingController.getCourseOfferingByIdAsync);
  *       400:
  *         description: Bad Request
  */
-router.post("/add", courseOfferingController.addCourseOfferingAsync);
+router.post(
+    "/add",
+    commonValidate([
+        body("course_instance_id")
+            .notEmpty()
+            .withMessage("course_instance_id is required")
+            .isInt()
+            .withMessage("course_instance_id must be an integer"),
+        body("teacher_id")
+            .notEmpty()
+            .withMessage("teacher_id is required")
+            .isInt()
+            .withMessage("teacher_id must be an integer"),
+        body("start_date")
+            .notEmpty()
+            .withMessage("start_date is required")
+            .isISO8601()
+            .withMessage("start_date must be a valid date"),
+        body("student_capacity")
+            .notEmpty()
+            .withMessage("student_capacity is required")
+            .isInt({ min: 1 })
+            .withMessage("student_capacity must be an integer greater than 0"),
+        body("status")
+            .notEmpty()
+            .withMessage("status is required")
+            .isIn(["Pending Start", "Active", "Completed"])
+            .withMessage("status must be one of Pending Start, Active, Completed"),
+    ]),
+    courseOfferingController.addCourseOfferingAsync
+);
 
 /**
  * @openapi

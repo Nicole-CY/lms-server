@@ -34,6 +34,11 @@ const CourseOffering = sequelize.define(
             field: 'start_date',
             allowNull: false,
         },
+        endDate: {
+            type: DataTypes.DATE,
+            allowNull: true,
+            field: 'end_date',
+        },
         studentCapacity: {
             type: DataTypes.INTEGER,
             field: 'student_capacity',
@@ -42,6 +47,20 @@ const CourseOffering = sequelize.define(
         status: {
             type: DataTypes.ENUM('Pending Start', 'Active', 'Completed'),
             allowNull: false,
+        },
+        createdBy: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'user',
+                key: 'id',
+            },
+        },
+        updatedBy: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'user',
+                key: 'id',
+            },
         },
     },
     {
