@@ -73,7 +73,7 @@ const courseRouter = require('./router/courseRouter');
 app.use('/api/courses', courseRouter);
 
 // config sessionRouter
-const sessionRouter = require('./router/sessionRouter');
+const sessionRouter = require('./router/sessionsRouter');
 app.use('/api/sessions', sessionRouter);
 
 // config courseOfferingRouter
