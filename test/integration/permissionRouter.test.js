@@ -1,30 +1,12 @@
 const request = require('supertest');
-const jwt = require('jsonwebtoken');
-
-const { jwtConfig } = require('../../appConfig');
 const app = require('../../app');
-const { sequelize } = require('../../db/sequelizedb');
 const Permission = require('../../models/permission');
+const { generateToken } = require('../utils/auth');
 
 let token;
 
 beforeAll(async () => {
-    await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
-    await sequelize.sync({ force: true });
-    await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
-    const user = {
-        id: 1,
-        role: ['superadmin'],
-        email: 'superadmin@example.com',
-    };
-
-    token = jwt.sign(user, jwtConfig.secret, {
-        expiresIn: `${jwtConfig.expiresIn}s`,
-    });
-});
-
-afterAll(async () => {
-    await sequelize.close();
+    token = generateToken();
 });
 
 beforeEach(async () => {

@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../db/sequelizedb');
 
 const Session = sequelize.define(
-    'session',
+    'Session',
     {
         id: {
             type: DataTypes.INTEGER,

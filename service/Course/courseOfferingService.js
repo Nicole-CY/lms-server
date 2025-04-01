@@ -40,9 +40,50 @@ const getCourseOfferingListAsync = async (page = 1, pageSize = 10, search = "") 
     }
 };
 
+
+const isCourseOfferingConflict = async (courseInstanceId, startDate, endDate) => {
+    const existingOffering = await CourseOffering.findOne({
+        where: {
+            courseInstanceId,
+            [Op.or]: [
+                {
+                    startDate: {
+                        [Op.between]: [startDate, endDate],
+                    },
+                },
+                {
+                    endDate: {
+                        [Op.between]: [startDate, endDate],
+                    },
+                },
+                {
+                    startDate: {
+                        [Op.lte]: startDate,
+                    },
+                    endDate: {
+                        [Op.gte]: endDate,
+                    },
+                },
+            ],
+        },
+    });
+
+    return existingOffering !== null;
+};
 // Add new course offering
 const addCourseOfferingAsync = async (offering) => {
     try {
+        const { courseInstanceId, startDate, endDate } = offering;
+        const hasConflict = await isCourseOfferingConflict(courseInstanceId, startDate, endDate);
+
+        if (hasConflict) {
+            return {
+                isSuccess: false,
+                message: "The course instance has a scheduling conflict within this time period.",
+                data: null
+            };
+        }
+        
         const newOffering = await CourseOffering.create(offering);
         return { isSuccess: true, message: "Course offering added", data: newOffering };
     } catch (error) {

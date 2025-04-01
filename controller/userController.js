@@ -55,7 +55,7 @@ const getUserListAsync = async (req, res) => {
 
 const deleteUserByIdAsync = async (req, res) => {
     let ids = req.params.ids;
-    let result = await userService.delUserByIdAsync(ids);
+    let result = await userService.deleteUserByIdAsync(ids);
     if (result.isSuccess) {
         res.sendCommonValue({}, "success", 1);
     } else {
@@ -86,7 +86,7 @@ const updateUserAsync = async (req, res) => {
         res.sendCommonValue({}, "Username already exists", 400, 400);
         return;
     }
-    let dbResult = await userService.uptUserByIdAsync(user);
+    let dbResult = await userService.updateUserByIdAsync(user);
     if (dbResult.isSuccess) {
         res.sendCommonValue(user, "success", 1);
         return;
@@ -105,6 +105,16 @@ const getUserByIdAsync = async (req, res) => {
     }
 };
 
+const getUserByNameAsync = async (req,res) => {
+    const username = req.query.userName;
+    const result = await userService.getUserbyNameAsync(username)
+    if(result.isSuccess){
+        res.sendCommonValue(result.data,'success', 1)
+    } else {
+        res.sendCommonValue({}, result.message, 0)
+    }
+}
+
 module.exports = {
     addUserAsync,
     getUserAsync,
@@ -112,4 +122,5 @@ module.exports = {
     deleteUserByIdAsync,
     updateUserAsync,
     getUserByIdAsync,
+    getUserByNameAsync,
 };

@@ -33,7 +33,12 @@ const Menu = sequelize.define(
             allowNull: false,
         },
     },
-    { timestamps: false, tableName: 'menu' }
+    {
+        tableName: 'menu',
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+    }
 );
 
 Menu.associate = function (models) {

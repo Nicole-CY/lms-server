@@ -35,14 +35,23 @@ const getCourseOfferingListAsync = async (req, res) => {
 
 const addCourseOfferingAsync = async (req, res) => {
     try {
-        const { course_instance_id, teacher_id, start_date, student_capacity, status } = req.body;
+        const { course_instance_id, teacher_id, start_date, end_date,student_capacity, status, updated_by, created_by} = req.body;
 
-        const result = await CourseOfferingService.addCourseOfferingAsync(req.body);
+        const result = await CourseOfferingService.addCourseOfferingAsync({
+            courseInstanceId: course_instance_id,
+            teacherId: teacher_id,
+            startDate: start_date,
+            endDate: end_date,
+            studentCapacity: student_capacity,
+            status,
+            createdBy: created_by,
+            updatedBy: updated_by
+          });
 
         if (result.isSuccess) {
             res.sendCommonValue(result.data, "Course offering added successfully", 1);
         } else {
-            res.sendCommonValue({}, "Failed to add course offering", 0);
+            res.sendCommonValue({}, result.message || "Failed to add course offering", 0);
         }
     } catch (error) {
         console.error("Error in addCourseOfferingAsync:", error);
