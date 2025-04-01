@@ -1,12 +1,18 @@
 const express = require("express");
 require("express-async-errors");
 
-const sessionRouter = express.Router();
-
-const { body, query, param } = require("express-validator");
+const router = express.Router();
 const { commonValidate } = require("../middleware/expressValidator");
 
 const sessionController = require("../controller/Course/sessionController");
+const {addSessionValidator,
+    updateSessionValidator,
+    getSessionByIdValidator,
+    getSessionsByCourseInstanceIdValidator,
+    getSessionListValidator,
+    deleteSessionValidator
+} = require("../validator/sessionValidator")
+
 
 // Add session
 /**
@@ -88,13 +94,9 @@ const sessionController = require("../controller/Course/sessionController");
  *      500:
  *        description: Server Error
  */
-sessionRouter.post(
+router.post(
     "",
-    commonValidate([
-        body("courseInstanceId").notEmpty().withMessage("courseInstanceId is required"),
-        body("sessionTitle").notEmpty().withMessage("title is required"),
-        body("order").notEmpty().withMessage("order is required"),
-    ]),
+    commonValidate(addSessionValidator),
     sessionController.addSessionAsync
 );
 
@@ -129,11 +131,9 @@ sessionRouter.post(
  *      500:
  *        description: Server Error
  */
-sessionRouter.get(
+router.get(
     "/getById",
-    commonValidate([
-        query("id").notEmpty().withMessage("not a valid session id"),
-    ]),
+    commonValidate(getSessionByIdValidator),
     sessionController.getSessionByIdAsync
 );
 
@@ -168,11 +168,9 @@ sessionRouter.get(
  *      500:
  *        description: Server Error
  */
-sessionRouter.get(
+router.get(
     "/getByCourseInstanceId",
-    commonValidate([
-        query("courseInstanceId").notEmpty().withMessage("not a valid course instance id"),
-    ]),
+    commonValidate(getSessionsByCourseInstanceIdValidator),
     sessionController.getSessionsByCourseInstanceIdAsync
 );
 
@@ -220,12 +218,9 @@ sessionRouter.get(
  *      500:
  *        description: Server Error
  */
-sessionRouter.get(
+router.get(
     "/",
-    commonValidate([
-        query("page").notEmpty().isInt({ min: 1 }).withMessage("not a valid page"),
-        query("pageSize").notEmpty().isInt({ min: 1 }).withMessage("not a valid page size"),
-    ]),
+    commonValidate(getSessionListValidator),
     sessionController.getSessionListAsync
 );
 
@@ -289,13 +284,9 @@ sessionRouter.get(
  *      500:
  *        description: Server Error
  */
-sessionRouter.put(
+router.put(
     "",
-    commonValidate([
-        body("id").notEmpty().withMessage("Not a valid session id"),
-        body("sessionTitle").notEmpty().withMessage("Not a valid title"),
-        body("order").notEmpty().withMessage("Not a valid order"),
-    ]),
+    commonValidate(updateSessionValidator),
     sessionController.updateSessionAsync
 );
 
@@ -327,12 +318,10 @@ sessionRouter.put(
  *       500:
  *         description: Server Error
  */
-sessionRouter.delete(
+router.delete(
     "/:id",
-    commonValidate([
-        param("id").notEmpty().isInt({ min: 1 }).withMessage("not a valid session id")
-    ]),
+    commonValidate(deleteSessionValidator),
     sessionController.deleteSessionAsync
 );
 
-module.exports = sessionRouter;
+module.exports = router;
