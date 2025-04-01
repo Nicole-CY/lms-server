@@ -30,15 +30,23 @@ module.exports = {
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',
             },
-            max_students: {
+            student_capacity: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 defaultValue: 30,
             },
+            start_date: {
+                type: Sequelize.DATE,
+                allowNull: true,
+            },
+            end_date: {
+                type: Sequelize.DATE,
+                allowNull: true,
+            },
             status: {
-                type: Sequelize.ENUM('Active', 'Pending Start', 'Completed'),
+                type: Sequelize.ENUM('Scheduled', 'In Progress', 'Completed', 'Cancelled'),
                 allowNull: false,
-                defaultValue: 'Pending Start',
+                defaultValue: 'Scheduled',
             },
             created_at: {
                 allowNull: false,
@@ -52,19 +60,19 @@ module.exports = {
             },
             created_by: {
                 type: Sequelize.INTEGER,
-                allowNull: false,
                 references: {
                     model: 'user',
                     key: 'id',
                 },
+                onDelete: 'CASCADE',
             },
             updated_by: {
                 type: Sequelize.INTEGER,
-                allowNull: false,
                 references: {
                     model: 'user',
                     key: 'id',
                 },
+                onDelete: 'CASCADE',
             },
         });
     },
