@@ -30,21 +30,15 @@ const addUserAsync = async (req, res) => {
         user.password = password;
         res.sendCommonValue(user, "success", 1);
     } else {
-        res.sendCommonValue({}, "", 0);
+        res.sendCommonValue({}, "failed", 0);
     }
 };
 
-const getUserAsync = (req, res) => {
-    res.sendCommonValue(
-        { id: 1, name: "admin", age: 22, dt: new Date() },
-        "getUserAsync",
-        1
-    );
-};
+
 
 const getUserListAsync = async (req, res) => {
-    let page = parseInt(req.params.page);
-    let pageSize = parseInt(req.params.pageSize);
+    let page = parseInt(req.query.page);
+    let pageSize = parseInt(req.query.pageSize);
     let result = await userService.getUserListAsync(page, pageSize);
     if (result.isSuccess) {
         res.sendCommonValue(result.data, "success", 1);
@@ -53,15 +47,27 @@ const getUserListAsync = async (req, res) => {
     }
 };
 
-const deleteUserByIdAsync = async (req, res) => {
-    let ids = req.params.ids;
-    let result = await userService.deleteUserByIdAsync(ids);
-    if (result.isSuccess) {
-        res.sendCommonValue({}, "success", 1);
+const getUserByNameAsync = async (req,res) => {
+    const username = req.params.userName;
+    const result = await userService.getUserbyNameAsync(username)
+    if(result.isSuccess){
+        res.sendCommonValue(result.data,'success', 1)
     } else {
-        res.sendCommonValue({}, "failed", 0);
+        res.sendCommonValue({}, result.message, 0)
+    }
+}
+
+const getUserByIdAsync = async (req, res) => {
+    let id = parseInt(req.params.id);
+    let result = await userService.getUserbyIdAsync(id);
+    if (result.isSuccess) {
+        res.sendCommonValue(result.data, "success", 1);
+    } else {
+        res.sendCommonValue([], "failed", 0);
     }
 };
+
+
 
 const updateUserAsync = async (req, res) => {
     //check username not in db
@@ -91,36 +97,29 @@ const updateUserAsync = async (req, res) => {
         res.sendCommonValue(user, "success", 1);
         return;
     } else {
-        res.sendCommonValue({}, "", 0);
+        res.sendCommonValue({}, "failed", 0);
     }
 };
 
-const getUserByIdAsync = async (req, res) => {
-    let id = parseInt(req.query.id);
-    let result = await userService.getUserbyIdAsync(id);
+
+
+const deleteUserByIdAsync = async (req, res) => {
+    let ids = req.params.ids;
+    let result = await userService.deleteUserByIdAsync(ids);
     if (result.isSuccess) {
-        res.sendCommonValue(result.data, "success", 1);
+        res.sendCommonValue({}, "success", 1);
     } else {
-        res.sendCommonValue([], "failed", 0);
+        res.sendCommonValue({}, "failed", 0);
     }
 };
 
-const getUserByNameAsync = async (req,res) => {
-    const username = req.query.userName;
-    const result = await userService.getUserbyNameAsync(username)
-    if(result.isSuccess){
-        res.sendCommonValue(result.data,'success', 1)
-    } else {
-        res.sendCommonValue({}, result.message, 0)
-    }
-}
+
 
 module.exports = {
     addUserAsync,
-    getUserAsync,
     getUserListAsync,
-    deleteUserByIdAsync,
-    updateUserAsync,
-    getUserByIdAsync,
     getUserByNameAsync,
+    getUserByIdAsync,
+    updateUserAsync,
+    deleteUserByIdAsync,
 };
