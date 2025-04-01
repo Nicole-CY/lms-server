@@ -10,10 +10,10 @@ const swaggerUi = require('swagger-ui-express');
 const appConfig = require('./appConfig');
 
 app.use(
-  cors({
-    origin: appConfig.corsConfig.origin,
-    credentials: true,
-  })
+    cors({
+        origin: appConfig.corsConfig.origin,
+        credentials: true,
+    })
 );
 
 // config commonresult
@@ -28,11 +28,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(
-  jwtMiddleware({
-    secret: appConfig.jwtConfig.secret,
-    algorithms: appConfig.jwtConfig.algorithms,
-    getToken: req => req.cookies.token,
-  }).unless({ path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register'] })
+    jwtMiddleware({
+        secret: appConfig.jwtConfig.secret,
+        algorithms: appConfig.jwtConfig.algorithms,
+        getToken: req => req.cookies.token,
+    }).unless({ path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register'] })
 );
 
 // config Swagger
@@ -40,12 +40,12 @@ const swaggerDocument = require('./common/swagger');
 
 // config'/api-docs'  Path to access Swagger UI
 const swaggerUiOptions = {
-  explorer: true,
+    explorer: true,
 };
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerUiOptions));
 
 app.get('/', (req, res) => {
-  res.send('server running ' + new Date().toLocaleString());
+    res.send('server running ' + new Date().toLocaleString());
 });
 
 // config authRouter
@@ -73,7 +73,7 @@ const courseRouter = require('./router/courseRouter');
 app.use('/api/courses', courseRouter);
 
 // config sessionRouter
-const sessionRouter = require('./router/sessionrouter');
+const sessionRouter = require('./router/sessionsRouter');
 app.use('/api/sessions', sessionRouter);
 
 // config courseOfferingRouter
@@ -98,6 +98,6 @@ app.use(erorhandle.errorHandling);
 
 const port = appConfig.serverConfig.port;
 app.listen(port, '0.0.0.0', () => {
-  console.log(`Server is running on port ${port},http://localhost:${port}`);
-  console.log(`Swagger is running on http://localhost:${port}/api-docs/`);
+    console.log(`Server is running on port ${port},http://localhost:${port}`);
+    console.log(`Swagger is running on http://localhost:${port}/api-docs/`);
 });
