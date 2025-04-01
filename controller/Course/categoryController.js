@@ -110,6 +110,17 @@ const updateCategoryByNameAsync = async (req, res) => {
   }
 };
 
+// Get category tree
+const getCategoryTreeAsync = async (req, res) => {
+  const result = await CategoryService.getCategoryTreeAsync();
+
+  if (result.isSuccess) {
+    res.sendCommonValue(result.data, "Category tree retrieved", 1);
+  } else {
+    res.sendCommonValue({}, "No categories found", 0);
+  }
+}
+
 module.exports = {
   getCategoryByNameAsync,
   getCategoryListAsync,
@@ -118,4 +129,5 @@ module.exports = {
   getCategoryByIdAsync,
   updateCategoryByIdAsync,
   updateCategoryByNameAsync,
+  getCategoryTreeAsync
 };

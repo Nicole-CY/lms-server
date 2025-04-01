@@ -21,11 +21,11 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            courseCode: {
+            course_code: {
                 type: Sequelize.STRING(50),
                 allowNull: false,
             },
-            coverImage: {
+            cover_image: {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
@@ -33,21 +33,31 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
-            createdAt: {
+            created_at: {
+                allowNull: false,
                 type: Sequelize.DATE,
-                allowNull: true,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
-            updatedAt: {
+            updated_at: {
+                allowNull: false,
                 type: Sequelize.DATE,
-                allowNull: true,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
-            createdBy: {
+            created_by: {
                 type: Sequelize.INTEGER,
-                allowNull: true,
+                references: {
+                    model: 'user',
+                    key: 'id',
+                },
+                onDelete: 'CASCADE',
             },
-            updatedBy: {
+            updated_by: {
                 type: Sequelize.INTEGER,
-                allowNull: true,
+                references: {
+                    model: 'user',
+                    key: 'id',
+                },
+                onDelete: 'CASCADE',
             },
         });
     },

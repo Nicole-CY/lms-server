@@ -1,6 +1,5 @@
-const { Op } = require('sequelize');
-
-const Permission = require('../models/permission');
+const Permission = require("../models/permission");
+const { getPaginatedResults } = require("../utils/pagination");
 const logger = require('../common/logSetting');
 const pagination = require('../utils/pagination');
 
@@ -15,39 +14,41 @@ const getPermissionListAsync = async (page = 1, pageSize = 10, search = '') => {
         });
         return result;
     } catch (error) {
-        logger.error('getPermissionListAsync error:', error);
+        logger.error("getPermissionListAsync error:", error);
         return {
             isSuccess: false,
-            message: 'Get permission list failed',
+            message: "Get permission list failed",
             data: null,
         };
     }
 };
 
-const getPermissionByIdAsync = async id => {
+// 通过ID获取权限
+const getPermissionByIdAsync = async (id) => {
     try {
         const permission = await Permission.findByPk(id);
 
         if (!permission) {
             return {
                 isSuccess: false,
-                message: 'Permission not found',
+                message: "Permission not found",
                 data: { id: 0 },
             };
         }
 
-        return { isSuccess: true, message: '', data: permission };
+        return { isSuccess: true, message: "", data: permission };
     } catch (error) {
-        logger.error('getPermissionByIdAsync error:', error);
+        logger.error("getPermissionByIdAsync error:", error);
         return {
             isSuccess: false,
-            message: 'Get permission failed',
+            message: "Get permission failed",
             data: null,
         };
     }
 };
 
-const getPermissionByNameAsync = async name => {
+// 通过名称查找权限（用于检查唯一性）
+const getPermissionByNameAsync = async (name) => {
     try {
         const permission = await Permission.findOne({
             where: { name },
@@ -56,41 +57,43 @@ const getPermissionByNameAsync = async name => {
         if (!permission) {
             return {
                 isSuccess: false,
-                message: 'Permission not found',
+                message: "Permission not found",
                 data: { id: 0 },
             };
         }
 
-        return { isSuccess: true, message: '', data: permission };
+        return { isSuccess: true, message: "", data: permission };
     } catch (error) {
-        logger.error('getPermissionByNameAsync error:', error);
+        logger.error("getPermissionByNameAsync error:", error);
         return {
             isSuccess: false,
-            message: 'Server error',
+            message: "Server error",
             data: null,
         };
     }
 };
 
-const addPermissionAsync = async permission => {
+// 添加权限
+const addPermissionAsync = async (permission) => {
     try {
         const newPermission = await Permission.create({
             name: permission.name,
             description: permission.description,
         });
 
-        return { isSuccess: true, message: '', data: newPermission };
+        return { isSuccess: true, message: "", data: newPermission };
     } catch (error) {
-        logger.error('addPermissionAsync error:', error);
+        logger.error("addPermissionAsync error:", error);
         return {
             isSuccess: false,
-            message: 'Add permission failed',
+            message: "Add permission failed",
             data: null,
         };
     }
 };
 
-const uptPermissionByIdAsync = async permission => {
+// 更新权限
+const uptPermissionByIdAsync = async (permission) => {
     try {
         const result = await Permission.update(
             {
@@ -105,16 +108,17 @@ const uptPermissionByIdAsync = async permission => {
         );
 
         if (result[0] > 0) {
-            return { isSuccess: true, message: 'Update successful' };
+            return { isSuccess: true, message: "Update successful" };
         }
 
-        return { isSuccess: false, message: 'Update failed, permission not found' };
+        return { isSuccess: false, message: "Update failed, permission not found" };
     } catch (error) {
-        logger.error('uptPermissionByIdAsync error:', error);
-        return { isSuccess: false, message: 'Update failed', data: null };
+        logger.error("uptPermissionByIdAsync error:", error);
+        return { isSuccess: false, message: "Update failed", data: null };
     }
 };
 
+// 检查权限名是否存在（可用于更新时检查冲突）
 const checkPermissionNameAsync = async (name, id) => {
     try {
         const permission = await Permission.findOne({
@@ -124,15 +128,15 @@ const checkPermissionNameAsync = async (name, id) => {
         if (permission && permission.id !== id) {
             return {
                 isSuccess: false,
-                message: 'Permission name already exists',
+                message: "Permission name already exists",
                 data: permission,
             };
         }
 
-        return { isSuccess: true, message: '', data: null };
+        return { isSuccess: true, message: "", data: null };
     } catch (error) {
-        logger.error('checkPermissionNameAsync error:', error);
-        return { isSuccess: false, message: 'Check failed', data: null };
+        logger.error("checkPermissionNameAsync error:", error);
+        return { isSuccess: false, message: "Check failed", data: null };
     }
 };
 

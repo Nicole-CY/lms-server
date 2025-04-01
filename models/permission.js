@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../db/sequelizedb');
 
 const Permission = sequelize.define(
-    'permission',
+    'Permission',
     {
         // Model attributes are defined here
         id: {

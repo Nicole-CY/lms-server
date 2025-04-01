@@ -10,41 +10,56 @@ module.exports = {
                 autoIncrement: true,
                 primaryKey: true,
             },
-            courseId: {
+            course_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
+                references: {
+                    model: 'course',
+                    key: 'id',
+                },
+                onDelete: 'CASCADE',
             },
-            startDate: {
+            start_date: {
                 type: Sequelize.DATE,
                 allowNull: true,
             },
-            endDate: {
+            end_date: {
                 type: Sequelize.DATE,
                 allowNull: true,
             },
-            totalSessions: {
+            total_sessions: {
                 type: Sequelize.INTEGER,
                 allowNull: true,
             },
-            launchStatus: {
+            launch_status: {
                 type: Sequelize.ENUM('Scheduled', 'In Progress', 'Completed', 'Cancelled'),
                 allowNull: true,
             },
-            createdAt: {
+            created_at: {
+                allowNull: false,
                 type: Sequelize.DATE,
-                allowNull: true,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
-            updatedAt: {
+            updated_at: {
+                allowNull: false,
                 type: Sequelize.DATE,
-                allowNull: true,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
-            createdBy: {
+            created_by: {
                 type: Sequelize.INTEGER,
-                allowNull: true,
+                references: {
+                    model: 'user',
+                    key: 'id',
+                },
+                onDelete: 'CASCADE',
             },
-            updatedBy: {
+            updated_by: {
                 type: Sequelize.INTEGER,
-                allowNull: true,
+                references: {
+                    model: 'user',
+                    key: 'id',
+                },
+                onDelete: 'CASCADE',
             },
         });
     },

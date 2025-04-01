@@ -10,13 +10,33 @@ module.exports = {
                 autoIncrement: true,
                 primaryKey: true,
             },
-            courseId: {
+            course_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
+                references: {
+                    model: 'course',
+                    key: 'id',
+                },
+                onDelete: 'CASCADE',
             },
-            categoryId: {
+            category_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
+                references: {
+                    model: 'category',
+                    key: 'id',
+                },
+                onDelete: 'CASCADE',
+            },
+            created_at: {
+                allowNull: false,
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            },
+            updated_at: {
+                allowNull: false,
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
         });
     },

@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../db/sequelizedb');
 
 const Session = sequelize.define(
-    'session',
+    'Session',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -16,7 +16,7 @@ const Session = sequelize.define(
             allowNull: false,
             field: 'course_instance_id',
             references: {
-                model: 'CourseInstance',
+                model: 'course_instance',
                 key: 'id',
             },
         },
@@ -45,7 +45,7 @@ const Session = sequelize.define(
             type: DataTypes.INTEGER,
             field: 'created_by',
             references: {
-                model: 'User',
+                model: 'user',
                 key: 'id',
             },
         },
@@ -60,12 +60,17 @@ const Session = sequelize.define(
             type: DataTypes.INTEGER,
             field: 'updated_by',
             references: {
-                model: 'User',
+                model: 'user',
                 key: 'id',
             },
         },
     },
-    { timestamps: false, tableName: 'session' }
+    {
+        tableName: 'session',
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+    }
 );
 
 Session.associate = function (models) {

@@ -13,7 +13,6 @@ module.exports = {
                     file_path: '/uploads/videos/lesson1.mp4',
                     thumbnail_path: '/uploads/thumbnails/lesson1.jpg',
                     uploader_id: 1,
-                    uploaded_at: new Date(),
                     approval_status: 'Approved',
                 },
                 {
@@ -23,7 +22,6 @@ module.exports = {
                     file_path: '/uploads/pdfs/lecture-notes.pdf',
                     thumbnail_path: null,
                     uploader_id: 1,
-                    uploaded_at: new Date(),
                     approval_status: 'Pending',
                 },
                 {
@@ -33,7 +31,6 @@ module.exports = {
                     file_path: '/uploads/videos/lesson2.mp4',
                     thumbnail_path: '/uploads/thumbnails/lesson2.jpg',
                     uploader_id: 1,
-                    uploaded_at: new Date(),
                     approval_status: 'Approved',
                 },
             ],

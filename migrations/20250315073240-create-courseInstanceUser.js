@@ -10,25 +10,45 @@ module.exports = {
                 autoIncrement: true,
                 primaryKey: true,
             },
-            courseInstanceId: {
+            course_instance_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
+                references: {
+                    model: 'course_instance',
+                    key: 'id',
+                },
+                onDelete: 'CASCADE',
             },
-            userId: {
+            user_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
+                references: {
+                    model: 'user',
+                    key: 'id',
+                },
+                onDelete: 'CASCADE',
             },
-            canRead: {
+            can_read: {
                 type: Sequelize.BOOLEAN,
                 allowNull: true,
             },
-            canUpdate: {
+            can_update: {
                 type: Sequelize.BOOLEAN,
                 allowNull: true,
             },
-            canDelete: {
+            can_delete: {
                 type: Sequelize.BOOLEAN,
                 allowNull: true,
+            },
+            created_at: {
+                allowNull: false,
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            },
+            updated_at: {
+                allowNull: false,
+                type: Sequelize.DATE,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
         });
     },
