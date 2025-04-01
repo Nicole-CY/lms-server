@@ -280,4 +280,19 @@ router.delete(
     userController.deleteUserByIdAsync
 );
 
+/**
+ * @openapi
+ * '/api/users/getUserByName':
+ *  get:
+ *     tags:
+ *     - User Controller
+ *     summary: Get user by name
+ */
+router.get(
+    "/getUserByName",
+    commonValidate([
+        query("userName").notEmpty().isString().withMessage("User name is required")
+    ]),
+    userController.getUserByNameAsync
+);
 module.exports = router;
