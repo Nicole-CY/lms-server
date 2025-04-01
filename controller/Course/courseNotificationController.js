@@ -36,7 +36,15 @@ const getCourseNotificationListAsync = async (req, res) => {
 
 const addCourseNotificationAsync = async (req, res) => {
     try {
-        const result = await CourseNotificationService.addCourseNotificationAsync(req.body);
+        const { recipient_id, course_offering_id, message, status } = req.body;
+
+        const notificationData = {
+            recipientId: recipient_id,           
+            courseOfferingId: course_offering_id, 
+            message,
+            status
+        };
+        const result = await CourseNotificationService.addCourseNotificationAsync(notificationData);
 
         if (result.isSuccess) {
             res.sendCommonValue(result.data, "Notification added successfully", 1);
