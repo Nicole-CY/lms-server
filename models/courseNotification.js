@@ -14,7 +14,7 @@ const CourseNotification = sequelize.define(
         recipientId: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            field: "recipient_id",
+            field: 'recipient_id',
             references: {
                 model: 'user',
                 key: 'id',
@@ -23,7 +23,7 @@ const CourseNotification = sequelize.define(
         courseOfferingId: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            field: "course_offering_id",
+            field: 'course_offering_id',
             references: {
                 model: 'course_offering',
                 key: 'id',
@@ -40,14 +40,14 @@ const CourseNotification = sequelize.define(
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,
-            field: "created_at",
+            field: 'created_at',
             defaultValue: DataTypes.NOW,
         },
-
     },
     {
         tableName: 'course_notification',
-        timestamps: false,
+        timestamps: true,
+        createdAt: 'created_at',
         updatedAt: 'updated_at',
     }
 );

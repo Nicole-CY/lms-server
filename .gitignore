@@ -22,7 +22,6 @@ temp/
 *.swp
 *.swo
 
-.vscode/
 .idea/
 *.iml
 

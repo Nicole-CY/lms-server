@@ -1,17 +1,17 @@
-const { CourseInstance, Course, CourseInstanceUser, Session } = require("../../models");
-const logger = require("../../common/logSetting");
-const { getPagination } = require("../../common/pagination");
-const { courseInstanceFilter } = require("../../filters/courseInstanceFilter");
-const { sequelize } = require("../../db/sequelizedb");
+const { CourseInstance, Course, CourseInstanceUser, Session } = require('../../models');
+const logger = require('../../common/logSetting');
+const { getPagination } = require('../../common/pagination');
+const { courseInstanceFilter } = require('../../filters/courseInstanceFilter');
+const { sequelize } = require('../../db/sequelizedb');
 
-const addCourseInstanceAsync = async(courseInstanceData) => {
+const addCourseInstanceAsync = async courseInstanceData => {
     const t = await sequelize.transaction();
     try {
         // Check if course exists
         const course = await Course.findByPk(courseInstanceData.courseId);
         if (!course) {
             await t.rollback();
-            return { isSuccess: false, message: "Course not found", data: null };
+            return { isSuccess: false, message: 'Course not found', data: null };
         }
 
         // Check for overlapping dates with other instances of the same course
@@ -21,32 +21,45 @@ const addCourseInstanceAsync = async(courseInstanceData) => {
                 [sequelize.Op.or]: [
                     {
                         startDate: {
-                            [sequelize.Op.between]: [courseInstanceData.startDate, courseInstanceData.endDate]
-                        }
+                            [sequelize.Op.between]: [
+                                courseInstanceData.startDate,
+                                courseInstanceData.endDate,
+                            ],
+                        },
                     },
                     {
                         endDate: {
-                            [sequelize.Op.between]: [courseInstanceData.startDate, courseInstanceData.endDate]
-                        }
-                    }
-                ]
-            }
+                            [sequelize.Op.between]: [
+                                courseInstanceData.startDate,
+                                courseInstanceData.endDate,
+                            ],
+                        },
+                    },
+                ],
+            },
         });
 
         if (existingInstances.length > 0) {
             await t.rollback();
-            return { isSuccess: false, message: "Date range overlaps with existing course instance", data: null };
+            return {
+                isSuccess: false,
+                message: 'Date range overlaps with existing course instance',
+                data: null,
+            };
         }
 
-        const newCourseInstance = await CourseInstance.create({
-            courseId: courseInstanceData.courseId,
-            startDate: courseInstanceData.startDate,
-            endDate: courseInstanceData.endDate,
-            totalSessions: courseInstanceData.totalSessions,
-            launchStatus: courseInstanceData.launchStatus || "Scheduled",
-            createdBy: courseInstanceData.createdBy,
-            updatedBy: courseInstanceData.updatedBy
-        }, { transaction: t });
+        const newCourseInstance = await CourseInstance.create(
+            {
+                courseId: courseInstanceData.courseId,
+                startDate: courseInstanceData.startDate,
+                endDate: courseInstanceData.endDate,
+                totalSessions: courseInstanceData.totalSessions,
+                launchStatus: courseInstanceData.launchStatus || 'Scheduled',
+                createdBy: courseInstanceData.createdBy,
+                updatedBy: courseInstanceData.updatedBy,
+            },
+            { transaction: t }
+        );
 
         await t.commit();
 
@@ -55,61 +68,61 @@ const addCourseInstanceAsync = async(courseInstanceData) => {
             include: [
                 {
                     model: Course,
-                    attributes: ["title", "courseCode"]
-                }
-            ]
+                    attributes: ['title', 'courseCode'],
+                },
+            ],
         });
 
         return {
             isSuccess: true,
-            message: "",
-            data: courseInstanceWithAssociations
+            message: '',
+            data: courseInstanceWithAssociations,
         };
-    } catch(err) {
+    } catch (err) {
         await t.rollback();
-        logger.error("addCourseInstanceAsync error:", err);
-        return { isSuccess: false, message: "Failed to create course instance", data: null };
+        logger.error('addCourseInstanceAsync error:', err);
+        return { isSuccess: false, message: 'Failed to create course instance', data: null };
     }
 };
 
-const getCourseInstanceByIdAsync = async(id) => {
+const getCourseInstanceByIdAsync = async id => {
     try {
         const courseInstance = await CourseInstance.findByPk(id, {
             include: [
                 {
                     model: Course,
-                    attributes: ["title", "courseCode"]
+                    attributes: ['title', 'courseCode'],
                 },
                 {
                     model: Session,
-                    attributes: ["id", "sessionTitle", "order"],
+                    attributes: ['id', 'sessionTitle', 'order'],
                     include: [
                         {
                             model: sequelize.models.Media,
-                            as: "media",
-                            attributes: ["id", "fileType", "fileName", "filePath"],
-                            required: false
-                        }
-                    ]
-                }
-            ]
+                            as: 'media',
+                            attributes: ['id', 'fileType', 'fileName', 'filePath'],
+                            required: false,
+                        },
+                    ],
+                },
+            ],
         });
 
         if (!courseInstance) {
-            return { isSuccess: false, message: "Course instance not found", data: null };
+            return { isSuccess: false, message: 'Course instance not found', data: null };
         }
 
-        return { isSuccess: true, message: "", data: courseInstance };
-    } catch(err) {
-        logger.error("getCourseInstanceByIdAsync error:", err);
-        return { isSuccess: false, message: "Failed to fetch course instance", data: null };
+        return { isSuccess: true, message: '', data: courseInstance };
+    } catch (err) {
+        logger.error('getCourseInstanceByIdAsync error:', err);
+        return { isSuccess: false, message: 'Failed to fetch course instance', data: null };
     }
 };
 
-const getCourseInstanceListAsync = async(query) => {
+const getCourseInstanceListAsync = async query => {
     try {
         const { page, pageSize, offset, limit } = getPagination(query);
-        
+
         // Use the courseInstanceFilter to get where conditions and includes
         const { where, include } = courseInstanceFilter(query);
 
@@ -118,15 +131,15 @@ const getCourseInstanceListAsync = async(query) => {
             include,
             limit,
             offset,
-            order: [["startDate", "DESC"]],
-            distinct: true // Important for accurate count when using includes
+            order: [['startDate', 'DESC']],
+            distinct: true, // Important for accurate count when using includes
         });
 
         // If requested, include session counts for each course instance
         if (query.includeSessionCounts === 'true') {
-            for (let instance of courseInstances) {
+            for (const instance of courseInstances) {
                 const sessionCount = await Session.count({
-                    where: { courseInstanceId: instance.id }
+                    where: { courseInstanceId: instance.id },
                 });
                 instance.dataValues.sessionCount = sessionCount;
             }
@@ -134,27 +147,27 @@ const getCourseInstanceListAsync = async(query) => {
 
         return {
             isSuccess: true,
-            message: "",
+            message: '',
             data: {
                 courseInstances,
                 total: count,
                 page,
-                pageSize
-            }
+                pageSize,
+            },
         };
-    } catch(err) {
-        logger.error("getCourseInstanceListAsync error:", err);
-        return { isSuccess: false, message: "Failed to get course instance list", data: null };
+    } catch (err) {
+        logger.error('getCourseInstanceListAsync error:', err);
+        return { isSuccess: false, message: 'Failed to get course instance list', data: null };
     }
 };
 
-const updateCourseInstanceAsync = async(courseInstanceData, courseInstanceId) => {
+const updateCourseInstanceAsync = async (courseInstanceData, courseInstanceId) => {
     const t = await sequelize.transaction();
     try {
         const courseInstance = await CourseInstance.findByPk(courseInstanceId, { transaction: t });
         if (!courseInstance) {
             await t.rollback();
-            return { isSuccess: false, message: "Course instance not found", data: null };
+            return { isSuccess: false, message: 'Course instance not found', data: null };
         }
 
         // Check for overlapping dates if dates are being updated
@@ -168,37 +181,44 @@ const updateCourseInstanceAsync = async(courseInstanceData, courseInstanceId) =>
                             startDate: {
                                 [sequelize.Op.between]: [
                                     courseInstanceData.startDate || courseInstance.startDate,
-                                    courseInstanceData.endDate || courseInstance.endDate
-                                ]
-                            }
+                                    courseInstanceData.endDate || courseInstance.endDate,
+                                ],
+                            },
                         },
                         {
                             endDate: {
                                 [sequelize.Op.between]: [
                                     courseInstanceData.startDate || courseInstance.startDate,
-                                    courseInstanceData.endDate || courseInstance.endDate
-                                ]
-                            }
-                        }
-                    ]
+                                    courseInstanceData.endDate || courseInstance.endDate,
+                                ],
+                            },
+                        },
+                    ],
                 },
-                transaction: t
+                transaction: t,
             });
 
             if (existingInstances.length > 0) {
                 await t.rollback();
-                return { isSuccess: false, message: "Date range overlaps with existing course instance", data: null };
+                return {
+                    isSuccess: false,
+                    message: 'Date range overlaps with existing course instance',
+                    data: null,
+                };
             }
         }
 
         // Update the course instance
-        await courseInstance.update({
-            startDate: courseInstanceData.startDate,
-            endDate: courseInstanceData.endDate,
-            totalSessions: courseInstanceData.totalSessions,
-            launchStatus: courseInstanceData.launchStatus,
-            updatedBy: courseInstanceData.updatedBy
-        }, { transaction: t });
+        await courseInstance.update(
+            {
+                startDate: courseInstanceData.startDate,
+                endDate: courseInstanceData.endDate,
+                totalSessions: courseInstanceData.totalSessions,
+                launchStatus: courseInstanceData.launchStatus,
+                updatedBy: courseInstanceData.updatedBy,
+            },
+            { transaction: t }
+        );
 
         await t.commit();
 
@@ -207,84 +227,92 @@ const updateCourseInstanceAsync = async(courseInstanceData, courseInstanceId) =>
             include: [
                 {
                     model: Course,
-                    attributes: ["title", "courseCode"]
-                }
-            ]
+                    attributes: ['title', 'courseCode'],
+                },
+            ],
         });
 
         return {
             isSuccess: true,
-            message: "",
-            data: updatedInstance
+            message: '',
+            data: updatedInstance,
         };
-    } catch(err) {
+    } catch (err) {
         await t.rollback();
-        logger.error("updateCourseInstanceAsync error:", err);
-        return { isSuccess: false, message: "Failed to update course instance", data: null };
+        logger.error('updateCourseInstanceAsync error:', err);
+        return { isSuccess: false, message: 'Failed to update course instance', data: null };
     }
 };
 
-const deleteCourseInstanceAsync = async(id) => {
+const deleteCourseInstanceAsync = async id => {
     const t = await sequelize.transaction();
     try {
         const courseInstance = await CourseInstance.findByPk(id, { transaction: t });
         if (!courseInstance) {
             await t.rollback();
-            return { isSuccess: false, message: "Course instance not found", data: null };
+            return { isSuccess: false, message: 'Course instance not found', data: null };
         }
 
         // Check if there are any sessions
         const sessionCount = await Session.count({
             where: { courseInstanceId: id },
-            transaction: t
+            transaction: t,
         });
 
         if (sessionCount > 0) {
             await t.rollback();
-            return { isSuccess: false, message: "Cannot delete course instance with existing sessions", data: null };
+            return {
+                isSuccess: false,
+                message: 'Cannot delete course instance with existing sessions',
+                data: null,
+            };
         }
 
         await courseInstance.destroy({ transaction: t });
         await t.commit();
 
-        return { isSuccess: true, message: "", data: courseInstance };
-    } catch(err) {
+        return { isSuccess: true, message: '', data: courseInstance };
+    } catch (err) {
         await t.rollback();
-        logger.error("deleteCourseInstanceAsync error:", err);
-        return { isSuccess: false, message: "Failed to delete course instance", data: null };
+        logger.error('deleteCourseInstanceAsync error:', err);
+        return { isSuccess: false, message: 'Failed to delete course instance', data: null };
     }
 };
 
-const bulkDeleteCourseInstancesAsync = async(ids) => {
+const bulkDeleteCourseInstancesAsync = async ids => {
     const t = await sequelize.transaction();
     try {
         // Check if any of the instances have sessions
         const instancesWithSessions = await Session.findAll({
             where: { courseInstanceId: ids },
-            transaction: t
+            transaction: t,
         });
 
         if (instancesWithSessions.length > 0) {
             await t.rollback();
-            return { isSuccess: false, message: "Cannot delete course instances with existing sessions", data: null };
+            return {
+                isSuccess: false,
+                message: 'Cannot delete course instances with existing sessions',
+                data: null,
+            };
         }
 
         const deletedCount = await CourseInstance.destroy({
             where: { id: ids },
-            transaction: t
+            transaction: t,
         });
 
         if (deletedCount === 0) {
             await t.rollback();
-            return { isSuccess: false, message: "No course instances found to delete", data: null };
+            return { isSuccess: false, message: 'No course instances found to delete', data: null };
         }
 
         await t.commit();
-        return { isSuccess: true, message: "", data: { deletedCount } };
-    } catch(err) {
+        return { isSuccess: true, message: '', data: { deletedCount } };
+    } catch (err) {
         await t.rollback();
-        logger.error("bulkDeleteCourseInstancesAsync error:", err);
-        return { isSuccess: false, message: "Failed to bulk delete course instances", data: null };
+        logger.error('bulkDeleteCourseInstancesAsync error:', err);
+        return { isSuccess: false, message: 'Failed to bulk delete course instances', data: null };
     }
 };
 
