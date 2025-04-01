@@ -50,6 +50,7 @@ const CourseOffering = sequelize.define(
         },
         createdBy: {
             type: DataTypes.INTEGER,
+            field: 'created_by',
             references: {
                 model: 'user',
                 key: 'id',
@@ -57,6 +58,7 @@ const CourseOffering = sequelize.define(
         },
         updatedBy: {
             type: DataTypes.INTEGER,
+            field: 'updated_by',
             references: {
                 model: 'user',
                 key: 'id',

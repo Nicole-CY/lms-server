@@ -76,6 +76,7 @@ router.get("/detail", courseOfferingController.getCourseOfferingByIdAsync);
  *               - course_instance_id
  *               - teacher_id
  *               - start_date
+ *               - end_date
  *               - student_capacity
  *               - status
  *             properties:
@@ -86,11 +87,18 @@ router.get("/detail", courseOfferingController.getCourseOfferingByIdAsync);
  *               start_date:
  *                 type: string
  *                 format: date
+ *               end_date:
+ *                 type: string
+ *                 format: date
  *               student_capacity:
  *                 type: integer
  *               status:
  *                 type: string
- *                 enum: [Pending Start, Active, Completed]
+ *                 enum: [Scheduled, In Progress, Completed, Cancelled]
+ *               createdBy:
+ *                 type: integer
+ *               updatedBy:
+ *                 type: integer
  *     responses:
  *       201:
  *         description: Created
@@ -115,6 +123,11 @@ router.post(
             .withMessage("start_date is required")
             .isISO8601()
             .withMessage("start_date must be a valid date"),
+        body("end_date")
+            .notEmpty()
+            .withMessage("end_date is required")
+            .isISO8601()
+            .withMessage("end_date must be a valid date"),
         body("student_capacity")
             .notEmpty()
             .withMessage("student_capacity is required")
@@ -123,8 +136,8 @@ router.post(
         body("status")
             .notEmpty()
             .withMessage("status is required")
-            .isIn(["Pending Start", "Active", "Completed"])
-            .withMessage("status must be one of Pending Start, Active, Completed"),
+            .isIn(["Scheduled", "In Progress", "Completed", "Cancelled"])
+            .withMessage("status must be one of Scheduled, In Progress, Completed, Cancelled"),
     ]),
     courseOfferingController.addCourseOfferingAsync
 );
