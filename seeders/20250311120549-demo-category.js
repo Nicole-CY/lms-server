@@ -13,8 +13,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'programming.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 2,
@@ -24,8 +22,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'web_development.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 3,
@@ -35,8 +31,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'mobile_dev.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 4,
@@ -46,8 +40,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'data_science.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 5,
@@ -57,8 +49,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'python.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 6,
@@ -68,8 +58,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'javascript.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 7,
@@ -79,8 +67,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'react.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 8,
@@ -90,8 +76,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'nodejs.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 9,
@@ -101,8 +85,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'ai.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 10,
@@ -112,8 +94,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'cloud.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 11,
@@ -123,8 +103,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'cybersecurity.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 12,
@@ -134,8 +112,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'devops.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 13,
@@ -145,8 +121,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'business_analytics.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 14,
@@ -156,8 +130,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'graphic_design.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 15,
@@ -167,8 +139,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'digital_marketing.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 16,
@@ -178,8 +148,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'blockchain.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 17,
@@ -189,8 +157,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'game_dev.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 18,
@@ -200,8 +166,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'math.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 19,
@@ -211,8 +175,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'finance.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
             {
                 id: 20,
@@ -222,8 +184,6 @@ module.exports = {
                 created_by: 1,
                 updated_by: 1,
                 icon_url: 'writing.png',
-                created_at: new Date(),
-                updated_at: new Date(),
             },
         ]);
     },

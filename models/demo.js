@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../db/sequelizedb');
 
 const demo = sequelize.define(
-    'demo',
+    'Demo',
     {
         // Model attributes are defined here
         id: {
@@ -35,7 +35,12 @@ const demo = sequelize.define(
             allowNull: false,
         },
     },
-    { timestamps: false, tableName: 'demo' }
+    {
+        tableName: 'demo',
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+    }
 );
 
 module.exports = demo;
