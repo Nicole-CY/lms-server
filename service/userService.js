@@ -1,9 +1,9 @@
-const User = require("../models/user");
-const logger = require("../common/logSetting");
-const { Op } = require("sequelize");
+const { Op } = require('sequelize');
 
+const User = require('../models/user');
+const logger = require('../common/logSetting');
 
-const addUserAsync = async (user) => {
+const addUserAsync = async user => {
     try {
         const newUser = await User.create({
             firstName: user.firstName,
@@ -15,18 +15,17 @@ const addUserAsync = async (user) => {
             gender: user.gender,
             avatar: user.avatar,
             active: user.active ?? true,
-            roles: user.roles || ["user"],
+            roles: user.roles || ['user'],
         });
 
-        return { isSuccess: true, message: "", data: newUser };
+        return { isSuccess: true, message: '', data: newUser };
     } catch (error) {
-        logger.error("addUserAsync error:", error);
-        return { isSuccess: false, message: "Add user failed", data: null };
+        logger.error('addUserAsync error:', error);
+        return { isSuccess: false, message: 'Add user failed', data: null };
     }
 };
 
-
-const getUserListAsync = async (page = 1, pageSize = 10, search = "") => {
+const getUserListAsync = async (page = 1, pageSize = 10, search = '') => {
     try {
         const whereCondition = search
             ? { username: { [Op.like]: `%${search}%` } } // 🔹 支持搜索
@@ -36,92 +35,88 @@ const getUserListAsync = async (page = 1, pageSize = 10, search = "") => {
             where: whereCondition,
             limit: pageSize,
             offset: (page - 1) * pageSize,
-            attributes: { exclude: ["password"] }, // 🔹 避免返回敏感信息
+            attributes: { exclude: ['password'] }, // 🔹 避免返回敏感信息
         });
 
         return {
             isSuccess: true,
-            message: "",
+            message: '',
             data: {
                 items: rows,
                 total: count,
             },
         };
     } catch (error) {
-        logger.error("getUserListAsync error:", error);
+        logger.error('getUserListAsync error:', error);
         return {
             isSuccess: false,
-            message: "Get user list failed",
+            message: 'Get user list failed',
             data: null,
         };
     }
 };
 
-
-
-const getUserByNameAsync = async (name) => {
+const getUserByNameAsync = async name => {
     try {
         const user = await User.findOne({ where: { username: name } });
 
         if (!user) {
             return {
                 isSuccess: false,
-                message: "User not found",
+                message: 'User not found',
                 data: { id: 0 },
             };
         }
 
-        return { isSuccess: true, message: "", data: user };
+        return { isSuccess: true, message: '', data: user };
     } catch (error) {
-        logger.error("getUserbyNameAsync error:", error);
-        return { isSuccess: false, message: "Server error", data: null };
+        logger.error('getUserbyNameAsync error:', error);
+        return { isSuccess: false, message: 'Server error', data: null };
     }
 };
 
-const getUserByIdAsync = async (id) => {
+const getUserByIdAsync = async id => {
     try {
         const user = await User.findByPk(id);
 
         if (!user) {
             return {
                 isSuccess: false,
-                message: "User not found",
+                message: 'User not found',
                 data: { id: 0 },
             };
         }
 
-        return { isSuccess: true, message: "", data: user };
+        return { isSuccess: true, message: '', data: user };
     } catch (error) {
-        logger.error("getUserbyIdAsync error:", error);
-        return { isSuccess: false, message: "Get user failed", data: null };
+        logger.error('getUserbyIdAsync error:', error);
+        return { isSuccess: false, message: 'Get user failed', data: null };
     }
 };
 
-
-const getUserByEmailAsync = async (email) => {
+const getUserByEmailAsync = async email => {
     try {
         const user = await User.findOne({ where: { email } });
 
         if (!user) {
             return {
                 isSuccess: false,
-                message: "User not found",
+                message: 'User not found',
                 data: { id: 0 },
             };
         }
 
-        return { isSuccess: true, message: "", data: user };
+        return { isSuccess: true, message: '', data: user };
     } catch (error) {
-        logger.error("getUserbyEmailAsync error:", error);
-        return { isSuccess: false, message: "Server error", data: null };
+        logger.error('getUserByEmailAsync error:', error);
+        return { isSuccess: false, message: 'Server error', data: null };
     }
 };
-
 
 const getFilteredUserListAsync = async (
     page = 1,
     pageSize = 10,
-    search = "",
+    search = '',
     allowedRoles = []
 ) => {
     try {
@@ -137,34 +132,32 @@ const getFilteredUserListAsync = async (
             where: whereCondition,
             limit: pageSize,
             offset: (page - 1) * pageSize,
-            attributes: { exclude: ["password"] },
+            attributes: { exclude: ['password'] },
         });
 
         return {
             isSuccess: true,
-            message: "",
+            message: '',
             data: {
                 items: rows,
                 total: count,
             },
         };
     } catch (error) {
-        logger.error("getFilteredUserListAsync error:", error);
+        logger.error('getFilteredUserListAsync error:', error);
         return {
             isSuccess: false,
-            message: "Get filtered user list failed",
+            message: 'Get filtered user list failed',
             data: null,
         };
     }
 };
 
-
-
-const updateUserByIdAsync = async (user) => {
+const updateUserByIdAsync = async user => {
     try {
         const existingUser = await User.findByPk(user.id);
         if (!existingUser) {
-            return { isSuccess: false, message: "User not found", data: null };
+            return { isSuccess: false, message: 'User not found', data: null };
         }
 
         const result = await User.update(
@@ -184,16 +177,15 @@ const updateUserByIdAsync = async (user) => {
         );
 
         if (result[0] > 0) {
-            return { isSuccess: true, message: "Update successful" };
+            return { isSuccess: true, message: 'Update successful' };
         }
 
-        return { isSuccess: false, message: "Update failed" };
+        return { isSuccess: false, message: 'Update failed' };
     } catch (error) {
-        logger.error("uptUserByIdAsync error:", error);
-        return { isSuccess: false, message: "Update failed", data: null };
+        logger.error('uptUserByIdAsync error:', error);
+        return { isSuccess: false, message: 'Update failed', data: null };
     }
 };
-
 
 const checkUserNameAsync = async (username, id) => {
     try {
@@ -202,36 +194,35 @@ const checkUserNameAsync = async (username, id) => {
         if (user && user.id !== id) {
             return {
                 isSuccess: false,
-                message: "Username already exists",
+                message: 'Username already exists',
                 data: user,
             };
         }
 
-        return { isSuccess: true, message: "", data: null };
+        return { isSuccess: true, message: '', data: null };
     } catch (error) {
-        logger.error("checkUserNameAsync error:", error);
-        return { isSuccess: false, message: "Check failed", data: null };
+        logger.error('checkUserNameAsync error:', error);
+        return { isSuccess: false, message: 'Check failed', data: null };
     }
 };
 
-
-const deleteUserByIdAsync = async (idsString) => {
+const deleteUserByIdAsync = async idsString => {
     try {
-        const ids = idsString.split(",").map((id) => parseInt(id));
+        const ids = idsString.split(',').map(id => parseInt(id));
         const result = await User.destroy({ where: { id: ids } });
 
         if (result > 0) {
             return {
                 isSuccess: true,
-                message: "Delete successful",
+                message: 'Delete successful',
                 data: null,
             };
         }
 
-        return { isSuccess: false, message: "Delete failed, no user found" };
+        return { isSuccess: false, message: 'Delete failed, no user found' };
     } catch (error) {
-        logger.error("deleteUserByIdAsync error:", error);
-        return { isSuccess: false, message: "Delete failed", data: null };
+        logger.error('deleteUserByIdAsync error:', error);
+        return { isSuccess: false, message: 'Delete failed', data: null };
     }
 };
 
@@ -245,5 +236,4 @@ module.exports = {
     updateUserByIdAsync,
     checkUserNameAsync,
     deleteUserByIdAsync,
-
 };
