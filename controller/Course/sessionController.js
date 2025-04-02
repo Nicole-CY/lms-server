@@ -92,8 +92,7 @@ const getSessionListAsync = async (req, res) => {
  */
 const updateSessionAsync = async (req, res) => {
     try {
-        console.log("Session ID from params:", req.params);
-        console.log("Request body:", req.body);
+
         const session = {};
         session.id = req.body.id;
         session.courseInstanceId = req.body.courseInstanceId;
@@ -101,8 +100,6 @@ const updateSessionAsync = async (req, res) => {
         session.order = req.body.order;
         session.updatedBy = req.body.updatedBy;
 
-        // const sessionId = req.body.id;
-        // const sessionData = req.body;
         const result = await sessionService.updateSessionAsync(session.id, session);
 
         if (result.isSuccess) {
