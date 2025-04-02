@@ -62,7 +62,7 @@ const {addSessionValidator,
  *              properties:
  *                id:
  *                  type: integer
- *                  example: 101
+ *                  example: 1
  *                courseInstanceId:
  *                  type: integer
  *                  example: 1
