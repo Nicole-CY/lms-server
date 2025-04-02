@@ -31,7 +31,7 @@ const getUserListAsync = async (page = 1, pageSize = 10, search = '') => {
             ? { username: { [Op.like]: `%${search}%` } } 
             : {};
 
-        const result = await getPaginatedResults(User, { where, page, pageSize });
+        const result = await getPaginatedResults(User, { where, page, pageSize, attributes: { exclude: ['password'] } } );
 
         return {
             isSuccess: true,
@@ -50,7 +50,7 @@ const getUserListAsync = async (page = 1, pageSize = 10, search = '') => {
 
 const getUserByNameAsync = async name => {
     try {
-        const user = await User.findOne({ where: { username: name } });
+        const user = await User.findOne({ where: { username: name }, attributes: { exclude: ['password'] } });
 
         if (!user) {
             return {
@@ -69,7 +69,7 @@ const getUserByNameAsync = async name => {
 
 const getUserByIdAsync = async id => {
     try {
-        const user = await User.findByPk(id);
+        const user = await User.findByPk(id, { attributes: { exclude: ['password'] } }  );
 
         if (!user) {
             return {
@@ -88,7 +88,7 @@ const getUserByIdAsync = async id => {
 
 const getUserByEmailAsync = async email => {
     try {
-        const user = await User.findOne({ where: { email } });
+        const user = await User.findOne({ where: { email }, attributes: { exclude: ['password'] } });
 
         if (!user) {
             return {
@@ -113,7 +113,7 @@ const getFilteredUserListAsync = async (
 ) => {
     try {
         const whereCondition = {
-            roles: { [Op.overlap]: allowedRoles }, // 🔹 限制角色
+            roles: { [Op.overlap]: allowedRoles }, 
         };
 
         if (search) {
