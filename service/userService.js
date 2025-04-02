@@ -1,7 +1,7 @@
 const { Op } = require('sequelize');
-
 const User = require('../models/user');
 const logger = require('../common/logSetting');
+const {getPaginatedResults } = require('../utils/pagination');
 
 const addUserAsync = async user => {
     try {
@@ -27,24 +27,16 @@ const addUserAsync = async user => {
 
 const getUserListAsync = async (page = 1, pageSize = 10, search = '') => {
     try {
-        const whereCondition = search
-            ? { username: { [Op.like]: `%${search}%` } } // 🔹 支持搜索
+        const where = search
+            ? { username: { [Op.like]: `%${search}%` } } 
             : {};
 
-        const { count, rows } = await User.findAndCountAll({
-            where: whereCondition,
-            limit: pageSize,
-            offset: (page - 1) * pageSize,
-            attributes: { exclude: ['password'] }, // 🔹 避免返回敏感信息
-        });
+        const result = await getPaginatedResults(User, { where, page, pageSize });
 
         return {
             isSuccess: true,
-            message: '',
-            data: {
-                items: rows,
-                total: count,
-            },
+            message: 'Success',
+            data: result,
         };
     } catch (error) {
         logger.error('getUserListAsync error:', error);

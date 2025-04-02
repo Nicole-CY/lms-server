@@ -38,7 +38,9 @@ const addUserAsync = async (req, res) => {
 const getUserListAsync = async (req, res) => {
     const page = parseInt(req.query.page);
     const pageSize = parseInt(req.query.pageSize);
-    const result = await userService.getUserListAsync(page, pageSize);
+    const search = req.query.search;
+    
+    const result = await userService.getUserListAsync(page, pageSize, search);
     if (result.isSuccess) {
         res.sendCommonValue(result.data, 'success', 1);
     } else {
