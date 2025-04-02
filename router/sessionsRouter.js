@@ -206,6 +206,30 @@ router.get(
  *         required: false
  *         schema:
  *           type: integer
+ *       - name: sessionTitle
+ *         in: query
+ *         description: Filter sessions by title (Partial match)
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: sessionDescription
+ *         in: query
+ *         description: Filter sessions by description (Partial match)
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: createdBy
+ *         in: query
+ *         description: Filter sessions by created user
+ *         required: false
+ *         schema:
+ *           type: integer
+ *       - name: updatedBy
+ *         in: query
+ *         description: Filter sessions by course updated user
+ *         required: false
+ *         schema:
+ *           type: integer
  *     responses:
  *      200:
  *        description: Sessions fetched successfully

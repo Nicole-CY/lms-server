@@ -1,5 +1,7 @@
 const Session = require("../../models/session");
 const logger = require("../../common/logSetting");
+const { Op } = require("sequelize");
+const { getPaginatedResults } = require("../../utils/pagination");
 
 const addSessionAsync = async (sessionData) => {
     try {
@@ -41,7 +43,7 @@ const getSessionByIdAsync = async (sessionId) => {
             return { isSuccess: false, message: "Session not found", data: null };
         };
 
-        return { isSuccess: false, message: "Session fetched succesfully", data: session };
+        return { isSuccess: true, message: "Session fetched succesfully", data: session };
 
     } catch (err) {
         logger.error("getSessionByIdAsync error:", err);
@@ -80,19 +82,35 @@ const getSessionsByCourseInstanceIdAsync = async (courseInstanceId) => {
  * pagenization to extra session list
  * @param {number} page - current page，default 1
  * @param {number} pageSize - the number to show session per page, default 10 
+ * @param {object} query - Query filters (courseInstanceId, title, description, createdBy, updatedBy)
  * @returns {object}
  */
-const getSessionListAsync = async (page = 1, pageSize = 10) => {
+const getSessionListAsync = async (page = 1, pageSize = 10, query = {}) => {
     try {
-        const offset = (page - 1) * pageSize;
+        const where = {};
 
-        const { count, rows: sessions } = await Session.findAndCountAll({
-            limit: pageSize,
-            offset,
-            order: [['order', 'DESC']],
+        if (query.courseInstanceId) {
+            where.courseInstanceId = query.courseInstanceId; // Exact match
+        }
+        if (query.sessionTitle) {
+            where.sessionTitle = { [Op.like]: `%${query.sessionTitle}%` }; // Partial match
+        }
+        if (query.sessionDescription) {
+            where.sessionDescription = { [Op.like]: `%${query.sessionDescription}%` };
+        }
+        if (query.createdBy) {
+            where.createdBy = query.createdBy; // Exact match
+        }
+        if (query.updatedBy) {
+            where.updatedBy = query.updatedBy; // Exact match
+        }
+
+        return await getPaginatedResults(Session, {
+            page,
+            pageSize,
+            where,
+            order: [["order", "DESC"]],
         });
-
-        return { isSuccess: true, message: "Sessions fetched successfully", data: { total: count, sessions, } };
 
     } catch (err) {
         logger.error("getSessionList error:", err);

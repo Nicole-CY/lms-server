@@ -62,12 +62,19 @@ const getSessionsByCourseInstanceIdAsync = async (req, res) => {
  */
 const getSessionListAsync = async (req, res) => {
     try {
-        let { page, pageSize } = req.query;
+        let { page, pageSize, courseInstanceId, sessionTitle, sessionDescription, createdBy, updatedBy } = req.query;
 
         page = parseInt(page, 10) || 1;
         pageSize = parseInt(pageSize, 10) || 10;
 
-        const result = await sessionService.getSessionListAsync(page, pageSize);
+        const query = {};
+        if (courseInstanceId) query.courseInstanceId = courseInstanceId;
+        if (sessionTitle) query.sessionTitle = sessionTitle;
+        if (sessionDescription) query.sessionDescription = sessionDescription;
+        if (createdBy) query.createdBy = createdBy;
+        if (updatedBy) query.updatedBy = updatedBy;
+
+        const result = await sessionService.getSessionListAsync(page, pageSize, query);
 
         if (result.isSuccess) {
             res.sendCommonValue(result.data, "Sessions fetched successfully", 1, 200);
