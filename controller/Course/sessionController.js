@@ -92,9 +92,18 @@ const getSessionListAsync = async (req, res) => {
  */
 const updateSessionAsync = async (req, res) => {
     try {
-        const sessionId = req.params.id;
-        const sessionData = req.body;
-        const result = await sessionService.updateSessionAsync(sessionId, sessionData);
+        console.log("Session ID from params:", req.params);
+        console.log("Request body:", req.body);
+        const session = {};
+        session.id = req.body.id;
+        session.courseInstanceId = req.body.courseInstanceId;
+        session.sessionTitle = req.body.sessionTitle;
+        session.order = req.body.order;
+        session.updatedBy = req.body.updatedBy;
+
+        // const sessionId = req.body.id;
+        // const sessionData = req.body;
+        const result = await sessionService.updateSessionAsync(session.id, session);
 
         if (result.isSuccess) {
             res.sendCommonValue(result.data, "Session update successfully", 1, 200);

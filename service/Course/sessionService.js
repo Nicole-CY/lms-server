@@ -131,23 +131,24 @@ const updateSessionAsync = async (sessionId, sessionData) => {
         };
 
         const session = await Session.findByPk(sessionId);
+        console.log("Found session:", session);
         if (!session) {
-            return { isSuccess: false, message: "Session not found", date: null };
+            return { isSuccess: false, message: "Session not found", data: null };
         };
 
-        await session.update({
-            sessionTitle: sessionData.sessionTitle || session.sessionTitle,
-            sessionDescription: sessionData.sessionDescription || session.sessionDescription,
-            order: sessionData.order !== undefined ? sessionData.order : session.order,
-            updatedBy: sessionData.updateBy || session.updateBy,
-            updatedAt: new Date(),
-        });
+        await session.update(
+            {
+                ...sessionData, 
+                updatedAt: new Date(),
+            },
+            { omitNull: true }
+        );
 
         return { isSuccess: true, message: "Session updated successfully", data: session };
 
     } catch (err) {
         logger.error("updateSessionAsync error:", err);
-        return { isSuccess: false, message: "Failed to update session", date: null };
+        return { isSuccess: false, message: "Failed to update session", data: null };
     }
 };
 

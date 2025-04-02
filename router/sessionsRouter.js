@@ -251,7 +251,7 @@ router.get(
 // Update session
 /**
  * @openapi
- * '/api/sessions':
+ * '/api/sessions/{id}':
  *  put:
  *     tags:
  *     - Session Controller
@@ -272,10 +272,10 @@ router.get(
  *            properties:
  *              id:
  *                type: number
- *                default: 0
+ *                default: 1
  *              sessionTitle:
  *                type: string
- *                default: "Introduction to REST APIs"
+ *                default: "Introduction to Data Science"
  *              order:
  *                type: integer
  *                default: 1
@@ -284,7 +284,7 @@ router.get(
  *                default: "This session covers the basics of REST API design"
  *              courseInstanceId:
  *                type: integer
- *                default: 101
+ *                default: 1
  *                description: "The ID of the course instance this session belongs to"
  *              createdAt:
  *                type: string
@@ -293,8 +293,10 @@ router.get(
  *                type: string
  *                format: date-time
  *              createdBy:
+ *                default: 1
  *                type: integer
  *              updatedBy:
+ *                default: 1
  *                type: integer
  *     responses:
  *      200:
@@ -309,7 +311,7 @@ router.get(
  *        description: Server Error
  */
 router.put(
-    "",
+    "/:id",
     commonValidate(updateSessionValidator),
     sessionController.updateSessionAsync
 );
