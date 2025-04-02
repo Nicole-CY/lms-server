@@ -9,6 +9,7 @@ module.exports = {
         password: mysqlConfig.password,
         database: mysqlConfig.database,
         dialect: 'mysql',
+        migrationStorageTableName: 'sequelize_meta',
     },
     test: {
         host: mysqlConfig.host,
@@ -17,5 +18,6 @@ module.exports = {
         password: mysqlConfig.password,
         database: mysqlConfig.database,
         dialect: 'mysql',
+        migrationStorageTableName: 'sequelize_meta',
     },
 };

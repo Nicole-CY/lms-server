@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+
 const { mysqlConfig } = require('../appConfig');
 // const mysql2 = require('mysql2/promise');
 
@@ -15,6 +16,11 @@ const sequelize = new Sequelize(mysqlConfig.database, mysqlConfig.user, mysqlCon
     port: mysqlConfig.port,
     dialect:
         'mysql' /* one of 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql' | 'db2' | 'snowflake' | 'oracle' */,
+    define: {
+        underscored: true,
+        freezeTableName: true,
+        timestamps: true,
+    },
 });
 
 sequelize

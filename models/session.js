@@ -16,9 +16,9 @@ const Session = sequelize.define(
             allowNull: false,
             field: 'course_instance_id',
             references: {
-                model: "courseInstance",
-                key: "id",
-            }
+                model: 'courseInstance',
+                key: 'id',
+            },
         },
         sessionTitle: {
             type: DataTypes.STRING(50),
@@ -45,8 +45,8 @@ const Session = sequelize.define(
             type: DataTypes.INTEGER,
             field: 'created_by',
             references: {
-                model: "user",
-                key: "id",
+                model: 'user',
+                key: 'id',
             },
         },
         updatedAt: {
@@ -60,8 +60,8 @@ const Session = sequelize.define(
             type: DataTypes.INTEGER,
             field: 'updated_by',
             references: {
-                model: "user",
-                key: "id",
+                model: 'user',
+                key: 'id',
             },
         },
     },
@@ -69,7 +69,7 @@ const Session = sequelize.define(
         timestamps: true,
         createdAt: 'created_at',
         updatedAt: 'updated_at',
-        tableName: "session"
+        tableName: 'session',
     }
 );
 
