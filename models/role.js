@@ -31,7 +31,7 @@ const Role = sequelize.define(
 
 Role.associate = function (models) {
     Role.belongsToMany(models.User, {
-        through: 'userRole',
+        through: 'user_role',
         foreignKey: 'role_id',
         otherKey: 'user_id',
     });

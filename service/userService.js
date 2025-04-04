@@ -1,7 +1,8 @@
 const { Op } = require('sequelize');
+
 const User = require('../models/user');
 const logger = require('../common/logSetting');
-const {getPaginatedResults } = require('../utils/pagination');
+const { getPaginatedResults } = require('../utils/pagination');
 
 const addUserAsync = async user => {
     try {
@@ -27,11 +28,14 @@ const addUserAsync = async user => {
 
 const getUserListAsync = async (page = 1, pageSize = 10, search = '') => {
     try {
-        const where = search
-            ? { username: { [Op.like]: `%${search}%` } } 
-            : {};
+        const where = search ? { username: { [Op.like]: `%${search}%` } } : {};
 
-        const result = await getPaginatedResults(User, { where, page, pageSize, attributes: { exclude: ['password'] } } );
+        const result = await getPaginatedResults(User, {
+            where,
+            page,
+            pageSize,
+            attributes: { exclude: ['password'] },
+        });
 
         return {
             isSuccess: true,
@@ -48,10 +52,9 @@ const getUserListAsync = async (page = 1, pageSize = 10, search = '') => {
     }
 };
 
-
 const getUserByIdAsync = async id => {
     try {
-        const user = await User.findByPk(id, { attributes: { exclude: ['password'] } }  );
+        const user = await User.findByPk(id, { attributes: { exclude: ['password'] } });
 
         if (!user) {
             return {
@@ -70,7 +73,9 @@ const getUserByIdAsync = async id => {
 
 const getUserByEmailAsync = async email => {
     try {
-        const user = await User.findOne({ where: { email }, attributes: { exclude: ['password'] } });
+        const user = await User.findOne({
+            where: { email },
+        });
 
         if (!user) {
             return {
@@ -95,7 +100,7 @@ const getFilteredUserListAsync = async (
 ) => {
     try {
         const whereCondition = {
-            roles: { [Op.overlap]: allowedRoles }, 
+            roles: { [Op.overlap]: allowedRoles },
         };
 
         if (search) {
@@ -176,7 +181,7 @@ const checkUsernameAsync = async (username, id) => {
     } catch (error) {
         logger.error('checkUsernameAsync error:', error);
         return { isSuccess: false, message: 'Check failed', data: null };
-    }   
+    }
 };
 
 const deleteUserByIdAsync = async idsString => {

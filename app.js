@@ -27,6 +27,8 @@ app.use(express.urlencoded({ extended: false }));
 // parse Cookie
 app.use(cookieParser());
 
+const setUserFromToken = require('./middleware/setUserFromToken');
+
 app.use(
     jwtMiddleware({
         secret: appConfig.jwtConfig.secret,
@@ -62,7 +64,7 @@ app.use('/api/demos', demoRouter);
 
 // config roleRouter
 const roleRouter = require('./router/roleRouter');
-app.use('/api/roles', roleRouter);
+app.use('/api/roles', setUserFromToken, roleRouter);
 
 // config categoryRouter
 const categoryRouter = require('./router/categoryRouter');
