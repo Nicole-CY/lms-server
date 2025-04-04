@@ -29,4 +29,12 @@ const Role = sequelize.define(
     }
 );
 
+Role.associate = function (models) {
+    Role.belongsToMany(models.User, {
+        through: 'userRole',
+        foreignKey: 'role_id',
+        otherKey: 'user_id',
+    });
+};
+
 module.exports = Role;

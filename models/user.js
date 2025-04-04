@@ -53,11 +53,6 @@ const User = sequelize.define(
             allowNull: true, // change to true for now, due to data missing columns
             defaultValue: true,
         },
-        roles: {
-            type: DataTypes.JSON,
-            allowNull: false,
-            defaultValue: [],
-        },
     },
     {
         timestamps: true,
@@ -66,5 +61,13 @@ const User = sequelize.define(
         tableName: 'user',
     }
 );
+
+User.associate = function (models) {
+    User.belongsToMany(models.Role, {
+        through: 'userRole',
+        foreignKey: 'user_id',
+        otherKey: 'role_id',
+    });
+};
 
 module.exports = User;
