@@ -28,8 +28,7 @@ const addUserAsync = async (req, res) => {
     user.password = encrypPassword;
     const result = await userService.addUserAsync(user);
     if (result.isSuccess) {
-        user.password = password;
-        res.sendCommonValue(user, 'success', 1);
+        res.sendCommonValue({}, 'success', 1);
     } else {
         res.sendCommonValue({}, 'failed', 0);
     }
