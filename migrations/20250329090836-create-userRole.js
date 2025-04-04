@@ -2,15 +2,9 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-    up: async (queryInterface, Sequelize) => {
-        await queryInterface.createTable('course_notification', {
-            id: {
-                type: Sequelize.INTEGER,
-                primaryKey: true,
-                autoIncrement: true,
-                allowNull: false,
-            },
-            recipient_id: {
+    async up(queryInterface, Sequelize) {
+        await queryInterface.createTable('user_role', {
+            user_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
@@ -19,37 +13,35 @@ module.exports = {
                 },
                 onDelete: 'CASCADE',
             },
-            course_offering_id: {
+            role_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 references: {
-                    model: 'course_offering',
+                    model: 'role',
                     key: 'id',
                 },
                 onDelete: 'CASCADE',
             },
-            message: {
-                type: Sequelize.TEXT,
+            createdAt: {
                 allowNull: false,
-            },
-            status: {
-                type: Sequelize.ENUM('Unread', 'Read'),
-                allowNull: false,
-            },
-            created_at: {
                 type: Sequelize.DATE,
-                allowNull: false,
                 defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
-            updated_at: {
+            updatedAt: {
                 allowNull: false,
                 type: Sequelize.DATE,
                 defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
         });
+
+        await queryInterface.addConstraint('user_role', {
+            fields: ['user_id', 'role_id'],
+            type: 'primary key',
+            name: 'pk_userRole',
+        });
     },
 
-    down: async (queryInterface, Sequelize) => {
-        await queryInterface.dropTable('course_notification');
+    async down(queryInterface, Sequelize) {
+        await queryInterface.dropTable('user_role');
     },
 };

@@ -27,6 +27,8 @@ app.use(express.urlencoded({ extended: false }));
 // parse Cookie
 app.use(cookieParser());
 
+const setUserFromToken = require('./middleware/setUserFromToken');
+
 app.use(
     jwtMiddleware({
         secret: appConfig.jwtConfig.secret,
@@ -62,7 +64,7 @@ app.use('/api/demos', demoRouter);
 
 // config roleRouter
 const roleRouter = require('./router/roleRouter');
-app.use('/api/roles', roleRouter);
+app.use('/api/roles', setUserFromToken, roleRouter);
 
 // config categoryRouter
 const categoryRouter = require('./router/categoryRouter');
@@ -73,7 +75,7 @@ const courseRouter = require('./router/courseRouter');
 app.use('/api/courses', courseRouter);
 
 // config sessionRouter
-const sessionRouter = require('./router/sessionRouter');
+const sessionRouter = require('./router/sessionsRouter');
 app.use('/api/sessions', sessionRouter);
 
 // config courseOfferingRouter
@@ -96,8 +98,4 @@ app.use('/api/permissions', permissionRouter);
 const erorhandle = require('./middleware/errorHandling');
 app.use(erorhandle.errorHandling);
 
-const port = appConfig.serverConfig.port;
-app.listen(port, '0.0.0.0', () => {
-    console.log(`Server is running on port ${port},http://localhost:${port}`);
-    console.log(`Swagger is running on http://localhost:${port}/api-docs/`);
-});
+module.exports = app;

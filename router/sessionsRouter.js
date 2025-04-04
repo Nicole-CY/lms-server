@@ -37,6 +37,12 @@ const sessionController = require("../controller/Course/sessionController");
  *              order:
  *                type: integer
  *                example: 1
+ *              createdBy:
+ *                type: integer
+ *                example: 1
+ *              updatedBy:
+ *                type: integer
+ *                example: 1 
  *              sessionDescription:
  *                type: string
  *                example: "This session covers the basics of JavaScript."

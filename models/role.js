@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../db/sequelizedb');
 
 const Role = sequelize.define(
-    'role',
+    'Role',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -23,10 +23,18 @@ const Role = sequelize.define(
     },
     {
         tableName: 'role',
-        timestamps: false,
+        timestamps: true,
         createdAt: 'created_at',
         updatedAt: 'updated_at',
     }
 );
+
+Role.associate = function (models) {
+    Role.belongsToMany(models.User, {
+        through: 'user_role',
+        foreignKey: 'role_id',
+        otherKey: 'user_id',
+    });
+};
 
 module.exports = Role;

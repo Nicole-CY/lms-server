@@ -1,115 +1,115 @@
-const userService = require("../service/userService");
-const bcrypt = require("bcryptjs");
-const { bcryptConfig } = require("../appConfig");
+const bcrypt = require('bcryptjs');
+
+const userService = require('../service/userService');
+const { bcryptConfig } = require('../appConfig');
 
 const addUserAsync = async (req, res) => {
-    const existingEmail = await userService.getUserbyEmailAsync(req.body.email);
+    const existingEmail = await userService.getUserByEmailAsync(req.body.email);
 
     if (existingEmail.isSuccess && existingEmail.data.id > 0) {
-        return res.sendCommonValue({}, "Email already exists", 400, 400);
+        return res.sendCommonValue({}, 'Email already exists', 400, 400);
     }
 
-    let user = {};
-    user.password = req.body.password;
-    user.email = req.body.email;
-    user.firstName = req.body.firstName;
-    user.lastName = req.body.lastName;
-    user.address = req.body.address;
-    user.birthDate = req.body.birthDate;
-    user.gender = req.body.gender;
-    user.avatar = req.body.avatar;
-    user.roles = req.body.roles;
-    user.active = req.body.active;
+    const user = {
+        password: req.body.password,
+        email: req.body.email,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        address: req.body.address,
+        birthDate: req.body.birthDate,
+        gender: req.body.gender,
+        avatar: req.body.avatar,
+        roles: req.body.roles,
+        active: req.body.active,  
+    };
+    
+    
 
-    let password = req.body.password;
+
     const salt = await bcrypt.genSalt(bcryptConfig.saltRounds);
-    let encrypPassword = await bcrypt.hash(user.password, salt);
+    const encrypPassword = await bcrypt.hash(user.password, salt);
     user.password = encrypPassword;
-    let result = await userService.addUserAsync(user);
-    if (result.isSuccess) {
-        user.password = password;
-        res.sendCommonValue(user, "success", 1);
-    } else {
-        res.sendCommonValue({}, "", 0);
-    }
-};
 
-const getUserAsync = (req, res) => {
-    res.sendCommonValue(
-        { id: 1, name: "admin", age: 22, dt: new Date() },
-        "getUserAsync",
-        1
-    );
+    const result = await userService.addUserAsync(user);
+    
+    if (result.isSuccess) {
+        res.sendCommonValue({}, 'success', 1);
+    } else {
+        res.sendCommonValue({}, 'failed', 0);
+    }
 };
 
 const getUserListAsync = async (req, res) => {
-    let page = parseInt(req.params.page);
-    let pageSize = parseInt(req.params.pageSize);
-    let result = await userService.getUserListAsync(page, pageSize);
+    const page = parseInt(req.query.page);
+    const pageSize = parseInt(req.query.pageSize);
+    const search = req.query.search;
+    
+    const result = await userService.getUserListAsync(page, pageSize, search);
     if (result.isSuccess) {
-        res.sendCommonValue(result.data, "success", 1);
+        res.sendCommonValue(result.data, 'success', 1);
     } else {
-        res.sendCommonValue([], "failed", 0);
+        res.sendCommonValue([], 'failed', 0);
     }
 };
 
-const deleteUserByIdAsync = async (req, res) => {
-    let ids = req.params.ids;
-    let result = await userService.delUserByIdAsync(ids);
+
+
+const getUserByIdAsync = async (req, res) => {
+    const id = parseInt(req.params.id);
+    const result = await userService.getUserByIdAsync(id);
     if (result.isSuccess) {
-        res.sendCommonValue({}, "success", 1);
+        res.sendCommonValue(result.data, 'success', 1);
     } else {
-        res.sendCommonValue({}, "failed", 0);
+        res.sendCommonValue([], 'failed', 0);
     }
 };
 
 const updateUserAsync = async (req, res) => {
-    //check username not in db
-    let user = {};
-    user.id = req.body.id;
-    user.username = req.body.username;
-    user.email = req.body.email;
-    user.address = req.body.address;
-    user.birthDate = req.body.birthDate;
-    user.gender = req.body.gender;
-    user.firstName = req.body.firstName;
-    user.lastName = req.body.lastName;
-    user.avatar = req.body.avatar;
-    user.roles = req.body.roles;
-    user.active = req.body.active;
-
-    let checkUserResult = await userService.checkUserNameAsync(
-        user.username,
-        user.id
-    );
-    if (!checkUserResult.isSuccess) {
-        res.sendCommonValue({}, "Username already exists", 400, 400);
+    const email = req.body.email;
+    const checkResult = await userService.getUserByEmailAsync(email);
+    if (!checkResult.isSuccess || !checkResult.data || checkResult.data.id <= 0) {
+        res.sendCommonValue({}, 'user not found', 400, 400);
         return;
     }
-    let dbResult = await userService.uptUserByIdAsync(user);
+    
+    const userUpdate = {
+        id: checkResult.data.id,
+        username: req.body.username,
+        address: req.body.address,
+        birthDate: req.body.birthDate,
+        gender: req.body.gender,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        avatar: req.body.avatar,
+        roles: req.body.roles,
+        active: req.body.active,
+        //update password prohibited
+    }
+
+    const dbResult = await userService.updateUserByIdAsync(userUpdate);
+
     if (dbResult.isSuccess) {
-        res.sendCommonValue(user, "success", 1);
-        return;
+        res.sendCommonValue({}, 'update user successfully', 1);
     } else {
-        res.sendCommonValue({}, "", 0);
+        res.sendCommonValue({}, 'failed to update user', 0);
     }
 };
 
-const getUserByIdAsync = async (req, res) => {
-    let id = parseInt(req.query.id);
-    let result = await userService.getUserbyIdAsync(id);
+
+const deleteUserByIdAsync = async (req, res) => {
+    const ids = req.params.ids;
+    const result = await userService.deleteUserByIdAsync(ids);
     if (result.isSuccess) {
-        res.sendCommonValue(result.data, "success", 1);
+        res.sendCommonValue({}, 'success', 1);
     } else {
-        res.sendCommonValue([], "failed", 0);
+        res.sendCommonValue({}, 'failed', 0);
     }
 };
 
 module.exports = {
     addUserAsync,
-    getUserAsync,
     getUserListAsync,
-    deleteUserByIdAsync,
-    updateUserAsync,
     getUserByIdAsync,
+    updateUserAsync,
+    deleteUserByIdAsync,
 };

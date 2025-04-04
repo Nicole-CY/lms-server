@@ -17,7 +17,7 @@ const loginAsync = async (req, res) => {
             return res.sendCommonValue(null, 'Email and password are required', 0);
         }
 
-        const result = await userService.getUserbyEmailAsync(email);
+        const result = await userService.getUserByEmailAsync(email, true);
 
         if (!result.isSuccess) {
             logger.warn(`Login failed for email: ${email}`);
@@ -31,7 +31,7 @@ const loginAsync = async (req, res) => {
             return res.sendCommonValue(null, 'Authentication failed', 0);
         }
 
-        const user = { id: result.data.id, role: [result.data.roles], email: result.data.email };
+        const user = { id: result.data.id, email: result.data.email };
 
         const tokenStr = jwt.sign(user, jwtConfig.secret, {
             expiresIn: `${jwtConfig.expiresIn}s`,
@@ -74,7 +74,7 @@ const registerAsync = async (req, res) => {
             return res.sendCommonValue({}, 'email and password are required', 400, 400);
         }
 
-        const existingEmail = await userService.getUserbyEmailAsync(email);
+        const existingEmail = await userService.getUserByEmailAsync(email);
         if (existingEmail.isSuccess && existingEmail.data) {
             return res.sendCommonValue({}, 'Email already exists', 400, 400);
         }
@@ -120,7 +120,7 @@ const meAsync = async (req, res) => {
             return res.status(401).sendCommonValue(null, 'Not logged in', 0);
         }
 
-        const result = await userService.getUserbyEmailAsync(user.email);
+        const result = await userService.getUserByEmailAsync(user.email);
 
         if (!result.isSuccess) {
             return res.status(404).sendCommonValue(null, 'User does not exist.', 0);

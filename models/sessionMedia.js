@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../db/sequelizedb');
 
 const Media = sequelize.define(
-    'media',
+    'Media',
     {
         id: {
             type: DataTypes.INTEGER,
@@ -46,8 +46,8 @@ const Media = sequelize.define(
             allowNull: false,
             field: 'uploder_id',
             references: {
-                model: 'User',
-                key: 'id',
+                model: "user",
+                key: "id",
             },
             onDelete: 'CASCADE',
         },
@@ -65,13 +65,15 @@ const Media = sequelize.define(
         },
     },
     {
-        timestamps: false,
         tableName: 'media',
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
     }
 );
 
 Media.associate = function (models) {
-    Media.belongsTo(models.session, { foreignKey: 'sessionId' });
+    Media.belongsTo(models.Session, { foreignKey: 'sessionId' });
 };
 
 module.exports = Media;
