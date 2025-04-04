@@ -1,11 +1,10 @@
-const express = require("express");
-require("express-async-errors");
+const express = require('express');
+require('express-async-errors');
 const router = express.Router();
 
-const { commonValidate } = require("../middleware/expressValidator");
-const { roleValidator } = require("../validator/roleValidator");
-
-const roleController = require("../controller/roleController");
+const { commonValidate } = require('../middleware/expressValidator');
+const { roleValidator } = require('../validator/roleValidator');
+const roleController = require('../controller/roleController');
 
 /**
  * @openapi
@@ -38,13 +37,9 @@ const roleController = require("../controller/roleController");
  *      409:
  *        description: Role already exists
  *      500:
- *        description: Server Error 
+ *        description: Server Error
  */
-router.post(
-  "",
-  commonValidate(roleValidator),
-  roleController.addRoleAsync
-);
+router.post('', commonValidate(roleValidator), roleController.addRoleAsync);
 
 /**
  * @openapi
@@ -60,7 +55,7 @@ router.post(
  *      500:
  *        description: Server Error
  */
-router.get("", roleController.getAllRolesAsync);
+router.get('', roleController.getAllRolesAsync);
 
 /**
  * @openapi
@@ -85,10 +80,7 @@ router.get("", roleController.getAllRolesAsync);
  *      500:
  *        description: Server Error
  */
-router.get(
-  "/name/:role_name", 
-  roleController.getRoleByNameAsync
-);
+router.get('/name/:role_name', roleController.getRoleByNameAsync);
 
 /**
  * @openapi
@@ -128,11 +120,7 @@ router.get(
  *      500:
  *        description: Server Error
  */
-router.put(
-  "/:id",
-  commonValidate(roleValidator),
-  roleController.updateRoleAsync
-);
+router.put('/:id', commonValidate(roleValidator), roleController.updateRoleAsync);
 
 /**
  * @openapi
@@ -157,7 +145,44 @@ router.put(
  *      500:
  *        description: Server Error
  */
-router.delete("/:id", roleController.deleteRoleAsync);
+router.delete('/:id', roleController.deleteRoleAsync);
 
+/**
+ * @openapi
+ * '/api/roles/assign':
+ *  post:
+ *     tags:
+ *     - Role Controller
+ *     summary: Assign roles to a user
+ *     description: Assign one or more roles to a user without removing existing roles. Only Admin or SuperAdmin can perform this operation.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - roleIds
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *                 description: ID of the user to assign roles to
+ *               roleIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: Array of role IDs to assign
+ *     responses:
+ *       200:
+ *         description: Roles assigned successfully
+ *       400:
+ *         description: Invalid user ID or role IDs
+ *       403:
+ *         description: Forbidden - insufficient permissions
+ *       500:
+ *         description: Server Error
+ */
+router.post('/assign', roleController.assignRolesToUserAsync);
 
 module.exports = router;
