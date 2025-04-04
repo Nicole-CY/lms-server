@@ -5,7 +5,7 @@ const {getPaginatedResults } = require('../utils/pagination');
 
 const addUserAsync = async user => {
     try {
-        const newUser = await User.create({
+        await User.create({
             firstName: user.firstName,
             lastName: user.lastName,
             password: user.password,
@@ -48,24 +48,6 @@ const getUserListAsync = async (page = 1, pageSize = 10, search = '') => {
     }
 };
 
-const getUserByNameAsync = async name => {
-    try {
-        const user = await User.findOne({ where: { username: name }, attributes: { exclude: ['password'] } });
-
-        if (!user) {
-            return {
-                isSuccess: false,
-                message: 'User not found',
-                data: { id: 0 },
-            };
-        }
-
-        return { isSuccess: true, message: '', data: user };
-    } catch (error) {
-        logger.error('getUserbyNameAsync error:', error);
-        return { isSuccess: false, message: 'Server error', data: null };
-    }
-};
 
 const getUserByIdAsync = async id => {
     try {
@@ -79,9 +61,9 @@ const getUserByIdAsync = async id => {
             };
         }
 
-        return { isSuccess: true, message: '', data: user };
+        return { isSuccess: true, message: 'get user by id successfully', data: user };
     } catch (error) {
-        logger.error('getUserbyIdAsync error:', error);
+        logger.error('getUserByIdAsync error:', error);
         return { isSuccess: false, message: 'Get user failed', data: null };
     }
 };
@@ -98,7 +80,7 @@ const getUserByEmailAsync = async email => {
             };
         }
 
-        return { isSuccess: true, message: '', data: user };
+        return { isSuccess: true, message: 'get user by email successfully ', data: user };
     } catch (error) {
         logger.error('getUserByEmailAsync error:', error);
         return { isSuccess: false, message: 'Server error', data: null };
@@ -157,7 +139,6 @@ const updateUserByIdAsync = async user => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 password: user.password,
-                email: user.email,
                 address: user.address,
                 birthDate: user.birthDate,
                 gender: user.gender,
@@ -174,12 +155,12 @@ const updateUserByIdAsync = async user => {
 
         return { isSuccess: false, message: 'Update failed' };
     } catch (error) {
-        logger.error('uptUserByIdAsync error:', error);
+        logger.error('updateUserByIdAsync error:', error);
         return { isSuccess: false, message: 'Update failed', data: null };
     }
 };
 
-const checkUserNameAsync = async (username, id) => {
+const checkUsernameAsync = async (username, id) => {
     try {
         const user = await User.findOne({ where: { username } });
 
@@ -193,9 +174,9 @@ const checkUserNameAsync = async (username, id) => {
 
         return { isSuccess: true, message: '', data: null };
     } catch (error) {
-        logger.error('checkUserNameAsync error:', error);
+        logger.error('checkUsernameAsync error:', error);
         return { isSuccess: false, message: 'Check failed', data: null };
-    }
+    }   
 };
 
 const deleteUserByIdAsync = async idsString => {
@@ -221,11 +202,10 @@ const deleteUserByIdAsync = async idsString => {
 module.exports = {
     addUserAsync,
     getUserListAsync,
-    getUserByNameAsync,
     getUserByIdAsync,
     getFilteredUserListAsync,
     getUserByEmailAsync,
     updateUserByIdAsync,
-    checkUserNameAsync,
+    checkUsernameAsync,
     deleteUserByIdAsync,
 };
