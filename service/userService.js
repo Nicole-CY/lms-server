@@ -18,7 +18,7 @@ const addUserAsync = async user => {
             roles: user.roles || ['user'],
         });
 
-        return { isSuccess: true, message: '', data: newUser };
+        return { isSuccess: true, message: 'create user successfully', data: null };
     } catch (error) {
         logger.error('addUserAsync error:', error);
         return { isSuccess: false, message: 'Add user failed', data: null };
