@@ -71,10 +71,11 @@ const getUserByIdAsync = async id => {
     }
 };
 
-const getUserByEmailAsync = async email => {
+const getUserByEmailAsync = async (email, includePassword = false) => {
     try {
         const user = await User.findOne({
             where: { email },
+            attributes: includePassword ? undefined : { exclude: ['password'] },
         });
 
         if (!user) {
