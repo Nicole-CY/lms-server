@@ -8,12 +8,12 @@ jest.mock('../../../utils/pagination', () => ({
     getPaginatedResults: jest.fn(),
 }));
 
-const Category = require('../../../models/category'); 
+const Category = require('../../../models/category');
 const pagination = require('../../../utils/pagination');
-const { 
+const {
     getCategoryByNameAsync,
     getCategoryListAsync,
-    addCategoryAsync 
+    addCategoryAsync,
 } = require('../../../service/Course/categoryService');
 
 describe('categoryService', () => {
@@ -26,20 +26,20 @@ describe('categoryService', () => {
         it('should return category when found by name', async () => {
             const mockCategory = {
                 id: 1,
-                categoryName: 'Programming'
+                categoryName: 'Programming',
             };
-        
+
             Category.findOne.mockResolvedValue(mockCategory);
 
             const result = await getCategoryByNameAsync('Programming');
 
             expect(Category.findOne).toHaveBeenCalledWith({
-                where: { categoryName: 'Programming' }
+                where: { categoryName: 'Programming' },
             });
             expect(result).toEqual({
                 isSuccess: true,
                 message: '',
-                data: mockCategory
+                data: mockCategory,
             });
         });
 
@@ -49,12 +49,12 @@ describe('categoryService', () => {
             const result = await getCategoryByNameAsync('NonExisting');
 
             expect(Category.findOne).toHaveBeenCalledWith({
-                where: { categoryName: 'NonExisting' }
+                where: { categoryName: 'NonExisting' },
             });
             expect(result).toEqual({
                 isSuccess: false,
                 message: 'Category not found',
-                data: { id: 0 }
+                data: { id: 0 },
             });
         });
     });
@@ -76,7 +76,8 @@ describe('categoryService', () => {
 
             await expect(getCategoryListAsync()).resolves.toEqual({
                 isSuccess: false,
-                message: 'Get category list failed'
+                data: null,
+                message: 'Server error',
             });
         });
     });
@@ -86,23 +87,23 @@ describe('categoryService', () => {
         it('should successfully add a new category', async () => {
             const mockCategoryData = {
                 categoryName: 'Art',
-                description: 'All art related courses'
+                description: 'All art related courses',
             };
-            
+
             const mockCreatedCategory = {
                 id: 21,
-                ...mockCategoryData
+                ...mockCategoryData,
             };
-        
+
             Category.create.mockResolvedValue(mockCreatedCategory);
-        
+
             const result = await addCategoryAsync(mockCategoryData);
-        
+
             expect(Category.create).toHaveBeenCalledWith(mockCategoryData);
             expect(result).toEqual({
                 isSuccess: true,
                 message: 'Category added',
-                data: mockCreatedCategory
+                data: mockCreatedCategory,
             });
         });
 
@@ -115,7 +116,7 @@ describe('categoryService', () => {
             expect(result).toEqual({
                 isSuccess: false,
                 message: 'Add category failed',
-                data: null
+                data: null,
             });
         });
     });
