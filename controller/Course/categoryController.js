@@ -1,15 +1,19 @@
 const CategoryService = require("../../service/Course/categoryService");
 
 // Get categories by name
-const getCategoryByNameAsync = async (req, res) => {
-  const { categoryName } = req.query;
+const getCategoryByNameAsync = async (req, res, next) => {
+  try {
+    const { categoryName } = req.query;
+    const result = await CategoryService.getCategoryByNameAsync(categoryName);
 
-  const result = await CategoryService.getCategoryByNameAsync(categoryName);
-
-  if (result.isSuccess) {
-    res.sendCommonValue(result.data, "Category found", 1);
-  } else {
-    res.sendCommonValue({}, "Category not found", 0);
+    if (result.isSuccess) {
+      res.sendCommonValue(result.data, "Category found", 1);
+    } else {
+      res.sendCommonValue({}, "Category not found", 0);
+    }
+    
+  } catch (error) {
+    next(error);
   }
 };
 

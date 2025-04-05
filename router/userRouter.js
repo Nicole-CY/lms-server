@@ -12,7 +12,7 @@ const userController = require("../controller/userController");
  *  post:
  *     tags:
  *       - User Controller
- *     summary: Add user
+ *     summary: Create a new user
  *     requestBody:
  *      required: true
  *      content:
@@ -26,6 +26,7 @@ const userController = require("../controller/userController");
  *              email:
  *                type: string
  *                example: demo@example.com
+ *                description: Must be unique. Duplicate will return 400 error. 
  *              password:
  *                type: string
  *                example: 123456
@@ -67,7 +68,7 @@ const userController = require("../controller/userController");
  *        description: Server Error
  */
 router.post(
-    "",
+    "/",
     commonValidate([
         body("email").isEmail().withMessage("Invalid email"),
         body("password")
@@ -86,25 +87,96 @@ router.post(
     userController.addUserAsync
 );
 
+
+
+/**
+ * @openapi
+ * '/api/users/{id}':
+ *  get:
+ *     tags:
+ *     - User Controller
+ *     summary: Get user by ID
+ *     parameters:
+ *      - name: id
+ *        in: path
+ *        required: true
+ *        schema:
+ *          type: integer
+ *     responses:
+ *      200:
+ *        description: Fetched successfully
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Not Found
+ */
+router.get(
+    "/:id",
+    commonValidate([
+        param("id").notEmpty().isInt().withMessage("User ID is required"),
+    ]),
+    userController.getUserByIdAsync
+);
+
+
+
 /**
  * @openapi
  * '/api/users':
+ *  get:
+ *     tags:
+ *     - User Controller
+ *     summary: Get paginated user list
+ *     parameters:
+ *      - name: page
+ *        in: query
+ *        required: true
+ *        schema:
+ *          type: integer
+ *      - name: pageSize
+ *        in: query
+ *        required: true
+ *        schema:
+ *          type: integer
+ *     responses:
+ *      200:
+ *        description: Success
+ *      400:
+ *        description: Bad Request
+ */
+router.get(
+    "/",
+    commonValidate([
+        query("page").optional().isInt({ min: 1 }),
+        query("pageSize").optional().isInt({ min: 1 }),
+        query("search").optional().isString()
+      ]),   
+    userController.getUserListAsync
+);
+
+/**
+ * @openapi
+ * '/api/users/{id}':
  *  put:
  *     tags:
  *     - User Controller
- *     summary: Update user
+ *     summary: Update user by ID
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: User ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
  *     requestBody:
  *      required: true
  *      content:
  *        application/json:
  *           schema:
  *            type: object
- *            required:
- *              - id
+ *            required: true
  *            properties:
- *              id:
- *                type: number
- *                example: 1
  *              email:
  *                type: string
  *                example: updated@example.com
@@ -141,10 +213,11 @@ router.post(
  *        description: Server Error
  */
 router.put(
-    "",
+    "/:id",
     commonValidate([
-        body("id").notEmpty().isInt().withMessage("User ID is required"),
-        body("email").optional().isEmail(),
+        param("id").notEmpty().isInt().withMessage("User ID is required"),
+        body("email").optional().isEmail(), 
+        body("username").optional().isString(),
         body("password").optional().isString().isLength({ min: 6 }),
         body("firstName").optional().isString(),
         body("lastName").optional().isString(),
@@ -158,100 +231,7 @@ router.put(
     userController.updateUserAsync
 );
 
-/**
- * @openapi
- * '/api/users/getUser':
- *  get:
- *     tags:
- *     - User Controller
- *     summary: Get user by query id
- *     parameters:
- *      - name: id
- *        in: query
- *        required: true
- *        schema:
- *          type: integer
- *     responses:
- *      200:
- *        description: Fetched successfully
- *      400:
- *        description: Bad Request
- *      404:
- *        description: Not Found
- */
-router.get(
-    "/getUser",
-    commonValidate([
-        query("id").notEmpty().isInt().withMessage("User ID is required"),
-    ]),
-    userController.getUserAsync
-);
 
-/**
- * @openapi
- * '/api/users/getUserById':
- *  get:
- *     tags:
- *     - User Controller
- *     summary: Get user by ID (query)
- *     parameters:
- *      - name: id
- *        in: query
- *        required: true
- *        schema:
- *          type: integer
- *     responses:
- *      200:
- *        description: Success
- *      400:
- *        description: Bad Request
- */
-router.get(
-    "/getUserById",
-    commonValidate([
-        query("id").notEmpty().isInt().withMessage("User ID is required"),
-    ]),
-    userController.getUserByIdAsync
-);
-
-/**
- * @openapi
- * '/api/users/{page}/{pageSize}':
- *  get:
- *     tags:
- *     - User Controller
- *     summary: Get paginated user list
- *     parameters:
- *      - name: page
- *        in: path
- *        required: true
- *        schema:
- *          type: integer
- *      - name: pageSize
- *        in: path
- *        required: true
- *        schema:
- *          type: integer
- *     responses:
- *      200:
- *        description: Success
- *      400:
- *        description: Bad Request
- */
-router.get(
-    "/:page/:pageSize",
-    commonValidate([
-        param("page")
-            .notEmpty()
-            .isInt({ min: 1 })
-            .withMessage("Invalid page number"),
-        param("pageSize")
-            .notEmpty()
-            .isInt({ min: 1 })
-            .withMessage("Invalid page size"),
-    ]),
-    userController.getUserListAsync
-);
 
 /**
  * @openapi
@@ -280,19 +260,5 @@ router.delete(
     userController.deleteUserByIdAsync
 );
 
-/**
- * @openapi
- * '/api/users/getUserByName':
- *  get:
- *     tags:
- *     - User Controller
- *     summary: Get user by name
- */
-router.get(
-    "/getUserByName",
-    commonValidate([
-        query("userName").notEmpty().isString().withMessage("User name is required")
-    ]),
-    userController.getUserByNameAsync
-);
+
 module.exports = router;
