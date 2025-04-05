@@ -179,7 +179,6 @@ const updateCategoryByNameAsync = async (name, updateData) => {
 const getCategoryTreeAsync = async () => {
   try {
     const categories = await Category.findAll();
-
     const categoryTree = createCategoryTree(categories);
 
     return { isSuccess: true, message: "", data: categoryTree };
