@@ -31,7 +31,7 @@ const loginAsync = async (req, res) => {
             return res.sendCommonValue(null, 'Authentication failed', 0);
         }
 
-        const user = { id: result.data.id, role: [result.data.roles], email: result.data.email };
+        const user = { id: result.data.id, email: result.data.email };
 
         const tokenStr = jwt.sign(user, jwtConfig.secret, {
             expiresIn: `${jwtConfig.expiresIn}s`,
