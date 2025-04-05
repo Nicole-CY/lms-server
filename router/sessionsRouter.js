@@ -1,12 +1,18 @@
 const express = require("express");
 require("express-async-errors");
 
-const sessionRouter = express.Router();
-
-const { body, query, param } = require("express-validator");
+const router = express.Router();
 const { commonValidate } = require("../middleware/expressValidator");
 
 const sessionController = require("../controller/Course/sessionController");
+const {addSessionValidator,
+    updateSessionValidator,
+    getSessionByIdValidator,
+    getSessionsByCourseInstanceIdValidator,
+    getSessionListValidator,
+    deleteSessionValidator
+} = require("../validator/sessionValidator")
+
 
 // Add session
 /**
@@ -34,9 +40,6 @@ const sessionController = require("../controller/Course/sessionController");
  *              sessionTitle:
  *                type: string
  *                example: "Introduction to JavaScript"
- *              order:
- *                type: integer
- *                example: 1
  *              createdBy:
  *                type: integer
  *                example: 1
@@ -56,16 +59,13 @@ const sessionController = require("../controller/Course/sessionController");
  *              properties:
  *                id:
  *                  type: integer
- *                  example: 101
+ *                  example: 1
  *                courseInstanceId:
  *                  type: integer
  *                  example: 1
  *                sessionTitle:
  *                  type: string
  *                  example: "Introduction to JavaScript"
- *                order:
- *                  type: integer
- *                  example: 1
  *                sessionDescription:
  *                  type: string
  *                  example: "This session covers the basics of JavaScript."
@@ -88,13 +88,9 @@ const sessionController = require("../controller/Course/sessionController");
  *      500:
  *        description: Server Error
  */
-sessionRouter.post(
+router.post(
     "",
-    commonValidate([
-        body("courseInstanceId").notEmpty().withMessage("courseInstanceId is required"),
-        body("sessionTitle").notEmpty().withMessage("title is required"),
-        body("order").notEmpty().withMessage("order is required"),
-    ]),
+    commonValidate(addSessionValidator),
     sessionController.addSessionAsync
 );
 
@@ -129,11 +125,9 @@ sessionRouter.post(
  *      500:
  *        description: Server Error
  */
-sessionRouter.get(
+router.get(
     "/getById",
-    commonValidate([
-        query("id").notEmpty().withMessage("not a valid session id"),
-    ]),
+    commonValidate(getSessionByIdValidator),
     sessionController.getSessionByIdAsync
 );
 
@@ -168,11 +162,9 @@ sessionRouter.get(
  *      500:
  *        description: Server Error
  */
-sessionRouter.get(
+router.get(
     "/getByCourseInstanceId",
-    commonValidate([
-        query("courseInstanceId").notEmpty().withMessage("not a valid course instance id"),
-    ]),
+    commonValidate(getSessionsByCourseInstanceIdValidator),
     sessionController.getSessionsByCourseInstanceIdAsync
 );
 
@@ -208,6 +200,30 @@ sessionRouter.get(
  *         required: false
  *         schema:
  *           type: integer
+ *       - name: sessionTitle
+ *         in: query
+ *         description: Filter sessions by title (Partial match)
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: sessionDescription
+ *         in: query
+ *         description: Filter sessions by description (Partial match)
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: createdBy
+ *         in: query
+ *         description: Filter sessions by created user
+ *         required: false
+ *         schema:
+ *           type: integer
+ *       - name: updatedBy
+ *         in: query
+ *         description: Filter sessions by course updated user
+ *         required: false
+ *         schema:
+ *           type: integer
  *     responses:
  *      200:
  *        description: Sessions fetched successfully
@@ -220,19 +236,16 @@ sessionRouter.get(
  *      500:
  *        description: Server Error
  */
-sessionRouter.get(
+router.get(
     "/",
-    commonValidate([
-        query("page").notEmpty().isInt({ min: 1 }).withMessage("not a valid page"),
-        query("pageSize").notEmpty().isInt({ min: 1 }).withMessage("not a valid page size"),
-    ]),
+    commonValidate(getSessionListValidator),
     sessionController.getSessionListAsync
 );
 
 // Update session
 /**
  * @openapi
- * '/api/sessions':
+ * '/api/sessions/{id}':
  *  put:
  *     tags:
  *     - Session Controller
@@ -253,19 +266,16 @@ sessionRouter.get(
  *            properties:
  *              id:
  *                type: number
- *                default: 0
+ *                default: 1
  *              sessionTitle:
  *                type: string
- *                default: "Introduction to REST APIs"
- *              order:
- *                type: integer
- *                default: 1
+ *                default: "Introduction to Data Science"
  *              sessionDescription:
  *                type: string
  *                default: "This session covers the basics of REST API design"
  *              courseInstanceId:
  *                type: integer
- *                default: 101
+ *                default: 1
  *                description: "The ID of the course instance this session belongs to"
  *              createdAt:
  *                type: string
@@ -274,8 +284,10 @@ sessionRouter.get(
  *                type: string
  *                format: date-time
  *              createdBy:
+ *                default: 1
  *                type: integer
  *              updatedBy:
+ *                default: 1
  *                type: integer
  *     responses:
  *      200:
@@ -289,13 +301,9 @@ sessionRouter.get(
  *      500:
  *        description: Server Error
  */
-sessionRouter.put(
-    "",
-    commonValidate([
-        body("id").notEmpty().withMessage("Not a valid session id"),
-        body("sessionTitle").notEmpty().withMessage("Not a valid title"),
-        body("order").notEmpty().withMessage("Not a valid order"),
-    ]),
+router.put(
+    "/:id",
+    commonValidate(updateSessionValidator),
     sessionController.updateSessionAsync
 );
 
@@ -327,12 +335,10 @@ sessionRouter.put(
  *       500:
  *         description: Server Error
  */
-sessionRouter.delete(
+router.delete(
     "/:id",
-    commonValidate([
-        param("id").notEmpty().isInt({ min: 1 }).withMessage("not a valid session id")
-    ]),
+    commonValidate(deleteSessionValidator),
     sessionController.deleteSessionAsync
 );
 
-module.exports = sessionRouter;
+module.exports = router;
