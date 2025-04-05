@@ -3,14 +3,20 @@ const User = require('../models/user');
 const UserRole = require('../models/userRole');
 const logger = require('../common/logSetting');
 
-const checkCrudPermissionAsync = async user => {
+/**
+ * Asynchronously checks whether a given user has permission to perform CRUD operations on roles.
+ * Only users with the 'SuperAdmin' role are permitted to perform these operations.
+ *
+ * @param {Object} user - The user object containing at least an `id` property.
+ * @returns {Promise<Object>} An object containing:
+ *   - `isAllowed` (boolean): True if user has SuperAdmin permissions, false otherwise.
+ *   - `message` (string): An error or forbidden message if not allowed, empty if allowed.
+ *
+ * @throws Logs an error internally and returns an error message if the permission check fails.
+ */
+const checkCrudPermissionAsync = async operatorRoles => {
     try {
-        const userWithRoles = await User.findByPk(user.id, {
-            include: { model: Role, through: { attributes: [] } },
-        });
-
-        const roleNames = userWithRoles.Roles.map(r => r.roleName);
-        const isSuperAdmin = roleNames.includes('SuperAdmin');
+        const isSuperAdmin = operatorRoles.includes('SuperAdmin');
 
         if (!isSuperAdmin) {
             return {
@@ -34,16 +40,17 @@ const checkCrudPermissionAsync = async user => {
  * @param {string} roleName - The name of the role to find.
  * @returns {Promise<{isSuccess: boolean, message: string, data: object|null}>}
  */
-const getRoleByNameAsync = async (user, roleName) => {
+const getRoleByIdAsync = async (operatorRoles, id) => {
     try {
-        const permissionCheck = await checkCrudPermissionAsync(user);
-
+        // check if operator has the permission to read role
+        const permissionCheck = await checkCrudPermissionAsync(operatorRoles);
         if (!permissionCheck.isAllowed) {
             return { isSuccess: false, message: permissionCheck.message, data: null };
         }
 
+        // read role from database
         const role = await Role.findOne({
-            where: { role_name: roleName },
+            where: { id: id },
         });
 
         if (!role) {
@@ -53,7 +60,7 @@ const getRoleByNameAsync = async (user, roleName) => {
         return { isSuccess: true, message: '', data: role };
     } catch (error) {
         logger.error('getRoleByNameAsync error:', error);
-        return { isSuccess: false, message: 'Server error', data: null };
+        return { isSuccess: false, message: 'Get role failed', data: null };
     }
 };
 
@@ -61,20 +68,21 @@ const getRoleByNameAsync = async (user, roleName) => {
  * Retrieve all roles from the database.
  * @returns {Promise<{isSuccess: boolean, message: string, data: object[]|null}>}
  */
-const getAllRolesAsync = async user => {
+const getAllRolesAsync = async operatorRoles => {
     try {
-        const permissionCheck = await checkCrudPermissionAsync(user);
-
+        // check if operator has the permission to read roles
+        const permissionCheck = await checkCrudPermissionAsync(operatorRoles);
         if (!permissionCheck.isAllowed) {
             return { isSuccess: false, message: permissionCheck.message, data: null };
         }
 
+        // read roles from the database
         const roles = await Role.findAll();
 
         return { isSuccess: true, message: '', data: roles };
     } catch (error) {
         logger.error('getAllRolesAsync error:', error);
-        return { isSuccess: false, message: 'Server error', data: null };
+        return { isSuccess: false, message: 'Get roles failed', data: null };
     }
 };
 
@@ -83,16 +91,17 @@ const getAllRolesAsync = async user => {
  * @param {{ role_name: string, description?: string }} role - The role data to add.
  * @returns {Promise<{isSuccess: boolean, message: string, data: object|null}>}
  */
-const addRoleAsync = async (user, role) => {
+const addRoleAsync = async (operatorRoles, role) => {
     try {
-        const permissionCheck = await checkCrudPermissionAsync(user);
-
+        // check if operator has the permission to create role
+        const permissionCheck = await checkCrudPermissionAsync(operatorRoles);
         if (!permissionCheck.isAllowed) {
             return { isSuccess: false, message: permissionCheck.message, data: null };
         }
 
+        // create new role
         const newRole = await Role.create({
-            role_name: role.role_name,
+            roleName: role.role_name,
             description: role.description || '',
         });
 
@@ -109,21 +118,23 @@ const addRoleAsync = async (user, role) => {
  * @param {{ role_name?: string, description?: string }} updatedData - The updated role data.
  * @returns {Promise<{isSuccess: boolean, message: string, data: object|null}>}
  */
-const updateRoleAsync = async (user, roleId, updatedData) => {
+const updateRoleAsync = async (operatorRoles, roleId, updatedData) => {
     try {
-        const permissionCheck = await checkCrudPermissionAsync(user);
+        // check if operator has the permission to update role
+        const permissionCheck = await checkCrudPermissionAsync(operatorRoles);
         if (!permissionCheck.isAllowed) {
             return { isSuccess: false, message: permissionCheck.message, data: null };
         }
 
+        // check if the role user want to update exist in database
         const role = await Role.findByPk(roleId);
-
         if (!role) {
             return { isSuccess: false, message: 'Role not found', data: null };
         }
 
+        // update the role
         await role.update({
-            role_name: updatedData.role_name || role.role_name,
+            roleName: updatedData.role_name || role.role_name,
             description: updatedData.description || role.description,
         });
 
@@ -139,20 +150,21 @@ const updateRoleAsync = async (user, roleId, updatedData) => {
  * @param {number} roleId - The ID of the role to delete.
  * @returns {Promise<{isSuccess: boolean, message: string, data: null}>}
  */
-const deleteRoleAsync = async (user, roleId) => {
+const deleteRoleAsync = async (operatorRoles, roleId) => {
     try {
-        const permissionCheck = await checkCrudPermissionAsync(user);
-
+        // check if operator has the permission to delete role
+        const permissionCheck = await checkCrudPermissionAsync(operatorRoles);
         if (!permissionCheck.isAllowed) {
             return { isSuccess: false, message: permissionCheck.message, data: null };
         }
 
+        // check if the role operator want to delete exist in database
         const role = await Role.findByPk(roleId);
-
         if (!role) {
             return { isSuccess: false, message: 'Role not found', data: null };
         }
 
+        // delete the role
         await role.destroy();
 
         return { isSuccess: true, message: 'Role deleted successfully', data: null };
@@ -172,7 +184,7 @@ const deleteRoleAsync = async (user, roleId) => {
  * @param {object[]} rolesToAssign - Array of Sequelize Role instances to be assigned.
  * @returns {Promise<{ isAllowed: boolean, message: string }>}
  */
-const checkAssignPermissionAsync = async (operator, operatorRoles, rolesToAssign) => {
+const checkAssignPermissionAsync = async (operatorRoles, rolesToAssign) => {
     try {
         const isSuperAdmin = operatorRoles.includes('SuperAdmin');
         const isAdmin = operatorRoles.includes('Admin');
@@ -215,7 +227,7 @@ const checkAssignPermissionAsync = async (operator, operatorRoles, rolesToAssign
  * @param {number[]} roleIds - Array of role IDs to assign.
  * @returns {Promise<{ isSuccess: boolean, message: string, data: null }>}
  */
-const assignRolesToUserAsync = async (operator, operatorRoles, userId, roleIds) => {
+const assignRolesToUserAsync = async (operatorRoles, userId, roleIds) => {
     try {
         // Check if roles user passed exist
         const rolesToAssign = await Role.findAll({ where: { id: roleIds } });
@@ -224,17 +236,13 @@ const assignRolesToUserAsync = async (operator, operatorRoles, userId, roleIds) 
         }
 
         // Check permission based on operator's roles
-        const permissionCheck = await checkAssignPermissionAsync(
-            operator,
-            operatorRoles,
-            rolesToAssign
-        );
+        const permissionCheck = await checkAssignPermissionAsync(operatorRoles, rolesToAssign);
         if (!permissionCheck.isAllowed) {
             return { isSuccess: false, message: permissionCheck.message, data: null };
         }
 
         // Get current roles of the user
-        const existingUserRoles = await UserRole.findAll({ where: { user_id: userId } });
+        const existingUserRoles = await UserRole.findAll({ where: { userId: userId } });
         const existingRoleIds = new Set(existingUserRoles.map(r => r.role_id));
 
         // Filter out roles that are already assigned
@@ -245,8 +253,8 @@ const assignRolesToUserAsync = async (operator, operatorRoles, userId, roleIds) 
 
         // Create new role assignments
         const newEntries = newRoleIds.map(roleId => ({
-            user_id: userId,
-            role_id: roleId,
+            userId: userId,
+            roleId: roleId,
         }));
         await UserRole.bulkCreate(newEntries);
 
@@ -266,7 +274,7 @@ const assignRolesToUserAsync = async (operator, operatorRoles, userId, roleIds) 
 };
 
 module.exports = {
-    getRoleByNameAsync,
+    getRoleByIdAsync,
     getAllRolesAsync,
     addRoleAsync,
     updateRoleAsync,

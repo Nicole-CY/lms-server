@@ -5,15 +5,17 @@ const { sequelize } = require('../db/sequelizedb');
 const UserRole = sequelize.define(
     'UserRole',
     {
-        user_id: {
+        userId: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
+            field: 'user_id',
         },
-        role_id: {
+        roleId: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
+            field: 'role_id',
         },
     },
     {
