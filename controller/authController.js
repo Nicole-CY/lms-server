@@ -17,7 +17,7 @@ const loginAsync = async (req, res) => {
             return res.sendCommonValue(null, 'Email and password are required', 0);
         }
 
-        const result = await userService.getUserByEmailAsync(email);
+        const result = await userService.getUserByEmailAsync(email, true);
 
         if (!result.isSuccess) {
             logger.warn(`Login failed for email: ${email}`);
