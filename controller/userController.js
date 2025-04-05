@@ -65,16 +65,16 @@ const getUserByIdAsync = async (req, res) => {
 };
 
 const updateUserAsync = async (req, res) => {
-    const email = req.body.email;
-    const checkResult = await userService.getUserByEmailAsync(email);
+    const userId = parseInt(req.params.id);
+    const checkResult = await userService.getUserByIdAsync(userId);
     if (!checkResult.isSuccess || !checkResult.data || checkResult.data.id <= 0) {
         res.sendCommonValue({}, 'user not found', 400, 400);
         return;
     }
     
-    const userUpdate = {
-        id: checkResult.data.id,
-        username: req.body.username,
+    const updateData = {
+        id: userId,
+        password: req.body.password,
         address: req.body.address,
         birthDate: req.body.birthDate,
         gender: req.body.gender,
@@ -83,10 +83,13 @@ const updateUserAsync = async (req, res) => {
         avatar: req.body.avatar,
         roles: req.body.roles,
         active: req.body.active,
-        //update password prohibited
+        //update email prohibited
+    }
+    if(!updateData.password) {
+        delete updateData.password;
     }
 
-    const dbResult = await userService.updateUserByIdAsync(userUpdate);
+    const dbResult = await userService.updateUserByIdAsync(updateData);
 
     if (dbResult.isSuccess) {
         res.sendCommonValue({}, 'update user successfully', 1);

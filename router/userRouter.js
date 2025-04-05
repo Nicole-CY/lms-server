@@ -26,6 +26,7 @@ const userController = require("../controller/userController");
  *              email:
  *                type: string
  *                example: demo@example.com
+ *                description: Must be unique. Duplicate will return 400 error. 
  *              password:
  *                type: string
  *                example: 123456
@@ -160,18 +161,22 @@ router.get(
  *     tags:
  *     - User Controller
  *     summary: Update user by ID
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: User ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
  *     requestBody:
  *      required: true
  *      content:
  *        application/json:
  *           schema:
  *            type: object
- *            required:
- *              - id
+ *            required: true
  *            properties:
- *              id:
- *                type: number
- *                example: 1
  *              email:
  *                type: string
  *                example: updated@example.com
@@ -210,7 +215,7 @@ router.get(
 router.put(
     "/:id",
     commonValidate([
-        body("id").notEmpty().isInt().withMessage("User ID is required"),
+        param("id").notEmpty().isInt().withMessage("User ID is required"),
         body("email").optional().isEmail(), 
         body("username").optional().isString(),
         body("password").optional().isString().isLength({ min: 6 }),
