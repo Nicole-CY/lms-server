@@ -40,9 +40,6 @@ const {addSessionValidator,
  *              sessionTitle:
  *                type: string
  *                example: "Introduction to JavaScript"
- *              order:
- *                type: integer
- *                example: 1
  *              createdBy:
  *                type: integer
  *                example: 1
@@ -69,9 +66,6 @@ const {addSessionValidator,
  *                sessionTitle:
  *                  type: string
  *                  example: "Introduction to JavaScript"
- *                order:
- *                  type: integer
- *                  example: 1
  *                sessionDescription:
  *                  type: string
  *                  example: "This session covers the basics of JavaScript."
@@ -276,9 +270,6 @@ router.get(
  *              sessionTitle:
  *                type: string
  *                default: "Introduction to Data Science"
- *              order:
- *                type: integer
- *                default: 1
  *              sessionDescription:
  *                type: string
  *                default: "This session covers the basics of REST API design"

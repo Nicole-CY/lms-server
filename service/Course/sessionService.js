@@ -10,6 +10,15 @@ const addSessionAsync = async (sessionData) => {
             return { isSuccess: false, message: "courseInstanceId is required", data: null };
         }
 
+        const maxOrderSession = await Session.findOne({
+            where: { courseInstanceId: sessionData.courseInstanceId },
+            order: [['order', 'DESC']],
+        });
+
+        const maxOrder = maxOrderSession ? maxOrderSession.order : 0;
+
+        sessionData.order = maxOrder + 1;
+
         const newSession = await Session.create({
             courseInstanceId: sessionData.courseInstanceId,
             sessionTitle: sessionData.sessionTitle,

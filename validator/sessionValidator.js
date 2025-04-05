@@ -13,9 +13,6 @@ const addSessionValidator = [
         .optional()
         .isString().withMessage("session description must be a string")
         .isLength({ max: 255 }).withMessage("session description length no more than 255 characters"),
-    body("order")
-        .notEmpty().withMessage("order is required")
-        .isInt({ min: 1 }).withMessage("order must be an integer"),
 ];
 
 // Validator for updating a session
@@ -34,9 +31,9 @@ const updateSessionValidator = [
         .optional()
         .isString().withMessage("session description must be a string")
         .isLength({ max: 255 }).withMessage("session description length no more than 255 characters"),
-    body("order")
-        .notEmpty().withMessage("order is required")
-        .isInt({ min: 1 }).withMessage("order must be an integer"),
+    // body("order")
+    //     .notEmpty().withMessage("order is required")
+    //     .isInt({ min: 1 }).withMessage("order must be an integer"),
 ];
 
 const getSessionByIdValidator = [
