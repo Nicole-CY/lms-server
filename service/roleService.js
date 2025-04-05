@@ -9,7 +9,7 @@ const checkCrudPermissionAsync = async user => {
             include: { model: Role, through: { attributes: [] } },
         });
 
-        const roleNames = userWithRoles.roles.map(r => r.roleName);
+        const roleNames = userWithRoles.Roles.map(r => r.roleName);
         const isSuperAdmin = roleNames.includes('SuperAdmin');
 
         if (!isSuperAdmin) {
