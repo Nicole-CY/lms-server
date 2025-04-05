@@ -53,28 +53,27 @@ const addCategoryAsync = async category => {
     }
 };
 
+const findAllChildIds = async parentIds => {
+    const children = await Category.findAll({
+        where: { parentId: parentIds },
+        attributes: ['id'],
+        raw: true,
+    });
+    if (children.length === 0) return [];
+    const childIds = children.map(c => c.id);
+    return [...childIds, ...(await findAllChildIds(childIds))];
+};
+
 // Delete categories by id
 const deleteCategoryByIdAsync = async idsString => {
     const ids = idsString.split(',').map(id => parseInt(id, 10));
 
     try {
-        // 1. Find all child ids
-        const findAllChildIds = async parentIds => {
-            const children = await Category.findAll({
-                where: { parentId: parentIds },
-                attributes: ['id'],
-                raw: true,
-            });
-            if (children.length === 0) return [];
-            const childIds = children.map(c => c.id);
-            return [...childIds, ...(await findAllChildIds(childIds))];
-        };
-
-        // 2. Merge  all ids to be deleted (parent ids and their child ids)
+        // 1. Merge  all ids to be deleted (parent ids and their child ids)
         const childIds = await findAllChildIds(ids);
         const allIdsToDelete = [...new Set([...ids, ...childIds])];
 
-        // 3. Delete all ids
+        // 2. Delete all ids
         const deleteCount = await Category.destroy({
             where: { id: allIdsToDelete },
         });
