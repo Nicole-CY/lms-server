@@ -59,18 +59,37 @@ const deleteCategoryByIdAsync = async (idsString) => {
   const ids = idsString.split(",").map((id) => parseInt(id, 10));
 
   try {
+    // 1. Find all child ids
+    const findAllChildIds = async (parentIds) => {
+      const children = await Category.findAll({
+        where: { parentId: parentIds },
+        attributes: ['id'],
+        raw: true
+      });
+      if (children.length === 0) return [];
+      const childIds = children.map(c => c.id);
+      return [...childIds, ...(await findAllChildIds(childIds))];
+    };
+
+    // 2. Merge  all ids to be deleted (parent ids and their child ids)
+    const childIds = await findAllChildIds(ids);
+    const allIdsToDelete = [...new Set([...ids, ...childIds])];
+
+    // 3. Delete all ids
     const deleteCount = await Category.destroy({
-      where: { id: ids },
+      where: { id: allIdsToDelete },
     });
 
-    if (deleteCount > 0) {
-      return { isSuccess: true, message: "Deleted successfully" };
-    }
+    return {
+      isSuccess: deleteCount > 0,
+      message: deleteCount > 0 
+        ? `Deleted ${deleteCount} categories (including ${childIds.length} children)` 
+        : "No matching categories found"
+    };
 
-    return { isSuccess: false, message: "No matching categories found" };
   } catch (error) {
     logger.error("deleteCategoryByIdAsync error:", error);
-    return { isSuccess: false, message: "Delete failed", data: null };
+    return { isSuccess: false, message: "Delete failed" };
   }
 };
 
@@ -120,11 +139,11 @@ const updateCategoryByIdAsync = async (id, updateData) => {
 // Update categories by name
 const updateCategoryByNameAsync = async (name, updateData) => {
   try {
-    //1. Find current category by name
+    // 1. Find current category by name
     const result = await getCategoryByNameAsync(name);
     if (!result.isSuccess) return result;
 
-    //2. Check if renaming is happening
+    // 2. Check if renaming is happening
     if (updateData.categoryName && updateData.categoryName !== name) {
       const existingResult = await getCategoryByNameAsync(updateData.name);
       const isExisting = existingResult.isSuccess;
@@ -160,10 +179,8 @@ const updateCategoryByNameAsync = async (name, updateData) => {
 const getCategoryTreeAsync = async () => {
   try {
     const categories = await Category.findAll();
-
     const categoryTree = createCategoryTree(categories);
 
-    console.log("categoryTree", categoryTree)
     return { isSuccess: true, message: "", data: categoryTree };
   } catch (error) {
     logger.error("getCategoryByNameAsync error:", error);
