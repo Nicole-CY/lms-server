@@ -3,7 +3,7 @@ require('express-async-errors');
 const router = express.Router();
 
 const { commonValidate } = require('../middleware/expressValidator');
-const { roleValidator } = require('../validator/roleValidator');
+const { roleValidator, roleIdValidator } = require('../validator/roleValidator');
 const roleController = require('../controller/roleController');
 
 /**
@@ -59,19 +59,19 @@ router.get('', roleController.getAllRolesAsync);
 
 /**
  * @openapi
- * '/api/roles/name/{role_name}':
+ * '/api/roles/{id}':
  *  get:
  *     tags:
  *     - Role Controller
- *     summary: Get role by name
- *     description: Retrieve a specific role using its name
+ *     summary: Get role by id
+ *     description: Retrieve a specific role using its id
  *     parameters:
  *      - in: path
- *        name: role_name
+ *        name: id
  *        schema:
- *          type: string
+ *          type: integer
  *        required: true
- *        description: Name of the role
+ *        description: Id of the role
  *     responses:
  *      200:
  *        description: Role found
@@ -80,7 +80,7 @@ router.get('', roleController.getAllRolesAsync);
  *      500:
  *        description: Server Error
  */
-router.get('/name/:role_name', roleController.getRoleByNameAsync);
+router.get('/:id', commonValidate(roleIdValidator), roleController.getRoleByIdAsync);
 
 /**
  * @openapi
@@ -120,7 +120,7 @@ router.get('/name/:role_name', roleController.getRoleByNameAsync);
  *      500:
  *        description: Server Error
  */
-router.put('/:id', commonValidate(roleValidator), roleController.updateRoleAsync);
+router.put('/:id', commonValidate(roleIdValidator), roleController.updateRoleAsync);
 
 /**
  * @openapi
@@ -145,7 +145,7 @@ router.put('/:id', commonValidate(roleValidator), roleController.updateRoleAsync
  *      500:
  *        description: Server Error
  */
-router.delete('/:id', roleController.deleteRoleAsync);
+router.delete('/:id', commonValidate(roleIdValidator), roleController.deleteRoleAsync);
 
 /**
  * @openapi

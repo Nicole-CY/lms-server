@@ -4,23 +4,33 @@ const roleService = require('../service/roleService');
  * Add a new role
  */
 const addRoleAsync = async (req, res) => {
-    const dbResult = await roleService.getRoleByNameAsync(req.body.role_name);
-    if (dbResult.isSuccess && dbResult.data.id > 0) {
-        res.sendCommonValue({}, 'Role name already exists', 400, 400);
-        return;
+    const { role_name, description } = req.body;
+
+    // check if role already exist in database
+    const dbResult = await roleService.getAllRolesAsync(req.roles);
+    const existRoles = dbResult.data || [];
+    const roleExists = existRoles.some(
+        role => role.toJSON().roleName.toLowerCase() === role_name.toLowerCase()
+    );
+    if (roleExists) {
+        return res.status(400).json({
+            status: 400,
+            data: {},
+            message: 'Role name already exists',
+        });
     }
 
+    // add role to database
     const role = {
-        role_name: req.body.role_name,
-        description: req.body.description || '',
+        role_name: role_name,
+        description: description || '',
     };
-
-    const result = await roleService.addRoleAsync(req.user, role);
+    const result = await roleService.addRoleAsync(req.roles, role);
 
     if (result.isSuccess) {
         res.sendCommonValue(role, 'success', 1);
     } else {
-        res.sendCommonValue({}, 'Failed to create role', 0);
+        res.sendCommonValue({}, result.message, 0);
     }
 };
 
@@ -28,25 +38,23 @@ const addRoleAsync = async (req, res) => {
  * Get all roles
  */
 const getAllRolesAsync = async (req, res) => {
-    const result = await roleService.getAllRolesAsync(req.user);
+    // get roles from database
+    const result = await roleService.getAllRolesAsync(req.roles);
     if (result.isSuccess) {
         res.sendCommonValue(result.data, 'success', 1);
     } else {
-        res.sendCommonValue([], 'Failed to get roles', 0);
+        res.sendCommonValue([], result.message, 0);
     }
 };
 
 /**
- * Get role by name
+ * Get role by id
  */
-const getRoleByNameAsync = async (req, res) => {
-    const roleName = req.params.role_name || req.query.role_name;
-    if (!roleName) {
-        res.sendCommonValue({}, 'Missing role_name parameter', 400, 400);
-        return;
-    }
+const getRoleByIdAsync = async (req, res) => {
+    const id = req.params.id || req.query.id;
 
-    const result = await roleService.getRoleByNameAsync(req.user, roleName);
+    // get role from database
+    const result = await roleService.getRoleByIdAsync(req.roles, id);
     if (result.isSuccess) {
         res.sendCommonValue(result.data, 'success', 1);
     } else {
@@ -59,17 +67,14 @@ const getRoleByNameAsync = async (req, res) => {
  */
 const updateRoleAsync = async (req, res) => {
     const roleId = parseInt(req.params.id);
-    if (!roleId) {
-        res.sendCommonValue({}, 'Invalid role ID', 400, 400);
-        return;
-    }
 
+    // update role in database
     const updatedData = {
         role_name: req.body.role_name,
         description: req.body.description,
     };
 
-    const result = await roleService.updateRoleAsync(req.user, roleId, updatedData);
+    const result = await roleService.updateRoleAsync(req.roles, roleId, updatedData);
     if (result.isSuccess) {
         res.sendCommonValue(result.data, 'Role updated successfully', 1);
     } else {
@@ -82,12 +87,9 @@ const updateRoleAsync = async (req, res) => {
  */
 const deleteRoleAsync = async (req, res) => {
     const roleId = parseInt(req.params.id);
-    if (!roleId) {
-        res.sendCommonValue({}, 'Invalid role ID', 400, 400);
-        return;
-    }
 
-    const result = await roleService.deleteRoleAsync(req.user, roleId);
+    // delete role from database
+    const result = await roleService.deleteRoleAsync(req.roles, roleId);
     if (result.isSuccess) {
         res.sendCommonValue({}, 'Role deleted successfully', 1);
     } else {
@@ -100,20 +102,14 @@ const deleteRoleAsync = async (req, res) => {
  */
 const assignRolesToUserAsync = async (req, res) => {
     const { userId, roleIds } = req.body;
-    const operator = req.user;
     const operatorRoles = req.roles;
 
-    if (!userId || !Array.isArray(roleIds) || roleIds.length === 0) {
+    /*  if (!userId || !Array.isArray(roleIds) || roleIds.length === 0) {
         res.sendCommonValue({}, 'Invalid user ID or role IDs', 400, 400);
         return;
-    }
+    } */
 
-    const result = await roleService.assignRolesToUserAsync(
-        operator,
-        operatorRoles,
-        userId,
-        roleIds
-    );
+    const result = await roleService.assignRolesToUserAsync(operatorRoles, userId, roleIds);
 
     if (result.isSuccess) {
         res.sendCommonValue({}, result.message, 1);
@@ -125,7 +121,7 @@ const assignRolesToUserAsync = async (req, res) => {
 module.exports = {
     addRoleAsync,
     getAllRolesAsync,
-    getRoleByNameAsync,
+    getRoleByIdAsync,
     updateRoleAsync,
     deleteRoleAsync,
     assignRolesToUserAsync,
