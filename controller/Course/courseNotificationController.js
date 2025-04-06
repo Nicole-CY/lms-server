@@ -60,12 +60,30 @@ const addCourseNotificationAsync = async (req, res) => {
 const updateCourseNotificationByIdAsync = async (req, res) => {
     try {
         const id = parseInt(req.body.id, 10);
-        const result = await CourseNotificationService.updateCourseNotificationByIdAsync(id, req.body);
+        if (isNaN(id)) {
+            return res.sendCommonValue({}, "Invalid or missing ID", 400);
+        }
+
+        const updateData = {};
+
+        if (req.body.recipient_id !== undefined)
+            updateData.recipientId = req.body.recipient_id;
+
+        if (req.body.course_offering_id !== undefined)
+            updateData.courseOfferingId = req.body.course_offering_id;
+
+        if (req.body.message !== undefined)
+            updateData.message = req.body.message;
+
+        if (req.body.status !== undefined)
+            updateData.status = req.body.status;
+
+        const result = await CourseNotificationService.updateCourseNotificationByIdAsync(id, updateData);
 
         if (result.isSuccess) {
-            res.sendCommonValue(result.data, "Notification updated successfully", 1);
+            res.sendCommonValue(result.data, result.message || "Notification updated successfully", 1);
         } else {
-            res.sendCommonValue({}, "Failed to update notification", 0);
+            res.sendCommonValue({}, result.message ||"Failed to update notification", 0);
         }
     } catch (error) {
         console.error("Error in updateCourseNotificationByIdAsync:", error);
