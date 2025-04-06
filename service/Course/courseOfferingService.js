@@ -68,6 +68,13 @@ const isCourseOfferingConflict = async (courseInstanceId, startDate, endDate) =>
         },
     });
 
+    if (existingOffering) {
+        console.log("🔥 Conflict detected with existing course offering:");
+        console.log(existingOffering.toJSON());
+    } else {
+        console.log("✅ No conflict detected");
+    }
+
     return existingOffering !== null;
 };
 // Add new course offering
@@ -98,14 +105,35 @@ const updateCourseOfferingByIdAsync = async (id, updateData) => {
         const result = await getCourseOfferingByIdAsync(id);
         if (!result.isSuccess) return result;
 
-        const updated = await CourseOffering.update(updateData, {
+        if (updateData.startDate && updateData.endDate && updateData.courseInstanceId) {
+            const hasConflict = await isCourseOfferingConflict(
+                updateData.courseInstanceId,
+                updateData.startDate,
+                updateData.endDate,
+                id 
+            );
+
+            if (hasConflict) {
+                return {
+                    isSuccess: false,
+                    message: "Course offering time conflicts with another course",
+                    data: null,
+                };
+            }
+        }
+
+        const cleanedUpdateData = Object.fromEntries(
+            Object.entries(updateData).filter(([_, v]) => v !== undefined)
+        );
+
+        const [affectedRows] = await CourseOffering.update(cleanedUpdateData, {
             where: { id },
         });
 
         return {
             isSuccess: true,
-            message: "Course offering updated successfully",
-            data: updated,
+            message: affectedRows > 0 ? "Course offering updated successfully" : "No changes made",
+            data: affectedRows,
         };
     } catch (error) {
         logger.error("updateCourseOfferingByIdAsync error:", error);

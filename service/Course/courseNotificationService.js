@@ -57,14 +57,19 @@ const updateCourseNotificationByIdAsync = async (id, updateData) => {
         const result = await getCourseNotificationByIdAsync(id);
         if (!result.isSuccess) return result;
 
-        const updated = await CourseNotification.update(updateData, {
+        const cleanedUpdateData = Object.fromEntries(
+            Object.entries(updateData).filter(([_, v]) => v !== undefined)
+        );
+
+        const [affectedRows] = await CourseNotification.update(cleanedUpdateData, {
             where: { id },
         });
 
         return {
             isSuccess: true,
-            message: "Notification updated successfully",
-            data: updated,
+            message: affectedRows > 0
+            ? "Notification updated successfully"
+            : "No changes made",            data: affectedRows,
         };
     } catch (error) {
         logger.error("updateCourseNotificationByIdAsync error:", error);
