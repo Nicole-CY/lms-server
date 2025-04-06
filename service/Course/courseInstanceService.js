@@ -5,84 +5,164 @@ const { courseInstanceFilter } = require('../../filters/courseInstanceFilter');
 const { sequelize } = require('../../db/sequelizedb');
 
 const addCourseInstanceAsync = async courseInstanceData => {
-    const t = await sequelize.transaction();
-    try {
-        // Check if course exists
+    // const t = await sequelize.transaction();
+    // try {
+    //     // Check if course exists
+    //     const course = await Course.findByPk(courseInstanceData.courseId);
+    //     if (!course) {
+    //         await t.rollback();
+    //         return { isSuccess: false, message: 'Course not found', data: null };
+    //     }
+
+    //     // Check for overlapping dates with other instances of the same course
+    //     const existingInstances = await CourseInstance.findAll({
+    //         where: {
+    //             courseId: courseInstanceData.courseId,
+    //             [sequelize.Op.or]: [
+    //                 {
+    //                     startDate: {
+    //                         [sequelize.Op.between]: [
+    //                             courseInstanceData.startDate,
+    //                             courseInstanceData.endDate,
+    //                         ],
+    //                     },
+    //                 },
+    //                 {
+    //                     endDate: {
+    //                         [sequelize.Op.between]: [
+    //                             courseInstanceData.startDate,
+    //                             courseInstanceData.endDate,
+    //                         ],
+    //                     },
+    //                 },
+    //             ],
+    //         },
+    //     });
+
+    //     if (existingInstances.length > 0) {
+    //         await t.rollback();
+    //         return {
+    //             isSuccess: false,
+    //             message: 'Date range overlaps with existing course instance',
+    //             data: null,
+    //         };
+    //     }
+
+    //     const newCourseInstance = await CourseInstance.create(
+    //         {
+    //             courseId: courseInstanceData.courseId,
+    //             startDate: courseInstanceData.startDate,
+    //             endDate: courseInstanceData.endDate,
+    //             totalSessions: courseInstanceData.totalSessions,
+    //             launchStatus: courseInstanceData.launchStatus || 'Scheduled',
+    //             createdBy: courseInstanceData.createdBy,
+    //             updatedBy: courseInstanceData.updatedBy,
+    //         },
+    //         { transaction: t }
+    //     );
+
+    //     await t.commit();
+
+    //     // Fetch the created instance with its associations
+    //     const courseInstanceWithAssociations = await CourseInstance.findByPk(newCourseInstance.id, {
+    //         include: [
+    //             {
+    //                 model: Course,
+    //                 attributes: ['title', 'courseCode'],
+    //             },
+    //         ],
+    //     });
+
+    //     return {
+    //         isSuccess: true,
+    //         message: '',
+    //         data: courseInstanceWithAssociations,
+    //     };
+    // } catch (err) {
+    //     await t.rollback();
+    //     logger.error('addCourseInstanceAsync error:', err);
+    //     return { isSuccess: false, message: 'Failed to create course instance', data: null };
+    // }
+
+
+    const addCourseInstanceAsync = async courseInstanceData => {
+        // 1. 先查询课程是否存在（不需要事务）
         const course = await Course.findByPk(courseInstanceData.courseId);
         if (!course) {
-            await t.rollback();
             return { isSuccess: false, message: 'Course not found', data: null };
         }
 
-        // Check for overlapping dates with other instances of the same course
-        const existingInstances = await CourseInstance.findAll({
-            where: {
-                courseId: courseInstanceData.courseId,
-                [sequelize.Op.or]: [
+        // 2. 现在开启事务（准备读写操作）
+        const t = await sequelize.transaction();
+        try {
+            // 3. 查询是否有时间重叠的课程实例，并加 FOR UPDATE 锁（防并发）
+            const [existingInstances] = await sequelize.query(
+                `SELECT * FROM CourseInstances
+                 WHERE courseId = ?
+                 AND (
+                     (startDate BETWEEN ? AND ?) OR
+                     (endDate BETWEEN ? AND ?)
+                 )
+                 FOR UPDATE`,
+                {
+                    replacements: [
+                        courseInstanceData.courseId,
+                        courseInstanceData.startDate,
+                        courseInstanceData.endDate,
+                        courseInstanceData.startDate,
+                        courseInstanceData.endDate,
+                    ],
+                    transaction: t,
+                }
+            );
+
+            if (existingInstances.length > 0) {
+                await t.rollback();
+                return {
+                    isSuccess: false,
+                    message: 'Date range overlaps with existing course instance',
+                    data: null,
+                };
+            }
+
+            // 4. 创建课程实例（事务内执行）
+            const newCourseInstance = await CourseInstance.create(
+                {
+                    courseId: courseInstanceData.courseId,
+                    startDate: courseInstanceData.startDate,
+                    endDate: courseInstanceData.endDate,
+                    totalSessions: courseInstanceData.totalSessions,
+                    launchStatus: courseInstanceData.launchStatus || 'Scheduled',
+                    createdBy: courseInstanceData.createdBy,
+                    updatedBy: courseInstanceData.updatedBy,
+                },
+                { transaction: t }
+            );
+
+            await t.commit();
+
+            // 5. 查询带关联数据（可以不在事务里查）
+            const courseInstanceWithAssociations = await CourseInstance.findByPk(newCourseInstance.id, {
+                include: [
                     {
-                        startDate: {
-                            [sequelize.Op.between]: [
-                                courseInstanceData.startDate,
-                                courseInstanceData.endDate,
-                            ],
-                        },
-                    },
-                    {
-                        endDate: {
-                            [sequelize.Op.between]: [
-                                courseInstanceData.startDate,
-                                courseInstanceData.endDate,
-                            ],
-                        },
+                        model: Course,
+                        attributes: ['title', 'courseCode'],
                     },
                 ],
-            },
-        });
+            });
 
-        if (existingInstances.length > 0) {
-            await t.rollback();
             return {
-                isSuccess: false,
-                message: 'Date range overlaps with existing course instance',
-                data: null,
+                isSuccess: true,
+                message: '',
+                data: courseInstanceWithAssociations,
             };
+        } catch (err) {
+            await t.rollback();
+            logger.error('addCourseInstanceAsync error:', err);
+            return { isSuccess: false, message: 'Failed to create course instance', data: null };
         }
+    };
 
-        const newCourseInstance = await CourseInstance.create(
-            {
-                courseId: courseInstanceData.courseId,
-                startDate: courseInstanceData.startDate,
-                endDate: courseInstanceData.endDate,
-                totalSessions: courseInstanceData.totalSessions,
-                launchStatus: courseInstanceData.launchStatus || 'Scheduled',
-                createdBy: courseInstanceData.createdBy,
-                updatedBy: courseInstanceData.updatedBy,
-            },
-            { transaction: t }
-        );
-
-        await t.commit();
-
-        // Fetch the created instance with its associations
-        const courseInstanceWithAssociations = await CourseInstance.findByPk(newCourseInstance.id, {
-            include: [
-                {
-                    model: Course,
-                    attributes: ['title', 'courseCode'],
-                },
-            ],
-        });
-
-        return {
-            isSuccess: true,
-            message: '',
-            data: courseInstanceWithAssociations,
-        };
-    } catch (err) {
-        await t.rollback();
-        logger.error('addCourseInstanceAsync error:', err);
-        return { isSuccess: false, message: 'Failed to create course instance', data: null };
-    }
 };
 
 const getCourseInstanceByIdAsync = async id => {

@@ -22,21 +22,48 @@ const courseOfferingController = require("../controller/Course/courseOfferingCon
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
+ *         description: Page number for pagination
  *       - name: pageSize
  *         in: path
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 10
+ *         description: Number of items per page
  *       - name: search
  *         in: query
  *         required: false
  *         schema:
  *           type: string
+ *         description: Optional search keyword (course name, teacher, etc.)
+
  *     responses:
  *       200:
  *         description: Fetched successfully
  */
-router.get("/list/:page/:pageSize", courseOfferingController.getCourseOfferingListAsync);
+router.get(
+    "/list/:page/:pageSize",
+    commonValidate([
+      param("page")
+        .notEmpty()
+        .withMessage("page is required")
+        .isInt({ min: 1 })
+        .withMessage("page must be a positive integer"),
+      param("pageSize")
+        .notEmpty()
+        .withMessage("pageSize is required")
+        .isInt({ min: 1 })
+        .withMessage("pageSize must be a positive integer"),
+      query("search")
+        .optional()
+        .isString()
+        .isLength({ max: 100 })
+        .withMessage("search must be a string"),
+    ]),
+    courseOfferingController.getCourseOfferingListAsync
+  );
+
 
 /**
  * @openapi
@@ -51,13 +78,25 @@ router.get("/list/:page/:pageSize", courseOfferingController.getCourseOfferingLi
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
+ *         description: ID of the course offering to retrieve
  *     responses:
  *       200:
  *         description: Success
  *       404:
  *         description: Not Found
  */
-router.get("/detail", courseOfferingController.getCourseOfferingByIdAsync);
+router.get(
+    "/detail",
+    commonValidate([
+      query("id")
+        .notEmpty()
+        .withMessage("id is required")
+        .isInt({ min: 1 })
+        .withMessage("id must be a positive integer"),
+    ]),
+    courseOfferingController.getCourseOfferingByIdAsync
+  );
 
 /**
  * @openapi
@@ -82,23 +121,31 @@ router.get("/detail", courseOfferingController.getCourseOfferingByIdAsync);
  *             properties:
  *               course_instance_id:
  *                 type: integer
+ *                 example: 1
  *               teacher_id:
  *                 type: integer
+ *                 example: 3
  *               start_date:
  *                 type: string
  *                 format: date
+ *                 example: "2025-04-06"
  *               end_date:
  *                 type: string
  *                 format: date
+ *                 example: "2025-04-20"
  *               student_capacity:
  *                 type: integer
+ *                 example: 30
  *               status:
  *                 type: string
  *                 enum: [Scheduled, In Progress, Completed, Cancelled]
+ *                 example: "Scheduled"
  *               createdBy:
  *                 type: integer
+ *                 example: 1
  *               updatedBy:
  *                 type: integer
+ *                 example: 1
  *     responses:
  *       201:
  *         description: Created
@@ -145,10 +192,10 @@ router.post(
 /**
  * @openapi
  * '/api/courseOfferings/update':
- *  put:
+ *   put:
  *     tags:
- *     - CourseOffering
- *     summary: Update course offering by ID
+ *       - CourseOffering
+ *     summary: Update a course offering by ID
  *     requestBody:
  *       required: true
  *       content:
@@ -160,25 +207,102 @@ router.post(
  *             properties:
  *               id:
  *                 type: integer
+ *                 example: 1
+ *                 description: The ID of the course offering to update
+ *               course_instance_id:
+ *                 type: integer
+ *                 example: 1
+ *               teacher_id:
+ *                 type: integer
+ *                 example: 3
+ *               start_date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-04-06"
+ *               end_date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-04-20"
  *               student_capacity:
  *                 type: integer
+ *                 example: 30
  *               status:
  *                 type: string
- *                 enum: [Pending Start, Active, Completed]
+ *                 enum: [Scheduled, In Progress, Completed, Cancelled]
+ *                 example: "In Progress"
+ *               createdBy:
+ *                 type: integer
+ *                 example: 1
+ *               updatedBy:
+ *                 type: integer
+ *                 example: 2
  *     responses:
  *       200:
  *         description: Updated
+ *       400:
+ *         description: Bad Request
  *       404:
  *         description: Not Found
  */
-router.put("/update", courseOfferingController.updateCourseOfferingByIdAsync);
+router.put(
+    "/update",
+    commonValidate([
+      body("id")
+        .notEmpty()
+        .withMessage("id is required")
+        .isInt({ min: 1 })
+        .withMessage("id must be a positive integer"),
+  
+      body("course_instance_id")
+        .optional()
+        .isInt()
+        .withMessage("course_instance_id must be an integer"),
+  
+      body("teacher_id")
+        .optional()
+        .isInt()
+        .withMessage("teacher_id must be an integer"),
+  
+      body("start_date")
+        .optional()
+        .isISO8601()
+        .withMessage("start_date must be a valid date"),
+  
+      body("end_date")
+        .optional()
+        .isISO8601()
+        .withMessage("end_date must be a valid date"),
+  
+      body("student_capacity")
+        .optional()
+        .isInt({ min: 1 })
+        .withMessage("student_capacity must be an integer greater than 0"),
+  
+      body("status")
+        .optional()
+        .isIn(["Scheduled", "In Progress", "Completed", "Cancelled"])
+        .withMessage("status must be one of Scheduled, In Progress, Completed, Cancelled"),
+  
+      body("createdBy")
+        .optional()
+        .isInt()
+        .withMessage("createdBy must be an integer"),
+  
+      body("updatedBy")
+        .optional()
+        .isInt()
+        .withMessage("updatedBy must be an integer"),
+    ]),
+    courseOfferingController.updateCourseOfferingByIdAsync
+  );
+  
 
 /**
  * @openapi
  * '/api/courseOfferings/delete/{id}':
- *  delete:
+ *   delete:
  *     tags:
- *     - CourseOffering
+ *       - CourseOffering
  *     summary: Delete one or multiple course offerings
  *     parameters:
  *       - name: id
@@ -186,13 +310,25 @@ router.put("/update", courseOfferingController.updateCourseOfferingByIdAsync);
  *         required: true
  *         schema:
  *           type: string
- *           example: "1,2"
+ *           example: "1,2,3"
+ *         description: One or more course offering IDs to delete (comma-separated)
  *     responses:
  *       200:
- *         description: Deleted
+ *         description: Deleted successfully
  *       404:
- *         description: Not Found
+ *         description: Course offering(s) not found
  */
-router.delete("/delete/:id", courseOfferingController.deleteCourseOfferingByIdAsync);
+router.delete(
+    "/delete/:id",
+    commonValidate([
+      param("id")
+        .notEmpty()
+        .withMessage("id is required")
+        .matches(/^(\d+)(,\d+)*$/)
+        .withMessage("id must be one or more integers separated by commas, e.g. '1,2,3'"),
+    ]),
+    courseOfferingController.deleteCourseOfferingByIdAsync
+  );
+  
 
 module.exports = router;
