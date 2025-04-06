@@ -94,8 +94,8 @@ app.use('/api/menus', menuRouter);
 const permissionRouter = require('./router/permissionRouter');
 app.use('/api/permissions', permissionRouter);
 
-// config erorhandle
-const erorhandle = require('./middleware/errorHandling');
-app.use(erorhandle.errorHandling);
+// config errorHandle
+const errorHandle = require('./middleware/errorHandling');
+app.use(errorHandle.errorHandling);
 
 module.exports = app;

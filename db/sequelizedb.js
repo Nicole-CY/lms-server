@@ -25,12 +25,8 @@ const sequelize = new Sequelize(mysqlConfig.database, mysqlConfig.user, mysqlCon
 
 sequelize
     .authenticate()
-    .then(x => {
-        console.log('Connection has been established successfully.');
-    })
-    .catch(r => {
-        console.error('Unable to connect to the database:', r);
-    });
+    .then(() => console.log('Connection has been established successfully.'))
+    .catch(error => console.error('Unable to connect to the database:', error));
 
 module.exports = {
     sequelize,

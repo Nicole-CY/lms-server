@@ -20,11 +20,13 @@ const courseNotificationController = require("../controller/Course/courseNotific
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
  *       - name: pageSize
  *         in: path
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 10
  *       - name: search
  *         in: query
  *         required: false
@@ -41,6 +43,7 @@ router.get(
     commonValidate([
         param("page").isInt({ min: 1 }),
         param("pageSize").isInt({ min: 1 }),
+        query("search").optional().isString(),
     ]),
     courseNotificationController.getCourseNotificationListAsync
 );
@@ -58,6 +61,7 @@ router.get(
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
  *     responses:
  *       200:
  *         description: Notification found
@@ -68,7 +72,7 @@ router.get(
  */
 router.get(
     "/detail",
-    commonValidate([query("id").notEmpty().withMessage("id is required")]),
+    commonValidate([query("id").notEmpty().isInt({ min: 1 }).withMessage("id must be a positive integer")]),
     courseNotificationController.getCourseNotificationByIdAsync
 );
 
@@ -93,7 +97,7 @@ router.get(
  *             properties:
  *               recipient_id:
  *                 type: integer
- *                 example: 3
+ *                 example: 2
  *               course_offering_id:
  *                 type: integer
  *                 example: 1
@@ -112,8 +116,16 @@ router.get(
  *       500:
  *         description: Server Error
  */
-router.post("/add", courseNotificationController.addCourseNotificationAsync);
-
+router.post(
+    "/add",
+    commonValidate([
+      body("recipient_id").notEmpty().isInt(),
+      body("course_offering_id").notEmpty().isInt(),
+      body("message").notEmpty().isString(),
+      body("status").notEmpty().isIn(["Unread", "Read"]),
+    ]),
+    courseNotificationController.addCourseNotificationAsync
+  );
 /**
  * @openapi
  * '/api/courseNotifications/update':
@@ -132,11 +144,14 @@ router.post("/add", courseNotificationController.addCourseNotificationAsync);
  *             properties:
  *               id:
  *                 type: integer
+ *                 example: 1
  *               message:
  *                 type: string
+ *                 example: "updated message"
  *               status:
  *                 type: string
  *                 enum: [Unread, Read]
+ *                 example: "Read"
  *     responses:
  *       200:
  *         description: Updated successfully
@@ -145,8 +160,15 @@ router.post("/add", courseNotificationController.addCourseNotificationAsync);
  *       500:
  *         description: Server Error
  */
-router.put("/update", courseNotificationController.updateCourseNotificationByIdAsync);
-
+router.put(
+    "/update",
+    commonValidate([
+      body("id").notEmpty().isInt(),
+      body("message").optional().isString(),
+      body("status").optional().isIn(["Unread", "Read"]),
+    ]),
+    courseNotificationController.updateCourseNotificationByIdAsync
+  );
 /**
  * @openapi
  * '/api/courseNotifications/delete/{id}':
@@ -161,6 +183,7 @@ router.put("/update", courseNotificationController.updateCourseNotificationByIdA
  *         schema:
  *           type: string
  *           example: "1,2,3"
+ *         description: Comma-separated IDs to delete
  *     responses:
  *       200:
  *         description: Deleted successfully
@@ -171,9 +194,14 @@ router.put("/update", courseNotificationController.updateCourseNotificationByIdA
  */
 router.delete(
     "/delete/:id",
-    param("id").notEmpty().withMessage("id is required"),
+    commonValidate([
+      param("id")
+        .notEmpty()
+        .matches(/^(\d+)(,\d+)*$/)
+        .withMessage("id must be one or more integers separated by commas"),
+    ]),
     courseNotificationController.deleteCourseNotificationByIdAsync
-);
+  );
 
 module.exports = router;
 
