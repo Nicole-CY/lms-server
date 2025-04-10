@@ -5,23 +5,14 @@ const logger = require('../common/logSetting');
 const pagination = require('../utils/pagination');
 
 const getPermissionListAsync = async (page = 1, pageSize = 10, search = '') => {
-    try {
-        const where = search ? { permissionName: { [Op.like]: `%${search}%` } } : {};
+    const where = search ? { permissionName: { [Op.like]: `%${search}%` } } : {};
 
-        const result = await pagination.getPaginatedResults(Permission, {
-            page,
-            pageSize,
-            where,
-        });
-        return result;
-    } catch (error) {
-        logger.error('getPermissionListAsync error:', error);
-        return {
-            isSuccess: false,
-            message: 'Get permission list failed',
-            data: null,
-        };
-    }
+    const result = await pagination.getPaginatedResults(Permission, {
+        page,
+        pageSize,
+        where,
+    });
+    return result;
 };
 
 const getPermissionByIdAsync = async id => {

@@ -7,63 +7,59 @@ const logger = require('../common/logSetting');
 const { jwtConfig } = require('../appConfig');
 const userService = require('../service/userService');
 const { bcryptConfig } = require('../appConfig');
+const { UnauthorizedError } = require('../utils/errors');
 
 const loginAsync = async (req, res) => {
-    try {
-        const email = req.body.email;
-        const password = req.body.password;
+    const email = req.body.email;
+    const password = req.body.password;
 
-        if (!email || !password) {
-            return res.sendCommonValue(null, 'Email and password are required', 0);
-        }
-
-        const result = await userService.getUserByEmailAsync(email, true);
-
-        if (!result.isSuccess) {
-            logger.warn(`Login failed for email: ${email}`);
-            return res.sendCommonValue(null, 'Authentication failed', 0);
-        }
-
-        const isMatch = await bcrypt.compare(password, result.data.password);
-
-        if (!isMatch) {
-            logger.warn(`Password mismatch for email: ${email}`);
-            return res.sendCommonValue(null, 'Authentication failed', 0);
-        }
-
-        const user = { id: result.data.id, email: result.data.email };
-
-        const tokenStr = jwt.sign(user, jwtConfig.secret, {
-            expiresIn: `${jwtConfig.expiresIn}s`,
-        });
-
-        const csrfToken = crypto.randomBytes(24).toString('hex');
-
-        res.cookie('token', tokenStr, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'None',
-            maxAge: jwtConfig.expiresIn * 1000,
-        });
-
-        res.cookie('XSRF-TOKEN', csrfToken, {
-            sameSite: 'None',
-            httpOnly: false,
-            secure: true,
-            maxAge: jwtConfig.expiresIn * 1000,
-        });
-
-        return res.sendCommonValue(
-            {
-                email: email,
-            },
-            'Login successful',
-            1
-        );
-    } catch (err) {
-        logger.error(`Login error for email: ${req.body.email}, error: ${err}`);
-        return res.sendCommonValue(null, 'Internal server error', 0);
+    if (!email || !password) {
+        throw new UnauthorizedError('Authentication failed');
     }
+
+    const result = await userService.getUserByEmailAsync(email);
+
+    if (!result.isSuccess) {
+        logger.warn(`Login failed for email: ${email}`);
+        throw new UnauthorizedError('Authentication failed');
+    }
+
+    const isMatch = await bcrypt.compare(password, result.data.password);
+
+    if (!isMatch) {
+        logger.warn(`Password mismatch for email: ${email}`);
+        throw new UnauthorizedError('Authentication failed');
+    }
+
+    const user = { id: result.data.id, role: [result.data.roles], email: result.data.email };
+
+    const tokenStr = jwt.sign(user, jwtConfig.secret, {
+        expiresIn: `${jwtConfig.expiresIn}s`,
+    });
+
+    const csrfToken = crypto.randomBytes(24).toString('hex');
+
+    res.cookie('token', tokenStr, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+        maxAge: jwtConfig.expiresIn * 1000,
+    });
+
+    res.cookie('XSRF-TOKEN', csrfToken, {
+        sameSite: 'None',
+        httpOnly: false,
+        secure: true,
+        maxAge: jwtConfig.expiresIn * 1000,
+    });
+
+    return res.sendCommonValue(
+        {
+            email: email,
+        },
+        'Login successful',
+        1
+    );
 };
 
 const registerAsync = async (req, res) => {
