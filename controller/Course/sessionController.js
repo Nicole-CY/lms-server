@@ -7,6 +7,7 @@ const addSessionAsync = async (req, res) => {
     try {
         const sessionData = req.body;
         const result = await sessionService.addSessionAsync(sessionData);
+        console.log("result:", sessionData )
 
         if (result.isSuccess) {
             res.sendCommonValue(result.data, "session created successfully", 1, 201);
@@ -62,12 +63,19 @@ const getSessionsByCourseInstanceIdAsync = async (req, res) => {
  */
 const getSessionListAsync = async (req, res) => {
     try {
-        let { page, pageSize } = req.query;
+        let { page, pageSize, courseInstanceId, sessionTitle, sessionDescription, createdBy, updatedBy } = req.query;
 
         page = parseInt(page, 10) || 1;
         pageSize = parseInt(pageSize, 10) || 10;
 
-        const result = await sessionService.getSessionListAsync(page, pageSize);
+        const query = {};
+        if (courseInstanceId) query.courseInstanceId = courseInstanceId;
+        if (sessionTitle) query.sessionTitle = sessionTitle;
+        if (sessionDescription) query.sessionDescription = sessionDescription;
+        if (createdBy) query.createdBy = createdBy;
+        if (updatedBy) query.updatedBy = updatedBy;
+
+        const result = await sessionService.getSessionListAsync(page, pageSize, query);
 
         if (result.isSuccess) {
             res.sendCommonValue(result.data, "Sessions fetched successfully", 1, 200);
@@ -85,9 +93,15 @@ const getSessionListAsync = async (req, res) => {
  */
 const updateSessionAsync = async (req, res) => {
     try {
-        const sessionId = req.params.id;
-        const sessionData = req.body;
-        const result = await sessionService.updateSessionAsync(sessionId, sessionData);
+
+        const session = {};
+        session.id = req.body.id;
+        session.courseInstanceId = req.body.courseInstanceId;
+        session.sessionTitle = req.body.sessionTitle;
+        session.order = req.body.order;
+        session.updatedBy = req.body.updatedBy;
+
+        const result = await sessionService.updateSessionAsync(session.id, session);
 
         if (result.isSuccess) {
             res.sendCommonValue(result.data, "Session update successfully", 1, 200);
