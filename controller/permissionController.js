@@ -24,8 +24,6 @@ const getPermissionListAsync = async (req, res) => {
     const result = await permissionService.getPermissionListAsync(page, pageSize);
     if (result.isSuccess) {
         res.sendCommonValue(result.data, 'success', 1);
-    } else {
-        res.sendCommonValue([], 'failed', 0);
     }
 };
 

@@ -1,9 +1,15 @@
 const logger = require('../common/logSetting');
+const {
+    AppError,
+    ForbiddenError,
+    BadRequestError,
+    BusinessError,
+    UnauthorizedError,
+} = require('../utils/errors');
 
 /**
  * Global error handling middleware for Express.js.
- * Catches various types of known errors and responds with standardized messages.
- * Ensures sensitive error details are not exposed to the client.
+ * Handles errors from Express, Sequelize, and custom errors.
  *
  * @param {Error} err - The error thrown by previous middleware or route handler.
  * @param {Request} req - Express request object.
@@ -13,16 +19,7 @@ const logger = require('../common/logSetting');
 const errorHandling = (err, req, res, next) => {
     logger.error('Global Error Handler:', err);
 
-    // JWT Authentication Errors (e.g., invalid or expired token)
-    if (err.name === 'UnauthorizedError') {
-        const reason = err.inner?.name;
-        if (reason === 'TokenExpiredError') {
-            return res.sendCommonValue({}, 'Login expired. Please login again.', 401, 401);
-        }
-        return res.sendCommonValue({}, 'Unauthorized. Login Required', 401, 401);
-    }
-
-    // Sequelize ORM Errors
+    // Handle Sequelize errors (validation, unique constraint, foreign key constraint)
     if (err.name?.startsWith('Sequelize')) {
         if (err.name === 'SequelizeUniqueConstraintError') {
             return res.sendCommonValue({}, 'Duplicate data. Operation not allowed.', 400, 400);
@@ -40,37 +37,41 @@ const errorHandling = (err, req, res, next) => {
         return res.sendCommonValue({}, 'Database operation failed.', 500, 500);
     }
 
-    // Client input validation or bad request
-    if (err.name === 'BadRequestError') {
-        return res.sendCommonValue({}, err.message || 'Invalid request.', 400, 400);
+    // Handle custom BusinessError
+    if (err instanceof BusinessError) {
+        return res.sendCommonValue({}, err.message, err.statusCode, err.statusCode);
     }
 
-    // Forbidden access (authorization failure)
-    if (err.name === 'ForbiddenError') {
-        return res.sendCommonValue({}, err.message || 'Access denied.', 403, 403);
+    // Handle ForbiddenError (custom error)
+    if (err instanceof ForbiddenError) {
+        return res.sendCommonValue({}, err.message, err.statusCode, err.statusCode);
     }
 
-    // Custom business logic errors
-    if (err.isBusinessError) {
+    // Handle BadRequestError (custom error)
+    if (err instanceof BadRequestError) {
+        return res.sendCommonValue({}, err.message, err.statusCode, err.statusCode);
+    }
+
+    // Handle UnauthorizedError (custom error)
+    if (err instanceof UnauthorizedError) {
+        const reason = err.inner?.name;
+        if (reason === 'TokenExpiredError') {
+            return res.sendCommonValue({}, 'Login expired. Please login again.', 401, 401);
+        }
+        return res.sendCommonValue({}, err.message || 'Unauthorized. Login Required', 401, 401);
+    }
+
+    // Handle other custom errors if necessary (can be extended)
+    if (err.isOperational) {
         return res.sendCommonValue(
             {},
-            err.message || 'Business logic error.',
-            err.statusCode || 400,
-            err.statusCode || 400
+            err.message || 'An operational error occurred.',
+            err.statusCode,
+            err.statusCode
         );
     }
 
-    // Rate limit error
-    if (err.name === 'RateLimitError') {
-        return res.sendCommonValue({}, 'Too many requests. Please try again later.', 429, 429);
-    }
-
-    // Raw SQL error fallback (avoid leaking internal details)
-    if (err && err.sql) {
-        return res.sendCommonValue({}, 'Internal server error.', 500, 500);
-    }
-
-    // Unhandled/unknown errors (generic fallback)
+    // Handle generic Express errors
     return res.sendCommonValue({}, 'Unexpected server error.', 500, 500);
 };
 
