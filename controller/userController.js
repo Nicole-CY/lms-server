@@ -20,18 +20,15 @@ const addUserAsync = async (req, res) => {
         gender: req.body.gender,
         avatar: req.body.avatar,
         roles: req.body.roles,
-        active: req.body.active,  
+        active: req.body.active,
     };
-    
-    
-
 
     const salt = await bcrypt.genSalt(bcryptConfig.saltRounds);
     const encrypPassword = await bcrypt.hash(user.password, salt);
     user.password = encrypPassword;
 
     const result = await userService.addUserAsync(user);
-    
+
     if (result.isSuccess) {
         res.sendCommonValue({}, 'success', 1);
     } else {
@@ -43,7 +40,7 @@ const getUserListAsync = async (req, res) => {
     const page = parseInt(req.query.page);
     const pageSize = parseInt(req.query.pageSize);
     const search = req.query.search;
-    
+
     const result = await userService.getUserListAsync(page, pageSize, search);
     if (result.isSuccess) {
         res.sendCommonValue(result.data, 'success', 1);
@@ -51,8 +48,6 @@ const getUserListAsync = async (req, res) => {
         res.sendCommonValue([], 'failed', 0);
     }
 };
-
-
 
 const getUserByIdAsync = async (req, res) => {
     const id = parseInt(req.params.id);
@@ -71,7 +66,7 @@ const updateUserAsync = async (req, res) => {
         res.sendCommonValue({}, 'user not found', 400, 400);
         return;
     }
-    
+
     const updateData = {
         id: userId,
         password: req.body.password,
@@ -83,9 +78,9 @@ const updateUserAsync = async (req, res) => {
         avatar: req.body.avatar,
         roles: req.body.roles,
         active: req.body.active,
-        //update email prohibited
-    }
-    if(!updateData.password) {
+        // update email prohibited
+    };
+    if (!updateData.password) {
         delete updateData.password;
     }
 
@@ -97,7 +92,6 @@ const updateUserAsync = async (req, res) => {
         res.sendCommonValue({}, 'failed to update user', 0);
     }
 };
-
 
 const deleteUserByIdAsync = async (req, res) => {
     const ids = req.params.ids;

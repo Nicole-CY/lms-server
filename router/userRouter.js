@@ -86,20 +86,6 @@ router.post(
 
 /**
  * @openapi
- * '/api/users/name/{userName}':
- *  get:
- *     tags:
- *     - User Controller
- *     summary: Get user by username
- */
-router.get(
-    '/name/:userName',
-    commonValidate([param('userName').notEmpty().isString().withMessage('username is required')]),
-    userController.getUserByNameAsync
-);
-
-/**
- * @openapi
  * '/api/users/{id}':
  *  get:
  *     tags:
