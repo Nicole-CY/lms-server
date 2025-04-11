@@ -10,17 +10,12 @@ jest.mock('../../../utils/pagination', () => ({
 
 const Category = require('../../../models/category');
 const pagination = require('../../../utils/pagination');
-const {
-    getCategoryByNameAsync,
-    getCategoryListAsync,
-    addCategoryAsync,
-} = require('../../../service/Course/categoryService');
+const categoryService = require('../../../service/Course/categoryService');
 
 describe('categoryService', () => {
     afterEach(() => {
         jest.clearAllMocks();
     });
-
     // test suite for getCategoryByNameAsync function
     describe('getCategoryByNameAsync', () => {
         it('should return category when found by name', async () => {
@@ -28,11 +23,8 @@ describe('categoryService', () => {
                 id: 1,
                 categoryName: 'Programming',
             };
-
             Category.findOne.mockResolvedValue(mockCategory);
-
-            const result = await getCategoryByNameAsync('Programming');
-
+            const result = await categoryService.getCategoryByNameAsync('Programming');
             expect(Category.findOne).toHaveBeenCalledWith({
                 where: { categoryName: 'Programming' },
             });
@@ -42,12 +34,9 @@ describe('categoryService', () => {
                 data: mockCategory,
             });
         });
-
         it('should return not found when category does not exist', async () => {
             Category.findOne.mockResolvedValue(null);
-
-            const result = await getCategoryByNameAsync('NonExisting');
-
+            const result = await categoryService.getCategoryByNameAsync('NonExisting');
             expect(Category.findOne).toHaveBeenCalledWith({
                 where: { categoryName: 'NonExisting' },
             });
@@ -58,30 +47,24 @@ describe('categoryService', () => {
             });
         });
     });
-
     // test suite for getCategoryListAsync function
     describe('getCategoryListAsync', () => {
         it('should return paginated results', async () => {
             const mockResult = { data: [], total: 0 };
             pagination.getPaginatedResults.mockResolvedValue(mockResult);
-
-            const result = await getCategoryListAsync(1, 10, '');
-
+            const result = await categoryService.getCategoryListAsync(1, 10, '');
             expect(pagination.getPaginatedResults).toHaveBeenCalled();
             expect(result).toEqual(mockResult);
         });
-
         it('should handle error', async () => {
             pagination.getPaginatedResults.mockRejectedValue(new Error('DB Error'));
-
-            await expect(getCategoryListAsync()).resolves.toEqual({
+            await expect(categoryService.getCategoryListAsync()).resolves.toEqual({
                 isSuccess: false,
                 data: null,
                 message: 'Server error',
             });
         });
     });
-
     // test suite for addCategoryAsync function
     describe('addCategoryAsync', () => {
         it('should successfully add a new category', async () => {
@@ -89,16 +72,12 @@ describe('categoryService', () => {
                 categoryName: 'Art',
                 description: 'All art related courses',
             };
-
             const mockCreatedCategory = {
                 id: 21,
                 ...mockCategoryData,
             };
-
             Category.create.mockResolvedValue(mockCreatedCategory);
-
-            const result = await addCategoryAsync(mockCategoryData);
-
+            const result = await categoryService.addCategoryAsync(mockCategoryData);
             expect(Category.create).toHaveBeenCalledWith(mockCategoryData);
             expect(result).toEqual({
                 isSuccess: true,
@@ -106,13 +85,10 @@ describe('categoryService', () => {
                 data: mockCreatedCategory,
             });
         });
-
         it('should handle database errors', async () => {
             const mockError = new Error('Database error');
             Category.create.mockRejectedValue(mockError);
-
-            const result = await addCategoryAsync({ categoryName: 'Test' });
-
+            const result = await categoryService.addCategoryAsync({ categoryName: 'Test' });
             expect(result).toEqual({
                 isSuccess: false,
                 message: 'Add category failed',

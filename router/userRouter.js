@@ -1,10 +1,10 @@
-const express = require("express");
-require("express-async-errors");
+const express = require('express');
+require('express-async-errors');
 const router = express.Router();
+const { body, query, param } = require('express-validator');
 
-const { body, query, param } = require("express-validator");
-const { commonValidate } = require("../middleware/expressValidator");
-const userController = require("../controller/userController");
+const { commonValidate } = require('../middleware/expressValidator');
+const userController = require('../controller/userController');
 
 /**
  * @openapi
@@ -26,7 +26,7 @@ const userController = require("../controller/userController");
  *              email:
  *                type: string
  *                example: demo@example.com
- *                description: Must be unique. Duplicate will return 400 error. 
+ *                description: Must be unique. Duplicate will return 400 error.
  *              password:
  *                type: string
  *                example: 123456
@@ -68,26 +68,35 @@ const userController = require("../controller/userController");
  *        description: Server Error
  */
 router.post(
-    "/",
+    '/',
     commonValidate([
-        body("email").isEmail().withMessage("Invalid email"),
-        body("password")
-            .isString()
-            .isLength({ min: 6 })
-            .withMessage("Password too short"),
-        body("firstName").isString(),
-        body("lastName").isString(),
-        body("gender").optional().isInt(),
-        body("address").optional().isString(),
-        body("birthDate").optional().isISO8601().toDate(),
-        body("avatar").optional().isString(),
-        body("roles").optional().isArray(),
-        body("active").optional().isBoolean(),
+        body('email').isEmail().withMessage('Invalid email'),
+        body('password').isString().isLength({ min: 6 }).withMessage('Password too short'),
+        body('firstName').isString(),
+        body('lastName').isString(),
+        body('gender').optional().isInt(),
+        body('address').optional().isString(),
+        body('birthDate').optional().isISO8601().toDate(),
+        body('avatar').optional().isString(),
+        body('roles').optional().isArray(),
+        body('active').optional().isBoolean(),
     ]),
     userController.addUserAsync
 );
 
-
+/**
+ * @openapi
+ * '/api/users/name/{userName}':
+ *  get:
+ *     tags:
+ *     - User Controller
+ *     summary: Get user by username
+ */
+router.get(
+    '/name/:userName',
+    commonValidate([param('userName').notEmpty().isString().withMessage('username is required')]),
+    userController.getUserByNameAsync
+);
 
 /**
  * @openapi
@@ -111,14 +120,10 @@ router.post(
  *        description: Not Found
  */
 router.get(
-    "/:id",
-    commonValidate([
-        param("id").notEmpty().isInt().withMessage("User ID is required"),
-    ]),
+    '/:id',
+    commonValidate([param('id').notEmpty().isInt().withMessage('User ID is required')]),
     userController.getUserByIdAsync
 );
-
-
 
 /**
  * @openapi
@@ -145,12 +150,12 @@ router.get(
  *        description: Bad Request
  */
 router.get(
-    "/",
+    '/',
     commonValidate([
-        query("page").optional().isInt({ min: 1 }),
-        query("pageSize").optional().isInt({ min: 1 }),
-        query("search").optional().isString()
-      ]),   
+        query('page').optional().isInt({ min: 1 }),
+        query('pageSize').optional().isInt({ min: 1 }),
+        query('search').optional().isString(),
+    ]),
     userController.getUserListAsync
 );
 
@@ -213,25 +218,23 @@ router.get(
  *        description: Server Error
  */
 router.put(
-    "/:id",
+    '/:id',
     commonValidate([
-        param("id").notEmpty().isInt().withMessage("User ID is required"),
-        body("email").optional().isEmail(), 
-        body("username").optional().isString(),
-        body("password").optional().isString().isLength({ min: 6 }),
-        body("firstName").optional().isString(),
-        body("lastName").optional().isString(),
-        body("gender").optional().isInt(),
-        body("address").optional().isString(),
-        body("birthDate").optional().isISO8601().toDate(),
-        body("avatar").optional().isString(),
-        body("roles").optional().isArray(),
-        body("active").optional().isBoolean(),
+        param('id').notEmpty().isInt().withMessage('User ID is required'),
+        body('email').optional().isEmail(),
+        body('username').optional().isString(),
+        body('password').optional().isString().isLength({ min: 6 }),
+        body('firstName').optional().isString(),
+        body('lastName').optional().isString(),
+        body('gender').optional().isInt(),
+        body('address').optional().isString(),
+        body('birthDate').optional().isISO8601().toDate(),
+        body('avatar').optional().isString(),
+        body('roles').optional().isArray(),
+        body('active').optional().isBoolean(),
     ]),
     userController.updateUserAsync
 );
-
-
 
 /**
  * @openapi
@@ -253,12 +256,9 @@ router.put(
  *        description: Bad Request
  */
 router.delete(
-    "/:ids",
-    commonValidate([
-        param("ids").notEmpty().withMessage("User ID(s) required"),
-    ]),
+    '/:ids',
+    commonValidate([param('ids').notEmpty().withMessage('User ID(s) required')]),
     userController.deleteUserByIdAsync
 );
-
 
 module.exports = router;
