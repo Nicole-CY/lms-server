@@ -17,7 +17,7 @@ const loginAsync = async (req, res) => {
         throw new UnauthorizedError('Authentication failed');
     }
 
-    const result = await userService.getUserByEmailAsync(email);
+    const result = await userService.getUserByEmailAsync(email, true);
 
     if (!result.isSuccess) {
         logger.warn(`Login failed for email: ${email}`);
