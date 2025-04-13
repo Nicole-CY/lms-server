@@ -16,7 +16,6 @@ const addUserAsync = async user => {
             gender: user.gender,
             avatar: user.avatar,
             active: user.active ?? true,
-            roles: user.roles || ['user'],
         });
 
         return { isSuccess: true, message: 'create user successfully', data: null };
@@ -150,7 +149,6 @@ const updateUserByIdAsync = async user => {
                 gender: user.gender,
                 avatar: user.avatar,
                 active: user.active,
-                roles: user.roles,
             },
             { where: { id: user.id } }
         );
