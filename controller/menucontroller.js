@@ -1,4 +1,4 @@
-const menuService = require("../service/menuService");
+const menuService = require('../service/menuService');
 
 /**
  * create a new menu
@@ -17,16 +17,16 @@ const createMenuAsync = async (req, res) => {
         }
     }
 
-    let menu = {};
+    const menu = {};
     menu.menuName = req.body.menuName;
     menu.parentId = req.body.parentId;
     menu.routePath = req.body.routePath;
 
-    let result = await menuService.createMenuAsync(menu);
+    const result = await menuService.createMenuAsync(menu);
     if (result.isSuccess) {
-        res.sendCommonValue(result.data, "success", 1);
+        res.sendCommonValue(result.data, 'success', 1);
     } else {
-        res.sendCommonValue({}, "Create menu failed", 0);
+        res.sendCommonValue({}, 'Create menu failed', 0);
     }
 };
 
@@ -36,7 +36,7 @@ const createMenuAsync = async (req, res) => {
  * @param {*} res
  */
 const getMenuAsync = async (req, res) => {
-    let result = await menuService.getMenuAsync();
+    const result = await menuService.getMenuAsync();
     if (result.isSuccess) {
         res.sendCommonValue(result.data, 'success', 1);
     } else {
