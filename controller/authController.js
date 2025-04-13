@@ -31,7 +31,7 @@ const loginAsync = async (req, res) => {
         throw new UnauthorizedError('Authentication failed');
     }
 
-    const user = { id: result.data.id, role: [result.data.roles], email: result.data.email };
+    const user = { id: result.data.id, email: result.data.email };
 
     const tokenStr = jwt.sign(user, jwtConfig.secret, {
         expiresIn: `${jwtConfig.expiresIn}s`,
@@ -83,7 +83,6 @@ const registerAsync = async (req, res) => {
             firstName,
             lastName,
             password: hashedPassword,
-            roles: ['user'],
         };
 
         const result = await userService.addUserAsync(newUser);
@@ -126,7 +125,6 @@ const meAsync = async (req, res) => {
             {
                 id: result.data.id,
                 email: result.data.email,
-                roles: result.data.roles || [],
             },
             'User information retrieved successfully.',
             1
