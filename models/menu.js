@@ -32,6 +32,20 @@ const Menu = sequelize.define(
             field: 'route_path',
             allowNull: false,
         },
+        componentPath: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        menuType: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'page',
+        },
+        sortOrder: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
     },
     {
         tableName: 'menu',
