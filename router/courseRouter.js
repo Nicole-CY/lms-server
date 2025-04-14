@@ -1,16 +1,19 @@
-const express = require("express");
-require("express-async-errors");
+const express = require('express');
+
+require('express-async-errors');
 const router = express.Router();
-const {commonValidate} = require("../middleware/expressValidator"); 
-const courseController = require("../controller/Course/courseController");
-const {addCourseValidator,
+const { commonValidate } = require('../middleware/expressValidator');
+const courseController = require('../controller/Course/courseController');
+const {
+    addCourseValidator,
     updateCourseValidator,
     getCourseByTitleValidator,
     getCourseByCodeValidator,
     getCourseByIdValidator,
     getCourseListValidator,
     deleteCourseValidator,
-    bulkDeleteCoursesValidator,} = require("../validator/courseValidator")
+    bulkDeleteCoursesValidator,
+} = require('../validator/courseValidator');
 
 /**
  * @openapi
@@ -90,10 +93,7 @@ const {addCourseValidator,
  *      500:
  *        description: Server Error
  */
-router.post("",
-    commonValidate(addCourseValidator),
-    courseController.addCourseAsync
-);
+router.post('', commonValidate(addCourseValidator), courseController.addCourseAsync);
 
 /**
  * @openapi
@@ -105,7 +105,7 @@ router.post("",
  *     description: get a course by its title
  *     # security:
  *     #   - BearerAuth: []
- *     
+ *
  *     parameters:
  *      - name: title
  *        in: query
@@ -115,7 +115,7 @@ router.post("",
  *          type: string
  *     responses:
  *      200:
- *        description: Fetched Successfully 
+ *        description: Fetched Successfully
  *      400:
  *        description: Bad Request
  *      401:
@@ -126,7 +126,7 @@ router.post("",
  *        description: Server Error
  */
 router.get(
-    "/getByTitle",
+    '/getByTitle',
     commonValidate(getCourseByTitleValidator),
     courseController.getCourseByTitleAsync
 );
@@ -141,7 +141,7 @@ router.get(
  *     description: get a course by its courseCode
  *     # security:
  *     #   - BearerAuth: []
- *     
+ *
  *     parameters:
  *      - name: courseCode
  *        in: query
@@ -151,7 +151,7 @@ router.get(
  *          type: string
  *     responses:
  *      200:
- *        description: Fetched Successfully 
+ *        description: Fetched Successfully
  *      400:
  *        description: Bad Request
  *      401:
@@ -162,11 +162,10 @@ router.get(
  *        description: Server Error
  */
 router.get(
-    "/getByCode",
+    '/getByCode',
     commonValidate(getCourseByCodeValidator),
     courseController.getCourseByCourseCodeAsync
 );
-
 
 /**
  * @openapi
@@ -178,7 +177,7 @@ router.get(
  *     description: get a course by its id
  *     # security:
  *     #   - BearerAuth: []
- *     
+ *
  *     parameters:
  *      - name: id
  *        in: query
@@ -188,7 +187,7 @@ router.get(
  *          type: integer
  *     responses:
  *      200:
- *        description: Fetched Successfully 
+ *        description: Fetched Successfully
  *      400:
  *        description: Bad Request
  *      401:
@@ -198,9 +197,7 @@ router.get(
  *      500:
  *        description: Server Error
  */
-router.get("/getById",
-    commonValidate(getCourseByIdValidator),
-courseController.getCourseByIdAsync);
+router.get('/getById', commonValidate(getCourseByIdValidator), courseController.getCourseByIdAsync);
 
 /**
  * @openapi
@@ -260,13 +257,7 @@ courseController.getCourseByIdAsync);
  *        description: Server Error
  */
 
-router.get(
-    "/",
-    commonValidate(
-        getCourseListValidator
-    ),
-    courseController.getCourseListAsync
-);
+router.get('/', commonValidate(getCourseListValidator), courseController.getCourseListAsync);
 
 /**
  * @openapi
@@ -321,12 +312,8 @@ router.get(
  *      500:
  *        description: Server Error
  */
-router.put(
-    "",
-    commonValidate(updateCourseValidator),
-    courseController.updateCourseAsync
-  );
-  
+router.put('', commonValidate(updateCourseValidator), courseController.updateCourseAsync);
+
 /**
  * @openapi
  * '/api/courses/bulk':
@@ -361,9 +348,11 @@ router.put(
  */
 
 // First: More specific route for bulk delete
-router.delete("/bulk",
+router.delete(
+    '/bulk',
     commonValidate(bulkDeleteCoursesValidator),
-courseController.bulkDeleteCoursesAsync);
+    courseController.bulkDeleteCoursesAsync
+);
 
 /**
  * @openapi
@@ -394,11 +383,6 @@ courseController.bulkDeleteCoursesAsync);
  */
 
 // Then: Generic route for single course delete
-router.delete(
-    "/:id",
-    commonValidate(deleteCourseValidator),
-    courseController.deleteCourseAsync
-);
+router.delete('/:id', commonValidate(deleteCourseValidator), courseController.deleteCourseAsync);
 
 module.exports = router;
-
