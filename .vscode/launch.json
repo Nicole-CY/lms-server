@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Jest tests",
             "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
-            "args": ["--runInBand", "test/integration/router/courseRouter.test.js"],
+            "args": ["--runInBand", "tests/integration/router/courseRouter.test.js"],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
             "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
