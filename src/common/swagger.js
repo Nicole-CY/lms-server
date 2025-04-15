@@ -1,6 +1,7 @@
 const path = require('path');
+
 const swaggerDoc = require('swagger-jsdoc');
-//config swagger-jsdoc
+// config swagger-jsdoc
 const options = {
     definition: {
         openapi: '3.0.0',
@@ -10,7 +11,7 @@ const options = {
             description: `only has user apis and will add more`,
         },
     },
-    apis: [path.join(__dirname, '../router/*.js')],
+    apis: [path.join(__dirname, '../routers/*.js')],
 };
 
 const swaggerSpec = swaggerDoc(options);
