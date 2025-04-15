@@ -6,6 +6,7 @@ module.exports = {
     testTimeout: 10000,
     collectCoverage: true,
     collectCoverageFrom: [
+        'src/**/*.{js,ts}',
         '!**/node_modules/**',
         '!**/tests/**',
         '!**/migrations/**',
