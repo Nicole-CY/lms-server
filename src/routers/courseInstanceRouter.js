@@ -1,8 +1,9 @@
-const express = require("express");
-require("express-async-errors");
+const express = require('express');
+
+require('express-async-errors');
 const router = express.Router();
-const { commonValidate } = require("../middleware/expressValidator");
-const courseInstanceController = require("../controller/Course/courseInstanceController");
+const { commonValidate } = require('../middleware/expressValidator');
+const courseInstanceController = require('../controller/course/courseInstanceController');
 const {
     addCourseInstanceValidator,
     updateCourseInstanceValidator,
@@ -10,7 +11,7 @@ const {
     getCourseInstanceListValidator,
     deleteCourseInstanceValidator,
     bulkDeleteCourseInstancesValidator,
-} = require("../validator/courseInstanceValidator");
+} = require('../validator/courseInstanceValidator');
 
 /**
  * @openapi
@@ -65,7 +66,11 @@ const {
  *      500:
  *        description: Server error
  */
-router.post("", commonValidate(addCourseInstanceValidator), courseInstanceController.addCourseInstanceAsync);
+router.post(
+    '',
+    commonValidate(addCourseInstanceValidator),
+    courseInstanceController.addCourseInstanceAsync
+);
 
 /**
  * @openapi
@@ -90,7 +95,11 @@ router.post("", commonValidate(addCourseInstanceValidator), courseInstanceContro
  *      500:
  *        description: Server error
  */
-router.get("/:id", commonValidate(getCourseInstanceByIdValidator), courseInstanceController.getCourseInstanceByIdAsync);
+router.get(
+    '/:id',
+    commonValidate(getCourseInstanceByIdValidator),
+    courseInstanceController.getCourseInstanceByIdAsync
+);
 
 /**
  * @openapi
@@ -188,7 +197,11 @@ router.get("/:id", commonValidate(getCourseInstanceByIdValidator), courseInstanc
  *      500:
  *        description: Server error
  */
-router.get("", commonValidate(getCourseInstanceListValidator), courseInstanceController.getCourseInstanceListAsync);
+router.get(
+    '',
+    commonValidate(getCourseInstanceListValidator),
+    courseInstanceController.getCourseInstanceListAsync
+);
 
 /**
  * @openapi
@@ -238,7 +251,11 @@ router.get("", commonValidate(getCourseInstanceListValidator), courseInstanceCon
  *      500:
  *        description: Server error
  */
-router.put("", commonValidate(updateCourseInstanceValidator), courseInstanceController.updateCourseInstanceAsync);
+router.put(
+    '',
+    commonValidate(updateCourseInstanceValidator),
+    courseInstanceController.updateCourseInstanceAsync
+);
 
 /**
  * @openapi
@@ -270,7 +287,11 @@ router.put("", commonValidate(updateCourseInstanceValidator), courseInstanceCont
  *      500:
  *        description: Server error
  */
-router.delete("/bulk", commonValidate(bulkDeleteCourseInstancesValidator), courseInstanceController.bulkDeleteCourseInstancesAsync);
+router.delete(
+    '/bulk',
+    commonValidate(bulkDeleteCourseInstancesValidator),
+    courseInstanceController.bulkDeleteCourseInstancesAsync
+);
 
 /**
  * @openapi
@@ -297,6 +318,10 @@ router.delete("/bulk", commonValidate(bulkDeleteCourseInstancesValidator), cours
  *      500:
  *        description: Server error
  */
-router.delete("/:id", commonValidate(deleteCourseInstanceValidator), courseInstanceController.deleteCourseInstanceAsync);
+router.delete(
+    '/:id',
+    commonValidate(deleteCourseInstanceValidator),
+    courseInstanceController.deleteCourseInstanceAsync
+);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const sessionService = require('../../services/Course/sessionService');
+const sessionService = require('../../services/course/sessionService');
 
 /**
  * Add Session
@@ -7,7 +7,6 @@ const addSessionAsync = async (req, res) => {
     try {
         const sessionData = req.body;
         const result = await sessionService.addSessionAsync(sessionData);
-        console.log('result:', sessionData);
 
         if (result.isSuccess) {
             res.sendCommonValue(result.data, 'session created successfully', 1, 201);
