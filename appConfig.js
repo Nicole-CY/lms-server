@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 module.exports = {
     envConfig: process.env.APP_ENV || 'development',
     corsConfig: {
