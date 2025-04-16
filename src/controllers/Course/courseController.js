@@ -1,9 +1,8 @@
-const courseService = require('../../services/Course/courseService');
+const courseService = require('../../services/course/courseService');
 
 const addCourseAsync = async (req, res) => {
     try {
         const courseData = req.body;
-        console.log('req.body is:', req.body);
         const result = await courseService.addCourseAsync(courseData);
         if (result.isSuccess) {
             res.sendCommonValue(result.data, 'course created successfully', 1, 201);

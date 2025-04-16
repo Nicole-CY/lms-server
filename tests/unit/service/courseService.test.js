@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 
-const courseService = require('../../../src/services/Course/courseService');
+const courseService = require('../../../src/services/course/courseService');
 const { Course, CourseCategory } = require('../../../src/models');
 const { sequelize } = require('../../../src/db/sequelizedb');
 const { courseFilter } = require('../../../src/filters/courseFilter');

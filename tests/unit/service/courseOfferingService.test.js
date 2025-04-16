@@ -1,6 +1,6 @@
 const CourseOffering = require('../../../src/models/courseOffering');
 const pagination = require('../../../src/utils/pagination');
-const courseOfferingService = require('../../../src/services/Course/courseOfferingService');
+const courseOfferingService = require('../../../src/services/course/courseOfferingService');
 const { sequelize } = require('../../../src/db/sequelizedb');
 
 jest.mock('../../../src/models/courseOffering', () => ({

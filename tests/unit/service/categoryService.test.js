@@ -10,7 +10,7 @@ jest.mock('../../../src/utils/pagination', () => ({
 
 const Category = require('../../../src/models/category');
 const pagination = require('../../../src/utils/pagination');
-const categoryService = require('../../../src/services/Course/categoryService');
+const categoryService = require('../../../src/services/course/categoryService');
 
 describe('categoryService', () => {
     afterEach(() => {

@@ -1,4 +1,4 @@
-const CourseOfferingService = require('../../services/Course/courseOfferingService');
+const CourseOfferingService = require('../../services/course/courseOfferingService');
 
 const getCourseOfferingByIdAsync = async (req, res) => {
     try {

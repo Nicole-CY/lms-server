@@ -13,7 +13,6 @@ appConfig.js
 dist/
 build/
 *.log
-logs*
 logs/
 
 tmp/
