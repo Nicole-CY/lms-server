@@ -37,10 +37,8 @@ jobs:
             mysql:
                 image: mysql:8.0
                 env:
-                    MYSQL_ROOT_PASSWORD: root
-                    MYSQL_DATABASE: testdb
-                    MYSQL_USER: testuser
-                    MYSQL_PASSWORD: testpass
+                    MYSQL_ROOT_PASSWORD: 12345678
+                    MYSQL_DATABASE: moocdb
                 ports:
                     - 3306:3306
                 options: >-
@@ -66,8 +64,4 @@ jobs:
             - name: Run Integration Tests
               env:
                   NODE_ENV: test
-                  DB_HOST: 127.0.0.1
-                  DB_USER: testuser
-                  DB_PASS: testpass
-                  DB_NAME: testdb
               run: npm run test:integration
