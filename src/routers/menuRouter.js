@@ -37,6 +37,19 @@ const menuController = require('../controllers/menuController');
  *              routePath:
  *                type: string
  *                default: /dashboard
+ *              componentPath:
+ *                type: string
+ *                example: Dashboard
+ *              menuType:
+ *                type: string
+ *                enum: [page, group, link, button]
+ *                example: page
+ *              sortOrder:
+ *                type: integer
+ *                example: 1
+ *              permission:
+ *                type: string
+ *                example: menu:dashboard
  *     responses:
  *      201:
  *        description: Created
@@ -54,6 +67,17 @@ router.post(
     commonValidate([
         body('menuName').notEmpty().withMessage('Menu name is required'),
         body('routePath').notEmpty().withMessage('Route path is required'),
+        body('parentId').optional().isInt().withMessage('Parent ID must be an integer'),
+        body('componentPath').optional().isString(),
+        body('menuType')
+            .optional()
+            .isIn(['page', 'group', 'link', 'button'])
+            .withMessage('Invalid menu type'),
+        body('sortOrder')
+            .optional()
+            .isInt({ min: 0 })
+            .withMessage('Sort order must be a non-negative integer'),
+        body('permission').optional().isString(),
     ]),
     menuController.createMenuAsync
 );
