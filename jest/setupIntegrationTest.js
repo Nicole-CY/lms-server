@@ -1,4 +1,4 @@
-const { sequelize } = require('../db/sequelizedb');
+const { sequelize } = require('../src/db/sequelizedb');
 
 beforeAll(async () => {
     await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');

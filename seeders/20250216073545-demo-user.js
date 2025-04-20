@@ -20,7 +20,6 @@ module.exports = {
                         gender: 1,
                         avatar: 'https://via.placeholder.com/150',
                         active: true,
-                        roles: JSON.stringify(['super_admin', 'user']),
                     },
                     {
                         id: 2, // Explicitly set ID for admin
@@ -32,7 +31,6 @@ module.exports = {
                         gender: 1,
                         avatar: 'https://via.placeholder.com/150',
                         active: true,
-                        roles: JSON.stringify(['admin', 'user']),
                     },
                 ],
                 {}
