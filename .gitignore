@@ -6,7 +6,6 @@ yarn.lock
 appConfig.js
 
 .env
-.env.test
 .env.production
 .env.development
 
