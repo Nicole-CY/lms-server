@@ -7,6 +7,10 @@ const createMenuAsync = async menu => {
             menu_name: menu.menuName,
             parent_id: menu.parentId,
             route_path: menu.routePath,
+            component_path: menu.componentPath,
+            menu_type: menu.menuType || 'page',
+            sort_order: menu.sortOrder || 0,
+            permission: menu.permission || null,
         });
 
         return { isSuccess: true, message: '', data: newMenu };

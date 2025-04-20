@@ -46,6 +46,10 @@ const Menu = sequelize.define(
             allowNull: false,
             defaultValue: 0,
         },
+        permission: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     },
     {
         tableName: 'menu',
