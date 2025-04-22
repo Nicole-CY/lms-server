@@ -62,6 +62,13 @@ const Menu = sequelize.define(
 Menu.associate = function (models) {
     Menu.belongsTo(models.Menu, { foreignKey: 'parentId', as: 'parentMenu' });
     Menu.hasMany(models.Menu, { foreignKey: 'parentId', as: 'submenus' });
+
+    Menu.belongsToMany(models.Role, {
+        through: models.RoleMenu,
+        foreignKey: 'menuId',
+        otherKey: 'roleId',
+        as: 'roles',
+    });
 };
 
 module.exports = Menu;
