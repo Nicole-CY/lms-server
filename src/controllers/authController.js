@@ -125,6 +125,8 @@ const meAsync = async (req, res) => {
             {
                 id: result.data.id,
                 email: result.data.email,
+                firstName: result.data.firstName,
+                lastName: result.data.lastName,
             },
             'User information retrieved successfully.',
             1
