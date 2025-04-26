@@ -47,7 +47,7 @@ const userController = require('../controllers/userController');
  *                format: date
  *                example: 1990-01-01
  *              avatar:
- *                type: string
+ *                type: text
  *                example: http://example.com/avatar.png
  *              roles:
  *                type: array
