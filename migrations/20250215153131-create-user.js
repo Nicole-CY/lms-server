@@ -44,7 +44,7 @@ module.exports = {
                 defaultValue: true,
             },
             avatar: {
-                type: Sequelize.STRING(255),
+                type: Sequelize.TEXT('medium'),
                 allowNull: true,
             },
             roles: {
