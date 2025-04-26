@@ -25,12 +25,10 @@ const addUserAsync = async user => {
     }
 };
 
-const getUserListAsync = async (page = 1, pageSize = 10, search = '') => {
+const getUserListAsync = async (page = 1, pageSize = 10) => {
     try {
-        const where = search ? { username: { [Op.like]: `%${search}%` } } : {};
-
         const result = await getPaginatedResults(User, {
-            where,
+            where: {},
             page,
             pageSize,
             attributes: { exclude: ['password'] },
