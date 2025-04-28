@@ -43,7 +43,7 @@ const checkCrudPermissionAsync = async operatorRoles => {
  */
 const getRoleByIdAsync = async (operatorRoles, id) => {
     // check if operator has the permission to read role
-    const permissionCheck = await checkCrudPermissionAsync(operatorRoles);
+    const permissionCheck = await checkAssignPermissionAsync(operatorRoles);
     if (!permissionCheck.isAllowed) {
         return { isSuccess: false, message: permissionCheck.message, data: null };
     }
@@ -71,7 +71,7 @@ const getRoleByIdAsync = async (operatorRoles, id) => {
  */
 const getAllRolesAsync = async operatorRoles => {
     // check if operator has the permission to read roles
-    const permissionCheck = await checkCrudPermissionAsync(operatorRoles);
+    const permissionCheck = await checkAssignPermissionAsync(operatorRoles);
     if (!permissionCheck.isAllowed) {
         return { isSuccess: false, message: permissionCheck.message, data: null };
     }
@@ -185,7 +185,7 @@ const deleteRoleAsync = async (operatorRoles, roleId) => {
  * @param {object[]} rolesToAssign - Array of Sequelize Role instances to be assigned.
  * @returns {Promise<{ isAllowed: boolean, message: string }>}
  */
-const checkAssignPermissionAsync = async (operatorRoles, rolesToAssign) => {
+const checkAssignPermissionAsync = async (operatorRoles, rolesToAssign = []) => {
     let isSuperAdmin;
     let isAdmin;
     try {
