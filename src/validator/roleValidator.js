@@ -1,7 +1,7 @@
 const { param, body } = require('express-validator');
 
 const roleValidator = [
-    body('role_name')
+    body('roleName')
         .notEmpty()
         .withMessage('Role name is required')
         .isString()

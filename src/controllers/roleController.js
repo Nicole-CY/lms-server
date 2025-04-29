@@ -4,13 +4,13 @@ const roleService = require('../services/roleService');
  * Add a new role
  */
 const addRoleAsync = async (req, res) => {
-    const { role_name, description } = req.body;
+    const { roleName, description } = req.body;
 
     // check if role already exist in database
     const dbResult = await roleService.getAllRolesAsync(req.roles);
     const existRoles = dbResult.data || [];
     const roleExists = existRoles.some(
-        role => role.toJSON().roleName.toLowerCase() === role_name.toLowerCase()
+        role => role.toJSON().roleName.toLowerCase() === roleName.toLowerCase()
     );
     if (roleExists) {
         return res.status(400).json({
@@ -22,7 +22,7 @@ const addRoleAsync = async (req, res) => {
 
     // add role to database
     const role = {
-        role_name: role_name,
+        roleName: roleName,
         description: description || '',
     };
     const result = await roleService.addRoleAsync(req.roles, role);
@@ -70,7 +70,7 @@ const updateRoleAsync = async (req, res) => {
 
     // update role in database
     const updatedData = {
-        role_name: req.body.role_name,
+        roleName: req.body.roleName,
         description: req.body.description,
     };
 
