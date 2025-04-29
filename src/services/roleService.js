@@ -89,7 +89,7 @@ const getAllRolesAsync = async operatorRoles => {
 
 /**
  * Add a new role to the database.
- * @param {{ role_name: string, description?: string }} role - The role data to add.
+ * @param {{ roleName: string, description?: string }} role - The role data to add.
  * @returns {Promise<{isSuccess: boolean, message: string, data: object|null}>}
  */
 const addRoleAsync = async (operatorRoles, role) => {
@@ -102,7 +102,7 @@ const addRoleAsync = async (operatorRoles, role) => {
     try {
         // create new role
         const newRole = await Role.create({
-            roleName: role.role_name,
+            roleName: role.roleName,
             description: role.description || '',
         });
 
@@ -116,7 +116,7 @@ const addRoleAsync = async (operatorRoles, role) => {
 /**
  * Update an existing role by ID.
  * @param {number} roleId - The ID of the role to update.
- * @param {{ role_name?: string, description?: string }} updatedData - The updated role data.
+ * @param {{ roleName?: string, description?: string }} updatedData - The updated role data.
  * @returns {Promise<{isSuccess: boolean, message: string, data: object|null}>}
  */
 const updateRoleAsync = async (operatorRoles, roleId, updatedData) => {
@@ -135,7 +135,7 @@ const updateRoleAsync = async (operatorRoles, roleId, updatedData) => {
 
         // update the role
         await role.update({
-            roleName: updatedData.role_name || role.role_name,
+            roleName: updatedData.roleName || role.roleName,
             description: updatedData.description || role.description,
         });
 
