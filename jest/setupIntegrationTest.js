@@ -1,4 +1,5 @@
-const { sequelize } = require('../db/sequelizedb');
+const { sequelize } = require('../src/db/sequelizedb');
+const redis = require('../src/utils/redis');
 
 beforeAll(async () => {
     await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
@@ -7,5 +8,6 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+    await redis.quit();
     await sequelize.close();
 });

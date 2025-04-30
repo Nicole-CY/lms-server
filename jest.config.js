@@ -6,6 +6,7 @@ module.exports = {
     testTimeout: 10000,
     collectCoverage: true,
     collectCoverageFrom: [
+        'src/**/*.{js,ts}',
         '!**/node_modules/**',
         '!**/tests/**',
         '!**/migrations/**',
@@ -20,13 +21,13 @@ module.exports = {
             displayName: 'unit',
             testEnvironment: 'node',
             // setupFilesAfterEnv: ['<rootDir>/jest/setupUnitTest.js'],
-            testMatch: ['<rootDir>/test/unit/**/*.{test,spec}.js'],
+            testMatch: ['<rootDir>/tests/unit/**/*.{test,spec}.js'],
         },
         {
             displayName: 'integration',
             testEnvironment: 'node',
             setupFilesAfterEnv: ['<rootDir>/jest/setupIntegrationTest.js'],
-            testMatch: ['<rootDir>/test/integration/**/*.{test,spec}.js'],
+            testMatch: ['<rootDir>/tests/integration/**/*.{test,spec}.js'],
         },
     ],
 };
