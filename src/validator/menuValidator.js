@@ -80,6 +80,12 @@ const addMenuValidator = [
         .withMessage('Permission must be a string')
         .isLength({ max: 100 })
         .withMessage('Permission must not exceed 100 characters'),
+    body('icon')
+        .optional()
+        .isString()
+        .withMessage('Icon must be a string')
+        .isLength({ max: 100 })
+        .withMessage('Icon must not exceed 100 characters'),
 ];
 
 // Update menu by id
@@ -125,6 +131,12 @@ const updateMenuByIdValidator = [
         .withMessage('Permission must be a string')
         .isLength({ max: 100 })
         .withMessage('Permission must not exceed 100 characters'),
+    body('icon')
+        .optional()
+        .isString()
+        .withMessage('Icon must be a string')
+        .isLength({ max: 100 })
+        .withMessage('Icon must not exceed 100 characters'),
 ];
 
 // Delete menu by id

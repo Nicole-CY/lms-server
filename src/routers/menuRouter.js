@@ -138,6 +138,10 @@ router.get('/getMenu', commonValidate(getMenuByNameValidator), menuController.ge
  *              permission:
  *                type: string
  *                example: menu:dashboard
+ *              icon:
+ *                type: string
+ *                example: dashboard
+ *                description: Icon name used in the frontend menu
  *     responses:
  *      201:
  *        description: Created
@@ -198,6 +202,10 @@ router.post('/', commonValidate(addMenuValidator), menuController.addMenuAsync);
  *              permission:
  *                type: string
  *                example: menu:dashboard
+ *              icon:
+ *                type: string
+ *                example: dashboard
+ *                description: Icon name used in the frontend menu
  *     responses:
  *      201:
  *        description: Created

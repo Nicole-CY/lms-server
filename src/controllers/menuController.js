@@ -46,7 +46,7 @@ const getMenuByNameAsync = async (req, res, next) => {
 
 // Add new menu
 const addMenuAsync = async (req, res) => {
-    const { menuName, parentId } = req.body;
+    const { menuName, parentId } = req.body; // icon should be included if needed
 
     // 1. check if menuName exist
     const checkMenuNameResult = await menuService.getMenuByNameAsync(menuName);
@@ -75,6 +75,7 @@ const addMenuAsync = async (req, res) => {
         menuType: req.body.menuType || 'page',
         sortOrder: req.body.sortOrder || 0,
         permission: req.body.permission || null,
+        icon: req.body.icon || null,
     };
 
     // 4. create menu
