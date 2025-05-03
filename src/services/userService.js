@@ -1,8 +1,41 @@
 const { Op } = require('sequelize');
 
+const { cache } = require('../utils/cache');
 const User = require('../models/user');
 const logger = require('../common/logSetting');
 const { getPaginatedResults } = require('../utils/pagination');
+
+const getUserListAsync = async (page = 1, pageSize = 10, search = '') => {
+    const cacheKey = `user:list:page=${page}:size=${pageSize}:search=${search}`;
+
+    try {
+        const result = await cache(cacheKey, 300, async () => {
+            const where = search ? { username: { [Op.like]: `%${search}%` } } : {};
+
+            const data = await getPaginatedResults(User, {
+                where,
+                page,
+                pageSize,
+                attributes: { exclude: ['password'] },
+            });
+
+            return data;
+        });
+
+        return {
+            isSuccess: true,
+            message: 'Success',
+            data: result,
+        };
+    } catch (error) {
+        logger.error('getUserListAsync error:', error);
+        return {
+            isSuccess: false,
+            message: 'Get user list failed',
+            data: null,
+        };
+    }
+};
 
 const addUserAsync = async user => {
     try {
@@ -22,32 +55,6 @@ const addUserAsync = async user => {
     } catch (error) {
         logger.error('addUserAsync error:', error);
         return { isSuccess: false, message: 'Add user failed', data: null };
-    }
-};
-
-const getUserListAsync = async (page = 1, pageSize = 10, search = '') => {
-    try {
-        const where = search ? { username: { [Op.like]: `%${search}%` } } : {};
-
-        const result = await getPaginatedResults(User, {
-            where,
-            page,
-            pageSize,
-            attributes: { exclude: ['password'] },
-        });
-
-        return {
-            isSuccess: true,
-            message: 'Success',
-            data: result,
-        };
-    } catch (error) {
-        logger.error('getUserListAsync error:', error);
-        return {
-            isSuccess: false,
-            message: 'Get user list failed',
-            data: null,
-        };
     }
 };
 

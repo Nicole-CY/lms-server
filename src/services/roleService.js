@@ -4,6 +4,9 @@ const UserRole = require('../models/userRole');
 const logger = require('../common/logSetting');
 const { ForbiddenError } = require('../utils/errors');
 
+const RoleMenu = require('../models/roleMenu');
+const Menu = require('../models/menu');
+
 /**
  * Asynchronously checks whether a given user has permission to perform CRUD operations on roles.
  * Only users with the 'SuperAdmin' role are permitted to perform these operations.
@@ -43,7 +46,7 @@ const checkCrudPermissionAsync = async operatorRoles => {
  */
 const getRoleByIdAsync = async (operatorRoles, id) => {
     // check if operator has the permission to read role
-    const permissionCheck = await checkCrudPermissionAsync(operatorRoles);
+    const permissionCheck = await checkAssignPermissionAsync(operatorRoles);
     if (!permissionCheck.isAllowed) {
         return { isSuccess: false, message: permissionCheck.message, data: null };
     }
@@ -71,7 +74,7 @@ const getRoleByIdAsync = async (operatorRoles, id) => {
  */
 const getAllRolesAsync = async operatorRoles => {
     // check if operator has the permission to read roles
-    const permissionCheck = await checkCrudPermissionAsync(operatorRoles);
+    const permissionCheck = await checkAssignPermissionAsync(operatorRoles);
     if (!permissionCheck.isAllowed) {
         return { isSuccess: false, message: permissionCheck.message, data: null };
     }
@@ -89,7 +92,7 @@ const getAllRolesAsync = async operatorRoles => {
 
 /**
  * Add a new role to the database.
- * @param {{ role_name: string, description?: string }} role - The role data to add.
+ * @param {{ roleName: string, description?: string }} role - The role data to add.
  * @returns {Promise<{isSuccess: boolean, message: string, data: object|null}>}
  */
 const addRoleAsync = async (operatorRoles, role) => {
@@ -102,7 +105,7 @@ const addRoleAsync = async (operatorRoles, role) => {
     try {
         // create new role
         const newRole = await Role.create({
-            roleName: role.role_name,
+            roleName: role.roleName,
             description: role.description || '',
         });
 
@@ -116,7 +119,7 @@ const addRoleAsync = async (operatorRoles, role) => {
 /**
  * Update an existing role by ID.
  * @param {number} roleId - The ID of the role to update.
- * @param {{ role_name?: string, description?: string }} updatedData - The updated role data.
+ * @param {{ roleName?: string, description?: string }} updatedData - The updated role data.
  * @returns {Promise<{isSuccess: boolean, message: string, data: object|null}>}
  */
 const updateRoleAsync = async (operatorRoles, roleId, updatedData) => {
@@ -135,7 +138,7 @@ const updateRoleAsync = async (operatorRoles, roleId, updatedData) => {
 
         // update the role
         await role.update({
-            roleName: updatedData.role_name || role.role_name,
+            roleName: updatedData.roleName || role.roleName,
             description: updatedData.description || role.description,
         });
 
@@ -185,7 +188,7 @@ const deleteRoleAsync = async (operatorRoles, roleId) => {
  * @param {object[]} rolesToAssign - Array of Sequelize Role instances to be assigned.
  * @returns {Promise<{ isAllowed: boolean, message: string }>}
  */
-const checkAssignPermissionAsync = async (operatorRoles, rolesToAssign) => {
+const checkAssignPermissionAsync = async (operatorRoles, rolesToAssign = []) => {
     let isSuperAdmin;
     let isAdmin;
     try {
@@ -279,6 +282,59 @@ const assignRolesToUserAsync = async (operatorRoles, userId, roleIds) => {
     }
 };
 
+/**
+ * Assign menus to a role (overwrite existing ones).
+ * Only SuperAdmin is allowed to perform this action.
+ *
+ * @param {string[]} operatorRoles - The roles of the current operator.
+ * @param {number} roleId - The ID of the role to assign menus to.
+ * @param {number[]} menuIds - The menu IDs to assign.
+ * @returns {Promise<{ isSuccess: boolean, message: string, data: null }>}
+ */
+const assignMenusToRoleAsync = async (operatorRoles, roleId, menuIds) => {
+    // check permission
+    const permissionCheck = await checkCrudPermissionAsync(operatorRoles);
+    if (!permissionCheck.isAllowed) {
+        return { isSuccess: false, message: permissionCheck.message, data: null };
+    }
+
+    try {
+        // check if role exist
+        const role = await Role.findByPk(roleId);
+        if (!role) {
+            return {
+                isSuccess: false,
+                message: `Role with id ${roleId} does not exist.`,
+                data: null,
+            };
+        }
+
+        // delete previous relationship
+        await RoleMenu.destroy({ where: { roleId } });
+
+        // create new relationship
+        const newEntries = menuIds.map(menuId => ({
+            roleId: roleId,
+            menuId: menuId,
+        }));
+
+        await RoleMenu.bulkCreate(newEntries);
+
+        return {
+            isSuccess: true,
+            message: 'Menus assigned to role successfully.',
+            data: null,
+        };
+    } catch (error) {
+        logger.error('assignMenusToRoleAsync error:', error);
+        return {
+            isSuccess: false,
+            message: 'Server error while assigning menus to role.',
+            data: null,
+        };
+    }
+};
+
 module.exports = {
     getRoleByIdAsync,
     getAllRolesAsync,
@@ -286,4 +342,5 @@ module.exports = {
     updateRoleAsync,
     deleteRoleAsync,
     assignRolesToUserAsync,
+    assignMenusToRoleAsync,
 };

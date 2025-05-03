@@ -44,7 +44,7 @@ const User = sequelize.define(
             allowNull: false,
         },
         avatar: {
-            type: DataTypes.STRING(255),
+            type: DataTypes.TEXT('medium'),
             allowNull: true, // Allow null because avatar might not be provided initially
         },
         active: {

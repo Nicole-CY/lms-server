@@ -30,10 +30,18 @@ const Role = sequelize.define(
 );
 
 Role.associate = function (models) {
+    // role ↔ user
     Role.belongsToMany(models.User, {
         through: 'user_role',
         foreignKey: 'role_id',
         otherKey: 'user_id',
+    });
+    // role ↔ menu
+    Role.belongsToMany(models.Menu, {
+        through: models.RoleMenu,
+        foreignKey: 'roleId',
+        otherKey: 'menuId',
+        as: 'menus',
     });
 };
 

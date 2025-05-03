@@ -34,22 +34,37 @@ const Menu = sequelize.define(
         },
         componentPath: {
             type: DataTypes.STRING,
+            field: 'component_path',
             allowNull: true,
         },
         menuType: {
             type: DataTypes.STRING,
+            field: 'menu_type',
             allowNull: false,
             defaultValue: 'page',
         },
         sortOrder: {
             type: DataTypes.INTEGER,
+            field: 'sort_order',
             allowNull: false,
             defaultValue: 0,
         },
         permission: {
             type: DataTypes.STRING,
             allowNull: true,
+            defaultValue: null,
         },
+        icon: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            defaultValue: null,
+        },
+        // isHidden: {
+        //     type: DataTypes.BOOLEAN,
+        //     allowNull: false,
+        //     defaultValue: false,
+        //     field: 'is_hidden'
+        //   },
     },
     {
         tableName: 'menu',
@@ -62,6 +77,13 @@ const Menu = sequelize.define(
 Menu.associate = function (models) {
     Menu.belongsTo(models.Menu, { foreignKey: 'parentId', as: 'parentMenu' });
     Menu.hasMany(models.Menu, { foreignKey: 'parentId', as: 'submenus' });
+
+    Menu.belongsToMany(models.Role, {
+        through: models.RoleMenu,
+        foreignKey: 'menuId',
+        otherKey: 'roleId',
+        as: 'roles',
+    });
 };
 
 module.exports = Menu;
