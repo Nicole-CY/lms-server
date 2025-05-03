@@ -4,6 +4,9 @@ const UserRole = require('../models/userRole');
 const logger = require('../common/logSetting');
 const { ForbiddenError } = require('../utils/errors');
 
+const RoleMenu = require('../models/roleMenu');
+const Menu = require('../models/menu');
+
 /**
  * Asynchronously checks whether a given user has permission to perform CRUD operations on roles.
  * Only users with the 'SuperAdmin' role are permitted to perform these operations.
@@ -279,6 +282,59 @@ const assignRolesToUserAsync = async (operatorRoles, userId, roleIds) => {
     }
 };
 
+/**
+ * Assign menus to a role (overwrite existing ones).
+ * Only SuperAdmin is allowed to perform this action.
+ *
+ * @param {string[]} operatorRoles - The roles of the current operator.
+ * @param {number} roleId - The ID of the role to assign menus to.
+ * @param {number[]} menuIds - The menu IDs to assign.
+ * @returns {Promise<{ isSuccess: boolean, message: string, data: null }>}
+ */
+const assignMenusToRoleAsync = async (operatorRoles, roleId, menuIds) => {
+    // check permission
+    const permissionCheck = await checkCrudPermissionAsync(operatorRoles);
+    if (!permissionCheck.isAllowed) {
+        return { isSuccess: false, message: permissionCheck.message, data: null };
+    }
+
+    try {
+        // check if role exist
+        const role = await Role.findByPk(roleId);
+        if (!role) {
+            return {
+                isSuccess: false,
+                message: `Role with id ${roleId} does not exist.`,
+                data: null,
+            };
+        }
+
+        // delete previous relationship
+        await RoleMenu.destroy({ where: { roleId } });
+
+        // create new relationship
+        const newEntries = menuIds.map(menuId => ({
+            roleId: roleId,
+            menuId: menuId,
+        }));
+
+        await RoleMenu.bulkCreate(newEntries);
+
+        return {
+            isSuccess: true,
+            message: 'Menus assigned to role successfully.',
+            data: null,
+        };
+    } catch (error) {
+        logger.error('assignMenusToRoleAsync error:', error);
+        return {
+            isSuccess: false,
+            message: 'Server error while assigning menus to role.',
+            data: null,
+        };
+    }
+};
+
 module.exports = {
     getRoleByIdAsync,
     getAllRolesAsync,
@@ -286,4 +342,5 @@ module.exports = {
     updateRoleAsync,
     deleteRoleAsync,
     assignRolesToUserAsync,
+    assignMenusToRoleAsync,
 };
