@@ -54,6 +54,11 @@ const Menu = sequelize.define(
             allowNull: true,
             defaultValue: null,
         },
+        icon: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            defaultValue: null,
+        },
         // isHidden: {
         //     type: DataTypes.BOOLEAN,
         //     allowNull: false,
