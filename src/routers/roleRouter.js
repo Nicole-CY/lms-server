@@ -185,4 +185,42 @@ router.delete('/:id', commonValidate(roleIdValidator), roleController.deleteRole
  */
 router.post('/assign', roleController.assignRolesToUserAsync);
 
+/**
+ * @openapi
+ * '/api/roles/assign-menus':
+ *  post:
+ *     tags:
+ *     - Role Controller
+ *     summary: Assign menus to a role
+ *     description: Assign one or more menus to a role. Only SuperAdmin can perform this operation. Existing menu assignments will be overwritten.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - roleId
+ *               - menuIds
+ *             properties:
+ *               roleId:
+ *                 type: integer
+ *                 description: ID of the role to assign menus to
+ *               menuIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: Array of menu IDs to assign
+ *     responses:
+ *       200:
+ *         description: Menus assigned successfully
+ *       400:
+ *         description: Invalid role ID or menu IDs
+ *       403:
+ *         description: Forbidden - insufficient permissions
+ *       500:
+ *         description: Server Error
+ */
+router.post('/assign-menus', roleController.assignMenusToRoleAsync);
+
 module.exports = router;

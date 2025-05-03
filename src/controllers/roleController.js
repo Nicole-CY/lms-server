@@ -118,6 +118,27 @@ const assignRolesToUserAsync = async (req, res) => {
     }
 };
 
+/**
+ * Assign menus to a role (overwrite old ones)
+ */
+const assignMenusToRoleAsync = async (req, res) => {
+    const { roleId, menuIds } = req.body;
+    const operatorRoles = req.roles;
+
+    // validate
+    // if (!roleId || !Array.isArray(menuIds)) {
+    //     return res.sendCommonValue({}, 'Invalid role ID or menu IDs', 400, 400);
+    // }
+
+    const result = await roleService.assignMenusToRoleAsync(operatorRoles, roleId, menuIds);
+
+    if (result.isSuccess) {
+        res.sendCommonValue({}, result.message || 'Menus assigned successfully', 1);
+    } else {
+        res.sendCommonValue({}, result.message, 0, 403);
+    }
+};
+
 module.exports = {
     addRoleAsync,
     getAllRolesAsync,
@@ -125,4 +146,5 @@ module.exports = {
     updateRoleAsync,
     deleteRoleAsync,
     assignRolesToUserAsync,
+    assignMenusToRoleAsync,
 };
