@@ -3,9 +3,6 @@ const logger = require("../../common/logSetting");
 const { Op } = require("sequelize");
 const { getPaginatedResults } = require("../../utils/pagination");
 
-/**
- * adding session to a specific course instance
- */
 const addSessionAsync = async (sessionData) => {
     try {
 
@@ -132,7 +129,7 @@ const getSessionListAsync = async (page = 1, pageSize = 10, query = {}) => {
 
 /**
  * Update session
- * @param {number} sessionId - session ID that need to update
+ * @param {number} sessionId - ession ID that need to update
  * @param {object} sessionData - string object that need to update
  * @returns {object} 
  */
