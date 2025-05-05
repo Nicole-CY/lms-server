@@ -67,6 +67,7 @@ const addMenuAsync = async menu => {
             menuType: menu.menuType || 'page',
             sortOrder: menu.sortOrder || 0,
             permission: menu.permission || null,
+            icon: menu.icon || null,
         });
 
         return { isSuccess: true, message: '', data: newMenu };
@@ -170,6 +171,7 @@ const createMenuTree = (menus, parentId = null) => {
                 componentPath: menu.componentPath,
                 menuType: menu.menuType,
                 sortOrder: menu.sortOrder,
+                icon: menu.icon || null,
                 children: children.length ? children : [],
             };
             if (children.length) {
