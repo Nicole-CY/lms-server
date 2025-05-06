@@ -12,7 +12,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'programming.png',
+                icon_url: '../assets/programming.png',
             },
             {
                 id: 2,
@@ -21,7 +21,7 @@ module.exports = {
                 parent_id: 1,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'web_development.png',
+                icon_url: '../assets/web-dev.png',
             },
             {
                 id: 3,
@@ -30,7 +30,7 @@ module.exports = {
                 parent_id: 1,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'mobile_dev.png',
+                icon_url: '../assets/mobile.png',
             },
             {
                 id: 4,
@@ -39,7 +39,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'data_science.png',
+                icon_url: '../assets/data-science.png',
             },
             {
                 id: 5,
@@ -48,7 +48,7 @@ module.exports = {
                 parent_id: 4,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'python.png',
+                icon_url: '../assets/python.png',
             },
             {
                 id: 6,
@@ -57,7 +57,7 @@ module.exports = {
                 parent_id: 1,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'javascript.png',
+                icon_url: '../assets/javascript.png',
             },
             {
                 id: 7,
@@ -66,7 +66,7 @@ module.exports = {
                 parent_id: 6,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'react.png',
+                icon_url: '../assets/react.png',
             },
             {
                 id: 8,
@@ -75,7 +75,7 @@ module.exports = {
                 parent_id: 6,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'nodejs.png',
+                icon_url: '../assets/node.png',
             },
             {
                 id: 9,
@@ -84,7 +84,7 @@ module.exports = {
                 parent_id: 4,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'ai.png',
+                icon_url: '../assets/ai.png',
             },
             {
                 id: 10,
@@ -93,7 +93,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'cloud.png',
+                icon_url: '../assets/cloud.png',
             },
             {
                 id: 11,
@@ -102,7 +102,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'cybersecurity.png',
+                icon_url: '../assets/cyber.png',
             },
             {
                 id: 12,
@@ -111,7 +111,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'devops.png',
+                icon_url: '../assets/devops.png',
             },
             {
                 id: 13,
@@ -120,7 +120,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'business_analytics.png',
+                icon_url: '../assets/analytics.png',
             },
             {
                 id: 14,
@@ -129,7 +129,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'graphic_design.png',
+                icon_url: '../assets/app-store.png',
             },
             {
                 id: 15,
@@ -138,7 +138,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'digital_marketing.png',
+                icon_url: '../assets/digital.png',
             },
             {
                 id: 16,
@@ -147,7 +147,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'blockchain.png',
+                icon_url: '../assets/blockchain.png',
             },
             {
                 id: 17,
@@ -156,7 +156,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'game_dev.png',
+                icon_url: '../assets/game.png',
             },
             {
                 id: 18,
@@ -165,7 +165,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'math.png',
+                icon_url: '../assets/math.png',
             },
             {
                 id: 19,
@@ -174,7 +174,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'finance.png',
+                icon_url: '../assets/finance.png',
             },
             {
                 id: 20,
@@ -183,7 +183,7 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: 'writing.png',
+                icon_url: '../assets/writing.png',
             },
         ]);
     },
