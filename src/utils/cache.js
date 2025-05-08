@@ -4,14 +4,29 @@ const PREFIX = 'mooc:';
 
 async function cache(key, ttlSeconds, fetchFn) {
     const fullKey = PREFIX + key;
-    const cached = await redis.get(fullKey);
-    if (cached) {
-        return JSON.parse(cached);
+
+    // 1. read cache
+    try {
+        const cached = await redis.get(fullKey);
+        if (cached) {
+            return JSON.parse(cached);
+        }
+    } catch (readErr) {
+        console.warn(`[Cache] Redis READ failed for key=${fullKey}:`, readErr.message);
+        // Fallback: ignore read error, continue to execute fetchFn
     }
 
+    // 2. execute fetchFn
     const data = await fetchFn();
-    if (data) {
-        await redis.set(fullKey, JSON.stringify(data), 'EX', ttlSeconds);
+
+    // 3. try to write to cache
+    try {
+        if (data) {
+            await redis.set(fullKey, JSON.stringify(data), 'EX', ttlSeconds);
+        }
+    } catch (writeErr) {
+        console.warn(`[Cache] Redis WRITE failed for key=${fullKey}:`, writeErr.message);
+        // Fallback: ignore write error, return data
     }
 
     return data;
