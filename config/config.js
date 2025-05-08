@@ -19,6 +19,8 @@ module.exports = {
         dialectOptions: {
             charset: 'utf8mb4',
         },
+        seederStorage: 'sequelize',
+        seederStorageTableName: 'sequelize_data',
     },
     test: {
         host: mysqlConfig.host,

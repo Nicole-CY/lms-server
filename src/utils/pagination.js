@@ -13,7 +13,14 @@ const { Op } = require('sequelize');
  */
 const getPaginatedResults = async (
     model,
-    { page = 1, pageSize = 10, where = {}, order = [['created_at', 'DESC']], include = [] }
+    {
+        page = 1,
+        pageSize = 10,
+        where = {},
+        order = [['created_at', 'DESC']],
+        include = [],
+        attributes,
+    }
 ) => {
     try {
         const offset = (page - 1) * pageSize;
@@ -25,6 +32,7 @@ const getPaginatedResults = async (
             limit: pageSize, // Number of records per page
             order, // Sorting conditions
             include, // Include associated models
+            attributes,
         });
 
         // Calculate the total number of pages

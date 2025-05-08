@@ -1,5 +1,6 @@
 const { Op } = require('sequelize');
 
+const { BadRequestError } = require('../utils/errors');
 const Menu = require('../models/menu');
 const pagination = require('../utils/pagination');
 const logger = require('../common/logSetting');
@@ -18,43 +19,64 @@ const getMenuListAsync = async (page = 1, pageSize = 10, search = '') => {
 
 // Get menu by id
 const getMenuByIdAsync = async id => {
-    try {
-        const menu = await Menu.findByPk(id);
+    const menu = await Menu.findByPk(id);
 
-        if (!menu) {
-            return {
-                isSuccess: false,
-                message: 'Menu not found',
-                data: { id: 0 },
-            };
-        }
-
-        return { isSuccess: true, message: '', data: menu };
-    } catch (error) {
-        logger.error('getMenuByIdAsync error:', error);
-        return { isSuccess: false, message: 'Get menu failed', data: null };
+    if (!menu) {
+        throw new BadRequestError('Menu not found');
     }
+
+    return { isSuccess: true, message: '', data: menu };
 };
+
+// const getMenuByIdAsync = async id => {
+//     try {
+//         const menu = await Menu.findByPk(id);
+
+//         if (!menu) {
+//             return {
+//                 isSuccess: false,
+//                 message: 'Menu not found',
+//                 data: { id: 0 },
+//             };
+//         }
+
+//         return { isSuccess: true, message: '', data: menu };
+//     } catch (error) {
+//         logger.error('getMenuByIdAsync error:', error);
+//         return { isSuccess: false, message: 'Get menu failed', data: null };
+//     }
+// };
 
 // Get menu by name
+
 const getMenuByNameAsync = async name => {
-    try {
-        const menu = await Menu.findOne({ where: { menuName: name } });
+    const menu = await Menu.findOne({ where: { menuName: name } });
 
-        if (!menu) {
-            return {
-                isSuccess: false,
-                message: 'Menu not found',
-                data: { id: 0 },
-            };
-        }
-
-        return { isSuccess: true, message: '', data: menu };
-    } catch (error) {
-        logger.error('getMenuByNameAsync error:', error);
-        return { isSuccess: false, message: 'Server error', data: null };
+    if (!menu) {
+        throw new BadRequestError('Menu not found');
     }
+
+    return { isSuccess: true, message: '', data: menu };
 };
+
+// const getMenuByNameAsync = async name => {
+//     try {
+//         const menu = await Menu.findOne({ where: { menuName: name } });
+
+//         if (!menu) {
+//             return {
+//                 isSuccess: false,
+//                 message: 'Menu not found',
+//                 data: { id: 0 },
+//             };
+//         }
+
+//         return { isSuccess: true, message: '', data: menu };
+//     } catch (error) {
+//         logger.error('getMenuByNameAsync error:', error);
+//         return { isSuccess: false, message: 'Server error', data: null };
+//     }
+// };
 
 // Add new menu
 const addMenuAsync = async menu => {
@@ -73,9 +95,29 @@ const addMenuAsync = async menu => {
         return { isSuccess: true, message: '', data: newMenu };
     } catch (error) {
         logger.error('addMenuAsync error:', error);
-        return { isSuccess: false, message: 'Create menu failed', data: null };
+        throw new BadRequestError('Create menu failed');
     }
 };
+
+// const addMenuAsync = async menu => {
+//     try {
+//         const newMenu = await Menu.create({
+//             menuName: menu.menuName,
+//             parentId: menu.parentId,
+//             routePath: menu.routePath,
+//             componentPath: menu.componentPath,
+//             menuType: menu.menuType || 'page',
+//             sortOrder: menu.sortOrder || 0,
+//             permission: menu.permission || null,
+//             icon: menu.icon || null,
+//         });
+
+//         return { isSuccess: true, message: '', data: newMenu };
+//     } catch (error) {
+//         logger.error('addMenuAsync error:', error);
+//         return { isSuccess: false, message: 'Create menu failed', data: null };
+//     }
+// };
 
 // Update menu by id
 const updateMenuByIdAsync = async (id, updateData) => {
