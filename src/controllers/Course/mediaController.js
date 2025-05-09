@@ -1,4 +1,4 @@
-const mediaService = require('../../services/media/mediaService');
+const mediaService = require('../../services/course/mediaService');
 
 /**
  * Add Media

@@ -47,7 +47,7 @@ const {
  *                type: string
  *                nullable: true
  *                example: "Introduction to JavaScript"
- *              uploaderID:
+ *              uploaderId:
  *                type: integer
  *                example: 1
  *              approvalStatus:
@@ -82,7 +82,7 @@ const {
  *                  type: string
  *                  nullable: true
  *                  example: "Introduction to JavaScript"
- *                uploaderID:
+ *                uploaderId:
  *                  type: integer
  *                  example: 1
  *                approvalStatus:
@@ -99,3 +99,5 @@ const {
  *        description: Server Error
  */
 router.post('', commonValidate(addMediaValidator), mediaController.addMediaAsync);
+
+module.exports = router;
