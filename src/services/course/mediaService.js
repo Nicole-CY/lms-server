@@ -43,7 +43,7 @@ const getMediaBySessionIdAsync = async (sessionId) => {
 
         const mediaList = await Media.findAll({
             where: { sessionId },
-            order: [['createdAt', 'DESC']],
+            order: [['created_at', 'DESC']],
         });
         return { isSuccess: true, message: "Media fetched successfully", data: mediaList };
     } catch (err) {

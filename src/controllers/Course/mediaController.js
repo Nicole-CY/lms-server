@@ -23,7 +23,7 @@ const addMediaAsync = async (req, res) => {
  */
 const getMediaBySessionIdAsync = async (req, res) => {
     try {
-        const sessionId = req.params.sessionId;
+        const sessionId = req.query.sessionId;
 
         const result = await mediaService.getMediaBySessionIdAsync(sessionId);
 

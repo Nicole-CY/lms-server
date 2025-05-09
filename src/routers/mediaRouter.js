@@ -6,6 +6,9 @@ const { commonValidate } = require('../middlewares/expressValidator');
 const mediaController = require('../controllers/Course/mediaController');
 const {
     addMediaValidator,
+    getMediaBySessionIdValidator,
+    updateMediaValidator,
+    deleteMediaValidator,
 } = require('../validator/mediaValidator');
 
 // Add media
@@ -128,5 +131,10 @@ router.post('', commonValidate(addMediaValidator), mediaController.addMediaAsync
  *      500:
  *        description: Server Error
  */
+router.get(
+    '/getBySessionId',
+    commonValidate(getMediaBySessionIdValidator),
+    mediaController.getMediaBySessionIdAsync
+);
 
 module.exports = router;
