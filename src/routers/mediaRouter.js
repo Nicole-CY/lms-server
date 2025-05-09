@@ -137,4 +137,77 @@ router.get(
     mediaController.getMediaBySessionIdAsync
 );
 
+// Update media file
+/**
+ * @openapi
+ * '/api/media/{id}':
+ *  put:
+ *     tags:
+ *     - Media Controller
+ *     summary: Update media file
+ *     description: Update details of a media file by its ID
+ *     # security:
+ *     #   - BearerAuth: []
+ *     parameters:
+ *      - name: id
+ *        in: path
+ *        required: true
+ *        description: ID of the media file to update
+ *        schema:
+ *          type: integer
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *           schema:
+ *            type: object
+ *            required:
+ *              - id
+ *              - fileName
+ *            properties:
+ *              id:
+ *                type: integer
+ *                default: 1
+ *              sessionId:
+ *                type: integer
+ *                default: 1
+ *                description: "The session this media belongs to"
+ *              fileType:
+ *                type: string
+ *                default: "video"
+ *              fileName:
+ *                type: string
+ *                default: "lesson1-intro.mp4"
+ *              filePath:
+ *                type: string
+ *                default: "/uploads/lesson1-intro.mp4"
+ *              thumbnailPath:
+ *                type: string
+ *                default: "/uploads/thumbnails/lesson1-thumb.png"
+ *              uploaderId:
+ *                type: integer
+ *                default: 1
+ *              approvalStatus:
+ *                type: string
+ *                default: "Pending"
+ *              createdAt:
+ *                type: string
+ *                format: date-time
+ *              updatedAt:
+ *                type: string
+ *                format: date-time
+ *     responses:
+ *      200:
+ *        description: Media file updated successfully
+ *      400:
+ *        description: Bad Request
+ *      404:
+ *        description: Media not found
+ *      409:
+ *        description: Conflict
+ *      500:
+ *        description: Server Error
+ */
+router.put('/:id', commonValidate(updateMediaValidator), mediaController.updateMediaAsync);
+
 module.exports = router;
