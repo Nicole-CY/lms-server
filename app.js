@@ -77,6 +77,10 @@ app.use('/api/courses', courseRouter);
 const sessionRouter = require('./src/routers/sessionsRouter');
 app.use('/api/sessions', sessionRouter);
 
+// config sessionMediaRouter
+const mediaRouter = require('./src/routers/mediaRouter');
+app.use('/api/media', mediaRouter);
+
 // config courseOfferingRouter
 const courseOfferingRouter = require('./src/routers/courseOfferingRouter');
 app.use('/api/courseOfferings', courseOfferingRouter);
