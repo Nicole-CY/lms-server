@@ -36,7 +36,9 @@ app.use(
         secret: appConfig.jwtConfig.secret,
         algorithms: appConfig.jwtConfig.algorithms,
         getToken: req => req.cookies.token,
-    }).unless({ path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register'] })
+    }).unless({
+        path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register', '/api/courses'],
+    })
 );
 
 app.use(express.static('public'));
