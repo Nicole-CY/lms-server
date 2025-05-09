@@ -210,4 +210,34 @@ router.get(
  */
 router.put('/:id', commonValidate(updateMediaValidator), mediaController.updateMediaAsync);
 
+// delete media
+/**
+ * @openapi
+ * '/api/media/{id}':
+ *  delete:
+ *     tags:
+ *       - Media Controller
+ *     summary: Delete media
+ *     description: Delete a single media file by its ID.
+ *     # security:
+ *     #   - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: The ID of the media file to delete.
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Media deleted successfully
+ *       400:
+ *         description: Bad Request
+ *       404:
+ *         description: Media Not Found
+ *       500:
+ *         description: Server Error
+ */
+router.delete('/:id', commonValidate(deleteMediaValidator), mediaController.deleteMediaAsync);
+
 module.exports = router;
