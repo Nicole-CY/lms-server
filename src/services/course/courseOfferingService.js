@@ -1,30 +1,31 @@
-const { Op } = require("sequelize");
-const { sequelize } = require("../../db/sequelizedb");
-const CourseOffering = require("../../models/courseOffering");
-const { getPaginatedResults } = require("../../utils/pagination");
-const logger = require("../../common/logSetting");
+const { Op } = require('sequelize');
+
+const { sequelize } = require('../../db/sequelizedb');
+const CourseOffering = require('../../models/courseOffering');
+const { getPaginatedResults } = require('../../utils/pagination');
+const logger = require('../../common/logSetting');
 
 // Get offering by ID
-const getCourseOfferingByIdAsync = async (id) => {
+const getCourseOfferingByIdAsync = async id => {
     try {
         const offering = await CourseOffering.findByPk(id);
         if (!offering) {
-            return { isSuccess: false, message: "Course offering not found", data: { id: 0 } };
+            return { isSuccess: false, message: 'Course offering not found', data: { id: 0 } };
         }
-        return { isSuccess: true, message: "", data: offering };
+        return { isSuccess: true, message: '', data: offering };
     } catch (error) {
-        logger.error("getCourseOfferingByIdAsync error:", error);
-        return { isSuccess: false, message: "Server error", data: null };
+        logger.error('getCourseOfferingByIdAsync error:', error);
+        return { isSuccess: false, message: 'Server error', data: null };
     }
 };
 
 // Get list of course offerings with pagination
-const getCourseOfferingListAsync = async (page = 1, pageSize = 10, search = "") => {
+const getCourseOfferingListAsync = async (page = 1, pageSize = 10, search = '') => {
     try {
         const where = search
             ? {
-                teacher_id: parseInt(search, 10),
-            }
+                  teacher_id: parseInt(search, 10),
+              }
             : {};
 
         const result = await getPaginatedResults(CourseOffering, {
@@ -35,67 +36,78 @@ const getCourseOfferingListAsync = async (page = 1, pageSize = 10, search = "") 
 
         return result;
     } catch (error) {
-        logger.error("getCourseOfferingListAsync error:", error);
-        return { isSuccess: false, message: "Server error", data: null };
+        logger.error('getCourseOfferingListAsync error:', error);
+        return { isSuccess: false, message: 'Server error', data: null };
     }
 };
 
+const isCourseOfferingConflict = async (courseInstanceId, startDate, endDate, excludeId = null) => {
+    const whereClause = {
+        courseInstanceId,
+        [Op.or]: [
+            {
+                startDate: {
+                    [Op.between]: [startDate, endDate],
+                },
+            },
+            {
+                endDate: {
+                    [Op.between]: [startDate, endDate],
+                },
+            },
+            {
+                startDate: {
+                    [Op.lte]: startDate,
+                },
+                endDate: {
+                    [Op.gte]: endDate,
+                },
+            },
+        ],
+    };
 
-const isCourseOfferingConflict = async (courseInstanceId, startDate, endDate) => {
+    if (excludeId) {
+        whereClause.id = { [Op.ne]: excludeId };
+    }
+
     const existingOffering = await CourseOffering.findOne({
-        where: {
-            courseInstanceId,
-            [Op.or]: [
-                {
-                    startDate: {
-                        [Op.between]: [startDate, endDate],
-                    },
-                },
-                {
-                    endDate: {
-                        [Op.between]: [startDate, endDate],
-                    },
-                },
-                {
-                    startDate: {
-                        [Op.lte]: startDate,
-                    },
-                    endDate: {
-                        [Op.gte]: endDate,
-                    },
-                },
-            ],
-        },
+        where: whereClause,
     });
 
     if (existingOffering) {
-        console.log("🔥 Conflict detected with existing course offering:");
+        console.log('🔥 Conflict detected with existing course offering:');
         console.log(existingOffering.toJSON());
     } else {
-        console.log("✅ No conflict detected");
+        console.log('✅ No conflict detected');
     }
 
     return existingOffering !== null;
 };
+
 // Add new course offering
-const addCourseOfferingAsync = async (offering) => {
+const addCourseOfferingAsync = async offering => {
     try {
-        const { courseInstanceId, startDate, endDate } = offering;
-        const hasConflict = await isCourseOfferingConflict(courseInstanceId, startDate, endDate);
+        const { id, courseInstanceId, startDate, endDate } = offering;
+        const hasConflict = await isCourseOfferingConflict(
+            courseInstanceId,
+            startDate,
+            endDate,
+            id
+        );
 
         if (hasConflict) {
             return {
                 isSuccess: false,
-                message: "The course instance has a scheduling conflict within this time period.",
-                data: null
+                message: 'The course instance has a scheduling conflict within this time period.',
+                data: null,
             };
         }
-        
+
         const newOffering = await CourseOffering.create(offering);
-        return { isSuccess: true, message: "Course offering added", data: newOffering };
+        return { isSuccess: true, message: 'Course offering added', data: newOffering };
     } catch (error) {
-        logger.error("addCourseOfferingAsync error:", error);
-        return { isSuccess: false, message: "Add failed", data: null };
+        logger.error('addCourseOfferingAsync error:', error);
+        return { isSuccess: false, message: 'Add failed', data: null };
     }
 };
 
@@ -110,13 +122,13 @@ const updateCourseOfferingByIdAsync = async (id, updateData) => {
                 updateData.courseInstanceId,
                 updateData.startDate,
                 updateData.endDate,
-                id 
+                id
             );
 
             if (hasConflict) {
                 return {
                     isSuccess: false,
-                    message: "Course offering time conflicts with another course",
+                    message: 'Course offering time conflicts with another course',
                     data: null,
                 };
             }
@@ -132,31 +144,31 @@ const updateCourseOfferingByIdAsync = async (id, updateData) => {
 
         return {
             isSuccess: true,
-            message: affectedRows > 0 ? "Course offering updated successfully" : "No changes made",
+            message: affectedRows > 0 ? 'Course offering updated successfully' : 'No changes made',
             data: affectedRows,
         };
     } catch (error) {
-        logger.error("updateCourseOfferingByIdAsync error:", error);
-        return { isSuccess: false, message: "Update failed", data: null };
+        logger.error('updateCourseOfferingByIdAsync error:', error);
+        return { isSuccess: false, message: 'Update failed', data: null };
     }
 };
 
 // Delete course offering by ID(s)
-const deleteCourseOfferingByIdAsync = async (idsString) => {
-    const ids = idsString.split(",").map((id) => parseInt(id, 10));
+const deleteCourseOfferingByIdAsync = async idsString => {
+    const ids = idsString.split(',').map(id => parseInt(id, 10));
     try {
         const deleteCount = await CourseOffering.destroy({
             where: { id: ids },
         });
 
         if (deleteCount > 0) {
-            return { isSuccess: true, message: "Deleted successfully" };
+            return { isSuccess: true, message: 'Deleted successfully' };
         }
 
-        return { isSuccess: false, message: "No matching course offerings found" };
+        return { isSuccess: false, message: 'No matching course offerings found' };
     } catch (error) {
-        logger.error("deleteCourseOfferingByIdAsync error:", error);
-        return { isSuccess: false, message: "Delete failed", data: null };
+        logger.error('deleteCourseOfferingByIdAsync error:', error);
+        return { isSuccess: false, message: 'Delete failed', data: null };
     }
 };
 
