@@ -100,4 +100,33 @@ const {
  */
 router.post('', commonValidate(addMediaValidator), mediaController.addMediaAsync);
 
+// Get all media files
+/**
+ * @openapi
+ * '/api/media/getBySessionId':
+ *  get:
+ *     tags:
+ *     - Media Controller
+ *     summary: Get media files by session ID
+ *     description: Retrieve all media files associated with a specific session ID
+ *     parameters:
+ *      - name: sessionId
+ *        in: query
+ *        description: The ID of the session
+ *        required: true
+ *        schema:
+ *          type: integer
+ *     responses:
+ *      200:
+ *        description: Media files fetched successfully
+ *      400:
+ *        description: Bad Request
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Not Found
+ *      500:
+ *        description: Server Error
+ */
+
 module.exports = router;
