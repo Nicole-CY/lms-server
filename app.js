@@ -23,6 +23,9 @@ app.use(returnValue.returnValue);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
+
 // parse Cookie
 app.use(cookieParser());
 
@@ -35,6 +38,8 @@ app.use(
         getToken: req => req.cookies.token,
     }).unless({ path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register'] })
 );
+
+app.use(express.static('public'));
 
 // config Swagger
 const swaggerDocument = require('./src/common/swagger');
