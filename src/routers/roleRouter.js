@@ -145,7 +145,7 @@ router.put('/:id', commonValidate(roleIdValidator), roleController.updateRoleAsy
  *      500:
  *        description: Server Error
  */
-router.delete('/:id', commonValidate(roleIdValidator), roleController.deleteRoleAsync);
+router.delete('/:ids', roleController.deleteRoleAsync);
 
 /**
  * @openapi
