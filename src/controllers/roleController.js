@@ -86,12 +86,19 @@ const updateRoleAsync = async (req, res) => {
  * Delete a role by ID
  */
 const deleteRoleAsync = async (req, res) => {
-    const roleId = parseInt(req.params.id);
+    const idsParam = req.params.ids; // e.g., "1,2,3"
+    const roleIds = idsParam
+        .split(',')
+        .map(id => parseInt(id.trim()))
+        .filter(id => !isNaN(id));
 
-    // delete role from database
-    const result = await roleService.deleteRoleAsync(req.roles, roleId);
+    if (roleIds.length === 0) {
+        return res.sendCommonValue({}, 'Invalid role IDs', 0, 400);
+    }
+
+    const result = await roleService.deleteRoleAsync(req.roles, roleIds);
     if (result.isSuccess) {
-        res.sendCommonValue({}, 'Role deleted successfully', 1);
+        res.sendCommonValue({}, result.message, 1);
     } else {
         res.sendCommonValue({}, result.message, 0, 404);
     }
