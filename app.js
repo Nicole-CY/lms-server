@@ -20,8 +20,11 @@ const returnValue = require('./src/middlewares/returnValue');
 app.use(returnValue.returnValue);
 
 // config josn body
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+//app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+//app.use(express.urlencoded({ extended: false }));
+
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
