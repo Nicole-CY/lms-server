@@ -61,6 +61,14 @@ const errorHandling = (err, req, res, next) => {
         return res.sendCommonValue({}, err.message || 'Unauthorized. Login Required', 401, 401);
     }
 
+    if (err.name == 'UnauthorizedError') {
+        const reason = err.inner?.name;
+        if (reason === 'TokenExpiredError') {
+            return res.sendCommonValue({}, 'Login expired. Please login again.', 401, 401);
+        }
+        return res.sendCommonValue({}, err.message || 'Unauthorized. Login Required', 401, 401);
+    }
+
     // Handle other custom errors if necessary (can be extended)
     if (err.isOperational) {
         return res.sendCommonValue(
