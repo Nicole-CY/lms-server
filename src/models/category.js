@@ -43,7 +43,7 @@ const Category = sequelize.define(
         },
         iconUrl: {
             type: DataTypes.STRING(255),
-            allowNull: false,
+            allowNull: true,
             field: 'icon_url',
         },
     },
