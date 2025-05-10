@@ -44,18 +44,18 @@ const Media = sequelize.define(
         uploaderId: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            field: 'uploder_id',
+            field: 'uploader_id',
             references: {
                 model: "user",
                 key: "id",
             },
             onDelete: 'CASCADE',
         },
-        uploadedAt: {
+        updatedAt: {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW,
-            field: 'uploader_at',
+            field: 'updated_at',
         },
         approvalStatus: {
             type: DataTypes.ENUM('Pending', 'Approved', 'Rejected'),

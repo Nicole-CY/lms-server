@@ -23,6 +23,9 @@ app.use(returnValue.returnValue);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
+
 // parse Cookie
 app.use(cookieParser());
 
@@ -33,8 +36,12 @@ app.use(
         secret: appConfig.jwtConfig.secret,
         algorithms: appConfig.jwtConfig.algorithms,
         getToken: req => req.cookies.token,
-    }).unless({ path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register'] })
+    }).unless({
+        path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register', '/api/courses'],
+    })
 );
+
+app.use(express.static('public'));
 
 // config Swagger
 const swaggerDocument = require('./src/common/swagger');
@@ -76,6 +83,10 @@ app.use('/api/courses', courseRouter);
 // config sessionRouter
 const sessionRouter = require('./src/routers/sessionsRouter');
 app.use('/api/sessions', sessionRouter);
+
+// config sessionMediaRouter
+const mediaRouter = require('./src/routers/mediaRouter');
+app.use('/api/media', mediaRouter);
 
 // config courseOfferingRouter
 const courseOfferingRouter = require('./src/routers/courseOfferingRouter');

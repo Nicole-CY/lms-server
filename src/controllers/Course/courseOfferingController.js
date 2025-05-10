@@ -36,6 +36,7 @@ const getCourseOfferingListAsync = async (req, res) => {
 const addCourseOfferingAsync = async (req, res) => {
     try {
         const {
+            id,
             course_instance_id,
             teacher_id,
             start_date,
@@ -53,6 +54,7 @@ const addCourseOfferingAsync = async (req, res) => {
             return res.sendCommonValue({}, 'Invalid date format', 0);
         }
         const result = await CourseOfferingService.addCourseOfferingAsync({
+            id,
             courseInstanceId: course_instance_id,
             teacherId: teacher_id,
             startDate,

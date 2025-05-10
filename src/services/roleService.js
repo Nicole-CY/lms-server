@@ -1,9 +1,10 @@
+const { Op } = require('sequelize');
+
 const Role = require('../models/role');
 const User = require('../models/user');
 const UserRole = require('../models/userRole');
 const logger = require('../common/logSetting');
 const { ForbiddenError } = require('../utils/errors');
-
 const RoleMenu = require('../models/roleMenu');
 const Menu = require('../models/menu');
 
@@ -103,6 +104,11 @@ const addRoleAsync = async (operatorRoles, role) => {
     }
 
     try {
+        const existingRole = await Role.findOne({ where: { roleName: role.roleName } });
+        if (existingRole) {
+            return { isSuccess: false, message: 'Role name already exists', data: null };
+        }
+
         // create new role
         const newRole = await Role.create({
             roleName: role.roleName,
@@ -136,6 +142,19 @@ const updateRoleAsync = async (operatorRoles, roleId, updatedData) => {
             return { isSuccess: false, message: 'Role not found', data: null };
         }
 
+        // if roleName is being updated, check for duplicate role name
+        if (updatedData.roleName && updatedData.roleName !== role.roleName) {
+            const duplicateRole = await Role.findOne({
+                where: {
+                    roleName: updatedData.roleName,
+                    id: { [Op.ne]: roleId },
+                },
+            });
+            if (duplicateRole) {
+                return { isSuccess: false, message: 'Role name already exists', data: null };
+            }
+        }
+
         // update the role
         await role.update({
             roleName: updatedData.roleName || role.roleName,
@@ -150,31 +169,32 @@ const updateRoleAsync = async (operatorRoles, roleId, updatedData) => {
 };
 
 /**
- * Delete a role by its ID.
- * @param {number} roleId - The ID of the role to delete.
+ * Delete multiple roles by their IDs.
+ * @param {Array<string>} operatorRoles - Roles of the operator performing the deletion.
+ * @param {Array<number>} roleIds - Array of role IDs to delete.
  * @returns {Promise<{isSuccess: boolean, message: string, data: null}>}
  */
-const deleteRoleAsync = async (operatorRoles, roleId) => {
-    // check if operator has the permission to delete role
+const deleteRoleAsync = async (operatorRoles, roleIds) => {
     const permissionCheck = await checkCrudPermissionAsync(operatorRoles);
     if (!permissionCheck.isAllowed) {
         return { isSuccess: false, message: permissionCheck.message, data: null };
     }
 
     try {
-        // check if the role operator want to delete exist in database
-        const role = await Role.findByPk(roleId);
-        if (!role) {
-            return { isSuccess: false, message: 'Role not found', data: null };
+        // find all matching roles
+        const roles = await Role.findAll({ where: { id: roleIds } });
+
+        if (roles.length === 0) {
+            return { isSuccess: false, message: 'No matching roles found', data: null };
         }
 
-        // delete the role
-        await role.destroy();
+        // bulk delete
+        await Role.destroy({ where: { id: roleIds } });
 
-        return { isSuccess: true, message: 'Role deleted successfully', data: null };
+        return { isSuccess: true, message: 'Roles deleted successfully', data: null };
     } catch (error) {
-        logger.error('deleteRoleAsync error:', error);
-        return { isSuccess: false, message: 'Delete role failed', data: null };
+        logger.error('deleteRolesAsync error:', error);
+        return { isSuccess: false, message: 'Batch delete failed', data: null };
     }
 };
 
