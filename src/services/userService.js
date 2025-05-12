@@ -4,27 +4,70 @@ const { cache } = require('../utils/cache');
 const User = require('../models/user');
 const logger = require('../common/logSetting');
 const { getPaginatedResults } = require('../utils/pagination');
+const Role = require('../models/role');
 
-const getUserListAsync = async (page = 1, pageSize = 10, search = '') => {
-    const cacheKey = `user:list:page=${page}:size=${pageSize}:search=${search}`;
+// Get user list
+const getUserListAsync = async (page = 1, pageSize = 10, searchTerm = '') => {
+    const cacheKey = `user:list:page=${page}:size=${pageSize}`;
 
     try {
-        const result = await cache(cacheKey, 300, async () => {
-            const where = search ? { username: { [Op.like]: `%${search}%` } } : {};
+        const where = searchTerm
+            ? {
+                  [Op.or]: [
+                      { firstName: { [Op.like]: `%${searchTerm}%` } },
+                      { lastName: { [Op.like]: `%${searchTerm}%` } },
+                      { email: { [Op.like]: `%${searchTerm}%` } },
+                      { address: { [Op.like]: `%${searchTerm}%` } },
+                  ],
+              }
+            : {};
 
-            const data = await getPaginatedResults(User, {
-                where,
-                page,
-                pageSize,
-                attributes: { exclude: ['password'] },
+        console.log('🔍 [UserService] SearchTerm:', searchTerm);
+        console.log('🔍 [UserService] WHERE condition:', JSON.stringify(where, null, 2));
+
+        // use cache only when there is no search term
+        if (!searchTerm) {
+            const result = await cache(cacheKey, 300, async () => {
+                return await getPaginatedResults(User, {
+                    where,
+                    page,
+                    pageSize,
+                    attributes: { exclude: ['password'] },
+                    include: [
+                        {
+                            model: Role,
+                            attributes: ['roleName'],
+                            through: { attributes: [] },
+                        },
+                    ],
+                });
             });
 
-            return data;
+            return {
+                isSuccess: true,
+                message: 'Success (cached)',
+                data: result,
+            };
+        }
+
+        // skip cache when there is a search term
+        const result = await getPaginatedResults(User, {
+            where,
+            page,
+            pageSize,
+            attributes: { exclude: ['password'] },
+            include: [
+                {
+                    model: Role,
+                    attributes: ['roleName'],
+                    through: { attributes: [] },
+                },
+            ],
         });
 
         return {
             isSuccess: true,
-            message: 'Success',
+            message: 'Success (no-cache)',
             data: result,
         };
     } catch (error) {
@@ -37,6 +80,7 @@ const getUserListAsync = async (page = 1, pageSize = 10, search = '') => {
     }
 };
 
+// Add a new user
 const addUserAsync = async user => {
     try {
         await User.create({
@@ -58,6 +102,7 @@ const addUserAsync = async user => {
     }
 };
 
+// Get user by id
 const getUserByIdAsync = async id => {
     try {
         const user = await User.findByPk(id, { attributes: { exclude: ['password'] } });
@@ -77,6 +122,7 @@ const getUserByIdAsync = async id => {
     }
 };
 
+// Get user by email
 const getUserByEmailAsync = async (email, includePassword = false) => {
     try {
         const user = await User.findOne({
@@ -99,6 +145,7 @@ const getUserByEmailAsync = async (email, includePassword = false) => {
     }
 };
 
+// Get filtered user list
 const getFilteredUserListAsync = async (
     page = 1,
     pageSize = 10,
@@ -139,6 +186,7 @@ const getFilteredUserListAsync = async (
     }
 };
 
+// Update user by id
 const updateUserByIdAsync = async user => {
     try {
         const existingUser = await User.findByPk(user.id);
@@ -171,6 +219,7 @@ const updateUserByIdAsync = async user => {
     }
 };
 
+// Check username
 const checkUsernameAsync = async (username, id) => {
     try {
         const user = await User.findOne({ where: { username } });
@@ -190,6 +239,7 @@ const checkUsernameAsync = async (username, id) => {
     }
 };
 
+// Delete user by id
 const deleteUserByIdAsync = async idsString => {
     try {
         const ids = idsString.split(',').map(id => parseInt(id));
