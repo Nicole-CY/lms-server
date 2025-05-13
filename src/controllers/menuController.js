@@ -130,6 +130,23 @@ const getMenuTreeAsync = async (req, res) => {
     }
 };
 
+// Get menu by user role
+const getMenuByRoleAsync = async (req, res) => {
+    const role = req.user?.role || req.query.role;
+
+    if (!role) {
+        return res.sendCommonValue({}, 'Missing user role', 0);
+    }
+
+    const result = await menuService.getMenuByRoleAsync(role);
+
+    if (result.isSuccess) {
+        res.sendCommonValue(result.data, 'Menu loaded by role', 1);
+    } else {
+        res.sendCommonValue({}, 'Failed to load menu for role', 0);
+    }
+};
+
 module.exports = {
     getMenuByNameAsync,
     getMenuListAsync,
@@ -138,4 +155,5 @@ module.exports = {
     getMenuByIdAsync,
     updateMenuByIdAsync,
     getMenuTreeAsync,
+    getMenuByRoleAsync,
 };
