@@ -1,10 +1,9 @@
 const { Op } = require('sequelize');
 
 const { cache } = require('../utils/cache');
-const User = require('../models/user');
+const { User, Role } = require('../models');
 const logger = require('../common/logSetting');
 const { getPaginatedResults } = require('../utils/pagination');
-const Role = require('../models/role');
 
 // Get user list
 const getUserListAsync = async (page = 1, pageSize = 10, searchTerm = '') => {
@@ -128,7 +127,15 @@ const getUserByEmailAsync = async (email, includePassword = false) => {
         const user = await User.findOne({
             where: { email },
             attributes: includePassword ? undefined : { exclude: ['password'] },
+            include: [
+                {
+                    model: Role,
+                    attributes: ['roleName'],
+                    through: { attributes: [] },
+                },
+            ],
         });
+        
 
         if (!user) {
             return {
