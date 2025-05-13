@@ -33,6 +33,12 @@ module.exports = {
                 defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
         });
+
+        await queryInterface.addConstraint('role_menu', {
+            fields: ['role_id', 'menu_id'],
+            type: 'primary key',
+            name: 'pk_roleMenu',
+        });
     },
 
     async down(queryInterface, Sequelize) {
