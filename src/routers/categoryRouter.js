@@ -60,6 +60,10 @@ router.get(
  *         in: query
  *         description: pageSize
  *         required: true
+ *       - name: search
+ *         in: query
+ *         description: search
+ *         required: false
  *     responses:
  *      200:
  *        description: Fetched Successfully
