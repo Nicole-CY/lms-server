@@ -35,6 +35,7 @@ const setUserFromToken = async (req, res, next) => {
         // Attach user info to req for use in downstream controllers
         req.user = user;
         req.roles = roleNames;
+        req.user.role = roleNames[0] || null;
         next();
     } catch (error) {
         console.error('setUserFromToken error:', error);
