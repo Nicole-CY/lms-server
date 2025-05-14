@@ -20,7 +20,8 @@ const getCategoryByNameAsync = async (req, res, next) => {
 const getCategoryListAsync = async (req, res) => {
     const page = parseInt(req.query.page, 10) || 1;
     const pageSize = parseInt(req.query.pageSize, 10) || 10;
-    const result = await CategoryService.getCategoryListAsync(page, pageSize);
+    const search = req.query.search;
+    const result = await CategoryService.getCategoryListAsync(page, pageSize, search);
 
     if (result.isSuccess) {
         res.sendCommonValue(result.data, 'Category list retrieved', 1);
