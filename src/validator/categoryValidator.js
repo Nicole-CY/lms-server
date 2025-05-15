@@ -38,10 +38,9 @@ const addCategoryValidator = [
         .withMessage('Description must be a string')
         .isLength({ max: 255 })
         .withMessage('Description must not exceed 255 characters'),
-    body('parentId')
-        .optional({ nullable: true })
-        .isInt({ min: 1 })
-        .withMessage('Parent ID must be a positive integer'),
+    // body('parentId').optional({ nullable: true }),
+    // .isInt({ min: 1 })
+    // .withMessage('Parent ID must be a positive integer'),
     body('iconUrl')
         .isURL()
         .withMessage('Icon URL must be a valid URL')
@@ -84,13 +83,13 @@ const updateCategoryByIdValidator = [
         .withMessage('Description must be a string')
         .isLength({ max: 255 })
         .withMessage('Description must not exceed 255 characters'),
-    body('parentId').optional().isInt({ min: 1 }).withMessage('Parent ID must be a valid integer'),
-    body('iconUrl')
-        .optional()
-        .isURL()
-        .withMessage('Icon URL must be a valid URL')
-        .isLength({ max: 255 })
-        .withMessage('Icon URL must not exceed 255 characters'),
+    // body('parentId').optional().isInt({ min: 1 }).withMessage('Parent ID must be a valid integer'),
+    // body('iconUrl')
+    //     .optional()
+    //     .isURL()
+    //     .withMessage('Icon URL must be a valid URL')
+    //     .isLength({ max: 255 })
+    //     .withMessage('Icon URL must not exceed 255 characters'),
 ];
 
 const updateCategoryByNameValidator = [

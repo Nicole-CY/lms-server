@@ -81,7 +81,10 @@ const updateCategoryByIdAsync = async (req, res) => {
         newCategoryData.categoryName
     );
 
-    if (checkCategoryNameResult.isSuccess) {
+    if (
+        checkCategoryNameResult.isSuccess &&
+        checkCategoryNameResult.data.id !== newCategoryData.id
+    ) {
         return res.sendCommonValue({}, 'Category name already exists', 0);
     }
 
