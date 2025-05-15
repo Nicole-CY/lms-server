@@ -217,7 +217,6 @@ router.get(
  *              - id
  *              - categoryName
  *              - description
- *              - parentId
  *              - createdAt
  *              - updatedAt
  *              - createdBy
@@ -231,7 +230,9 @@ router.get(
  *                type: string
  *                example: Category for electronic items
  *              parentId:
- *                type: integer
+ *                type:
+ *                  - integer
+ *                  - null
  *                example: 1
  *              createdBy:
  *                type: integer
