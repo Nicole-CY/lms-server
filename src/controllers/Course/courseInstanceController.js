@@ -1,4 +1,4 @@
-const courseInstanceService = require('../../service/course/courseInstanceService');
+const courseInstanceService = require('../../services/course/courseInstanceService');
 
 const addCourseInstanceAsync = async (req, res) => {
     try {

@@ -13,6 +13,15 @@
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
             "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Server",
+            "program": "${workspaceFolder}/server.js",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
         }
     ]
 }
