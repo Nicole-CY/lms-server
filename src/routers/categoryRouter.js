@@ -67,6 +67,10 @@ router.get(
  *         in: query
  *         description: search
  *         required: false
+ *       - name: parentId
+ *         in: query
+ *         description: parent Id
+ *         required: false
  *     responses:
  *      200:
  *        description: Fetched Successfully
