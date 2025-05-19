@@ -1,4 +1,28 @@
+const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const { v4: uuidv4 } = require('uuid');
+
 const CategoryService = require('../../services/course/categoryService');
+
+// Configure AWS
+const s3Client = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+});
+
+const deleteFileFromS3 = async key => {
+    try {
+        const command = new DeleteObjectCommand({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: key,
+        });
+        await s3Client.send(command);
+    } catch (err) {
+        console.error('Failed to delete old file from S3:', err);
+    }
+};
 
 // Get categories by name
 const getCategoryByNameAsync = async (req, res, next) => {
@@ -77,26 +101,54 @@ const getCategoryByIdAsync = async (req, res) => {
 const updateCategoryByIdAsync = async (req, res) => {
     const id = parseInt(req.query.id, 10);
     const newCategoryData = req.body;
-    const checkCategoryNameResult = await CategoryService.getCategoryByNameAsync(
-        newCategoryData.categoryName
-    );
 
-    if (
-        checkCategoryNameResult.isSuccess &&
-        checkCategoryNameResult.data.id !== newCategoryData.id
-    ) {
-        return res.sendCommonValue({}, 'Category name already exists', 0);
-    }
+    try {
+        if (req.file) {
+            const file = req.file;
+            const fileExtension = file.originalname.split('.').pop();
+            const s3Key = `category-icons/${uuidv4()}.${fileExtension}`;
 
-    const updateCategoryResult = await CategoryService.updateCategoryByIdAsync(id, newCategoryData);
+            const command = new PutObjectCommand({
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: s3Key,
+                Body: file.buffer,
+                ContentType: file.mimetype,
+            });
 
-    if (updateCategoryResult.isSuccess) {
-        res.sendCommonValue(updateCategoryResult.data, 'Category updated successfully', 1);
-    } else {
-        res.sendCommonValue({}, 'Failed to update category', 0);
+            await s3Client.send(command);
+
+            newCategoryData.iconUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
+        }
+
+        // Check for duplicate category name outside of file upload logic
+        const checkCategoryNameResult = await CategoryService.getCategoryByNameAsync(
+            newCategoryData.categoryName
+        );
+
+        if (checkCategoryNameResult.isSuccess && checkCategoryNameResult.data.id !== id) {
+            return res.sendCommonValue({}, 'Category name already exists', 0);
+        }
+
+        // Update category with new data
+        const updateCategoryResult = await CategoryService.updateCategoryByIdAsync(
+            id,
+            newCategoryData
+        );
+
+        if (updateCategoryResult.isSuccess) {
+            return res.sendCommonValue(
+                updateCategoryResult.data,
+                'Category updated successfully',
+                1
+            );
+        } else {
+            return res.sendCommonValue({}, 'Failed to update category', 0);
+        }
+    } catch (error) {
+        console.error('Error updating category:', error);
+        return res.status(500).json({ error: 'Failed to update category' });
     }
 };
-
 // Update categories by name
 const updateCategoryByNameAsync = async (req, res) => {
     const { name } = req.query;
