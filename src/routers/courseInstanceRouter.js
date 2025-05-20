@@ -2,8 +2,8 @@ const express = require('express');
 
 require('express-async-errors');
 const router = express.Router();
-const { commonValidate } = require('../middleware/expressValidator');
-const courseInstanceController = require('../controller/course/courseInstanceController');
+const { commonValidate } = require('../middlewares/expressValidator');
+const courseInstanceController = require('../controllers/Course/courseInstanceController');
 const {
     addCourseInstanceValidator,
     updateCourseInstanceValidator,

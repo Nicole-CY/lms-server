@@ -1,3 +1,5 @@
+const path = require('path');
+
 const express = require('express');
 const cookieParser = require('cookie-parser');
 
@@ -20,11 +22,8 @@ const returnValue = require('./src/middlewares/returnValue');
 app.use(returnValue.returnValue);
 
 // config josn body
-//app.use(express.json());
-app.use(express.json({ limit: '50mb' }));
-//app.use(express.urlencoded({ extended: false }));
-
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
@@ -40,7 +39,14 @@ app.use(
         algorithms: appConfig.jwtConfig.algorithms,
         getToken: req => req.cookies.token,
     }).unless({
-        path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register', '/api/courses'],
+        path: [
+            '/',
+            /^\/api-docs/,
+            '/api/auth/login',
+            '/api/auth/register',
+            '/api/courses',
+            '/api/upload',
+        ],
     })
 );
 
@@ -83,6 +89,10 @@ app.use('/api/categories', categoryRouter);
 const courseRouter = require('./src/routers/courseRouter');
 app.use('/api/courses', courseRouter);
 
+// config courseInstanceRouter
+const courseInstanceRouter = require('./src/routers/courseInstanceRouter');
+app.use('/api/course-instances', courseInstanceRouter);
+
 // config sessionRouter
 const sessionRouter = require('./src/routers/sessionsRouter');
 app.use('/api/sessions', sessionRouter);
@@ -106,6 +116,17 @@ app.use('/api/menus', menuRouter);
 // config permissionRouter
 const permissionRouter = require('./src/routers/permissionRouter');
 app.use('/api/permissions', permissionRouter);
+
+// config uploadRouter
+const uploadRouter = require('./src/routers/upload');
+
+// 先注册API路由，确保能处理POST请求
+app.use('/api', uploadRouter);
+
+// 然后注册静态文件路由
+// to handle static files directory
+// GET /upload/xxx.png -> public/images/courses/xxx.png
+app.use('/upload', express.static(path.join(__dirname, 'public/images/courses')));
 
 // config errorHandle
 const errorHandle = require('./src/middlewares/errorHandling');

@@ -60,6 +60,8 @@ const CourseInstance = sequelize.define(
 );
 CourseInstance.associate = function (models) {
     CourseInstance.belongsTo(models.Course, { foreignKey: 'course_id' });
-    CourseInstance.hasMany(models.CourseInstanceUser, { foreignKey: 'course_instance_id' });
+    CourseInstance.hasMany(models.Session, {
+        foreignKey: 'course_instance_id', // adjust to match column
+    });
 };
 module.exports = CourseInstance;
