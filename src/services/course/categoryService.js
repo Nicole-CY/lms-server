@@ -200,7 +200,7 @@ const createCategoryTree = (categories, parentId = null) => {
         .forEach(category => {
             const children = createCategoryTree(categories, category.id);
             const newCategory = {
-                id: category.id,
+                id: category.id.toString(),
                 label: category.categoryName,
                 children: [],
             };
