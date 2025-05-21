@@ -116,16 +116,14 @@ const addRoleAsync = async (operatorRoles, role) => {
     }
 
     try {
+        // check if role name already exist in database
         const existingRole = await Role.findOne({ where: { roleName: role.roleName } });
         if (existingRole) {
             return { isSuccess: false, message: 'Role name already exists', data: null };
         }
 
         // create new role
-        const newRole = await Role.create({
-            roleName: role.roleName,
-            description: role.description || '',
-        });
+        const newRole = await Role.create(role);
 
         return { isSuccess: true, message: '', data: newRole };
     } catch (error) {
