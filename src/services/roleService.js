@@ -7,6 +7,7 @@ const logger = require('../common/logSetting');
 const { ForbiddenError } = require('../utils/errors');
 const RoleMenu = require('../models/roleMenu');
 const Menu = require('../models/menu');
+const { getPaginatedResults } = require('../utils/pagination');
 
 /**
  * Asynchronously checks whether a given user has permission to perform CRUD operations on roles.
@@ -70,25 +71,36 @@ const getRoleByIdAsync = async (operatorRoles, id) => {
 };
 
 /**
- * Retrieve all roles from the database.
- * @returns {Promise<{isSuccess: boolean, message: string, data: object[]|null}>}
+ * Get all roles with pagination and fuzzy search on name and description.
+ * @param {Array<string>} operatorRoles - The roles of the current user
+ * @param {number} page - The current page number
+ * @param {number} pageSize - Number of items per page
+ * @param {string} keyword - Optional keyword for fuzzy search
+ * @returns {Promise<{ isSuccess: boolean, message: string, data: object|null }>}
  */
-const getAllRolesAsync = async operatorRoles => {
-    // check if operator has the permission to read roles
+const getAllRolesAsync = async (operatorRoles, page, pageSize, keyword = '') => {
+    // Check if the user has permission to read roles
     const permissionCheck = await checkAssignPermissionAsync(operatorRoles);
     if (!permissionCheck.isAllowed) {
         return { isSuccess: false, message: permissionCheck.message, data: null };
     }
 
-    try {
-        // read roles from the database
-        const roles = await Role.findAll();
-
-        return { isSuccess: true, message: '', data: roles };
-    } catch (error) {
-        logger.error('getAllRolesAsync error:', error);
-        return { isSuccess: false, message: 'Get roles failed', data: null };
+    // Build fuzzy search condition
+    const where = {};
+    if (keyword) {
+        where[Op.or] = [
+            { roleName: { [Op.like]: `%${keyword}%` } },
+            { description: { [Op.like]: `%${keyword}%` } },
+        ];
     }
+
+    // Perform paginated query
+    return await getPaginatedResults(Role, {
+        page,
+        pageSize,
+        where,
+        order: [['created_at', 'DESC']],
+    });
 };
 
 /**

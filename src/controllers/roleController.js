@@ -38,8 +38,11 @@ const addRoleAsync = async (req, res) => {
  * Get all roles
  */
 const getAllRolesAsync = async (req, res) => {
+    const page = parseInt(req.query.page);
+    const pageSize = parseInt(req.query.pageSize);
+    const keyword = (req.query.keyword || '').trim().toLowerCase();
     // get roles from database
-    const result = await roleService.getAllRolesAsync(req.roles);
+    const result = await roleService.getAllRolesAsync(req.roles, page, pageSize, keyword);
     if (result.isSuccess) {
         res.sendCommonValue(result.data, 'success', 1);
     } else {
