@@ -47,13 +47,31 @@ router.post('', commonValidate(roleValidator), roleController.addRoleAsync);
  *  get:
  *     tags:
  *     - Role Controller
- *     summary: Get all roles
- *     description: Retrieve a list of all roles in the system
+ *     summary: Get paginated roles
+ *     description: Retrieve a paginated list of roles with optional keyword filtering
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number (starts from 1)
+ *       - in: query
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: keyword
+ *         schema:
+ *           type: string
+ *         description: Search keyword for role name or description
  *     responses:
- *      200:
- *        description: A list of roles
- *      500:
- *        description: Server Error
+ *       200:
+ *         description: A paginated list of roles
+ *       500:
+ *         description: Server Error
  */
 router.get('', roleController.getAllRolesAsync);
 
