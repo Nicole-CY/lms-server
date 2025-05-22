@@ -327,25 +327,21 @@ const deleteCourseInstanceAsync = async id => {
             return { isSuccess: false, message: 'Course instance not found', data: null };
         }
 
-        // Check if there are any sessions
-        const sessionCount = await Session.count({
+        // delete all sessions of the course instance
+        const deletedSessionsCount = await Session.destroy({
             where: { courseInstanceId: id },
             transaction: t,
         });
 
-        if (sessionCount > 0) {
-            await t.rollback();
-            return {
-                isSuccess: false,
-                message: 'Cannot delete course instance with existing sessions',
-                data: null,
-            };
-        }
-
+        // delete the course instance itself
         await courseInstance.destroy({ transaction: t });
         await t.commit();
 
-        return { isSuccess: true, message: '', data: courseInstance };
+        return {
+            isSuccess: true,
+            message: `Course instance and ${deletedSessionsCount} related sessions deleted successfully`,
+            data: courseInstance,
+        };
     } catch (err) {
         await t.rollback();
         logger.error('deleteCourseInstanceAsync error:', err);
@@ -356,21 +352,13 @@ const deleteCourseInstanceAsync = async id => {
 const bulkDeleteCourseInstancesAsync = async ids => {
     const t = await sequelize.transaction();
     try {
-        // Check if any of the instances have sessions
-        const instancesWithSessions = await Session.findAll({
+        // delete all sessions of the course instances
+        const deletedSessionsCount = await Session.destroy({
             where: { courseInstanceId: ids },
             transaction: t,
         });
 
-        if (instancesWithSessions.length > 0) {
-            await t.rollback();
-            return {
-                isSuccess: false,
-                message: 'Cannot delete course instances with existing sessions',
-                data: null,
-            };
-        }
-
+        // delete the course instances themselves
         const deletedCount = await CourseInstance.destroy({
             where: { id: ids },
             transaction: t,
@@ -382,7 +370,11 @@ const bulkDeleteCourseInstancesAsync = async ids => {
         }
 
         await t.commit();
-        return { isSuccess: true, message: '', data: { deletedCount } };
+        return {
+            isSuccess: true,
+            message: `${deletedCount} course instances and ${deletedSessionsCount} related sessions deleted successfully`,
+            data: { deletedInstancesCount: deletedCount, deletedSessionsCount },
+        };
     } catch (err) {
         await t.rollback();
         logger.error('bulkDeleteCourseInstancesAsync error:', err);
