@@ -99,7 +99,7 @@ const getAllRolesAsync = async (operatorRoles, page, pageSize, keyword = '') => 
         page,
         pageSize,
         where,
-        order: [['created_at', 'DESC']],
+        order: [['created_at', 'ASC']],
     });
 };
 
