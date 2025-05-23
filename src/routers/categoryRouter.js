@@ -95,18 +95,14 @@ router.get('/', commonValidate(getCategoryListValidator), categoryController.get
  *     requestBody:
  *      required: true
  *      content:
- *        application/json:
+ *        multipart/form-data:
  *           schema:
  *            type: object
  *            required:
  *              - categoryName
  *              - description
  *              - parentId
- *              - createdAt
- *              - updatedAt
  *              - createdBy
- *              - updatedBy
- *              - iconUrl
  *            properties:
  *              categoryName:
  *                type: string
@@ -115,17 +111,19 @@ router.get('/', commonValidate(getCategoryListValidator), categoryController.get
  *                type: string
  *                example: Category for electronic items
  *              parentId:
- *                type: integer
+ *                oneOf:
+ *                  - type: integer
+ *                  - type: 'null'
  *                example: 1
  *              createdBy:
- *                type: integer
- *                example: 1
- *              updatedBy:
  *                type: integer
  *                example: 1
  *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
+ *              iconFile:
+ *                type: string
+ *                format: binary
  *     responses:
  *      201:
  *        description: Created
@@ -138,7 +136,12 @@ router.get('/', commonValidate(getCategoryListValidator), categoryController.get
  *      500:
  *        description: Server Error
  */
-router.post('/', commonValidate(addCategoryValidator), categoryController.addCategoryAsync);
+router.post(
+    '/',
+    upload.single('iconFile'),
+    commonValidate(addCategoryValidator),
+    categoryController.addCategoryAsync
+);
 
 /**
  * @openapi
