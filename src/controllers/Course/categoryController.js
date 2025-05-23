@@ -57,19 +57,53 @@ const getCategoryListAsync = async (req, res) => {
 
 // Add categories
 const addCategoryAsync = async (req, res) => {
-    const { categoryName } = req.body;
-    const checkCategoryNameResult = await CategoryService.getCategoryByNameAsync(categoryName);
+    try {
+        const { categoryName, parentId } = req.body;
+        const newCategoryData = req.body;
+        const checkCategoryNameResult = await CategoryService.getCategoryByNameAsync(categoryName);
+        let newParentId;
 
-    if (checkCategoryNameResult.isSuccess) {
-        return res.sendCommonValue({}, 'Category name already exists', 0);
-    }
+        if (parentId === 'null' || parentId === '' || parentId === null) {
+            newParentId = null;
+        } else {
+            newParentId = parseInt(parentId, 10);
+        }
 
-    const addCategoryResult = await CategoryService.addCategoryAsync(req.body);
+        newCategoryData.parentId = newParentId;
 
-    if (addCategoryResult.isSuccess) {
-        res.sendCommonValue(addCategoryResult.data, 'Category added successfully', 1);
-    } else {
-        res.sendCommonValue({}, 'Failed to add category', 0);
+        if (checkCategoryNameResult.isSuccess) {
+            return res.sendCommonValue({}, 'Category name already exists', 0);
+        }
+        console.log(req.file);
+        if (req.file) {
+            const file = req.file;
+            const fileExtension = file.originalname.split('.').pop();
+            const s3Key = `category-icons/${uuidv4()}.${fileExtension}`;
+
+            const command = new PutObjectCommand({
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: s3Key,
+                Body: file.buffer,
+                ContentType: file.mimetype,
+            });
+
+            await s3Client.send(command);
+
+            newCategoryData.iconUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
+        }
+
+        // TODO: 检测category是否有互为父子的情况
+
+        const addCategoryResult = await CategoryService.addCategoryAsync(newCategoryData);
+
+        if (addCategoryResult.isSuccess) {
+            res.sendCommonValue(addCategoryResult.data, 'Category added successfully', 1);
+        } else {
+            res.sendCommonValue({}, 'Failed to add category', 0);
+        }
+    } catch (error) {
+        console.error('Error adding category:', error);
+        return res.status(500).json({ error: 'Failed to add category' });
     }
 };
 
@@ -102,6 +136,17 @@ const getCategoryByIdAsync = async (req, res) => {
 const updateCategoryByIdAsync = async (req, res) => {
     const id = parseInt(req.query.id, 10);
     const newCategoryData = req.body;
+    const { parentId } = req.body;
+
+    let newParentId;
+
+    if (parentId === 'null' || parentId === '' || parentId === null) {
+        newParentId = null;
+    } else {
+        newParentId = parseInt(parentId, 10);
+    }
+
+    newCategoryData.parentId = newParentId;
 
     try {
         if (req.file) {
@@ -125,6 +170,8 @@ const updateCategoryByIdAsync = async (req, res) => {
         const checkCategoryNameResult = await CategoryService.getCategoryByNameAsync(
             newCategoryData.categoryName
         );
+
+        // TODO: 检测category是否有互为父子的情况
 
         if (checkCategoryNameResult.isSuccess && checkCategoryNameResult.data.id !== id) {
             return res.sendCommonValue({}, 'Category name already exists', 0);
