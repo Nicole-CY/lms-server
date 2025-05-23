@@ -1,3 +1,5 @@
+const { Op } = require('sequelize');
+
 // const Course = require("../../models/course");
 // const CourseCategory = require("../../models/courseCategory");
 const { Course, CourseCategory } = require('../../models');
@@ -5,7 +7,6 @@ const logger = require('../../common/logSetting');
 const { getPagination } = require('../../common/pagination');
 const { courseFilter } = require('../../filters/courseFilter');
 const { sequelize, Sequelize } = require('../../db/sequelizedb');
-const { Op } = Sequelize;
 
 const addCourseAsync = async courseData => {
     const t = await sequelize.transaction();
