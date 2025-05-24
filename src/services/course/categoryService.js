@@ -25,9 +25,13 @@ const getCategoryByNameAsync = async name => {
 };
 
 // Get categories lists
-const getCategoryListAsync = async (page = 1, pageSize = 10, search = '') => {
+const getCategoryListAsync = async (page = 1, pageSize = 10, search = '', parentId = null) => {
     try {
         const where = search ? { categoryName: { [Op.like]: `%${search}%` } } : {};
+
+        if (parentId) {
+            where.parentId = parentId;
+        }
 
         const result = await getPaginatedResults(Category, {
             page,
@@ -196,7 +200,7 @@ const createCategoryTree = (categories, parentId = null) => {
         .forEach(category => {
             const children = createCategoryTree(categories, category.id);
             const newCategory = {
-                id: category.id,
+                id: category.id.toString(),
                 label: category.categoryName,
                 children: [],
             };

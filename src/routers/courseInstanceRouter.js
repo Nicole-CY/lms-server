@@ -264,7 +264,7 @@ router.put(
  *     tags:
  *     - Course Instance Controller
  *     summary: Bulk delete course instances
- *     description: Delete multiple course instances at once. Cannot delete instances with existing sessions.
+ *     description: Delete multiple course instances at once.
  *     requestBody:
  *      required: true
  *      content:
