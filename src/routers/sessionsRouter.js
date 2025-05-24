@@ -253,7 +253,6 @@ router.get('/', commonValidate(getSessionListValidator), sessionController.getSe
  *            required:
  *              - id
  *              - sessionTitle
- *              - order
  *            properties:
  *              id:
  *                type: number
