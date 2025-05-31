@@ -2,6 +2,9 @@ const { Op } = require('sequelize');
 
 const { sequelize } = require('../../db/sequelizedb');
 const CourseOffering = require('../../models/courseOffering');
+const CourseInstance = require('../../models/courseInstance');
+const Course = require('../../models/course');
+const User = require('../../models/user');
 const { getPaginatedResults } = require('../../utils/pagination');
 const logger = require('../../common/logSetting');
 
@@ -19,22 +22,83 @@ const getCourseOfferingByIdAsync = async id => {
     }
 };
 
-// Get list of course offerings with pagination
 const getCourseOfferingListAsync = async (page = 1, pageSize = 10, search = '') => {
     try {
-        const where = search
-            ? {
-                  teacher_id: parseInt(search, 10),
-              }
-            : {};
+        const where = {
+            [Op.or]: [],
+        };
+
+        const include = [
+            {
+                model: User,
+                as: 'teacher',
+                attributes: ['firstName', 'lastName'],
+                required: false,
+            },
+            {
+                model: CourseInstance,
+                attributes: ['id'],
+                required: false,
+                include: [
+                    {
+                        model: Course,
+                        attributes: ['title'],
+                        required: false,
+                    },
+                ],
+            },
+        ];
+
+        if (search) {
+            // 放在 where，而不是 include.where
+            where[Op.or].push(
+                { '$teacher.first_name$': { [Op.like]: `%${search}%` } },
+                { '$teacher.last_name$': { [Op.like]: `%${search}%` } },
+                { '$CourseInstance.Course.title$': { [Op.like]: `%${search}%` } },
+                { status: { [Op.like]: `%${search}%` } },
+                { student_capacity: { [Op.like]: `%${search}%` } }
+            );
+
+            // 仅当 search 是合法时间再判断日期
+            const parsedDate = Date.parse(search);
+            if (!isNaN(parsedDate)) {
+                where[Op.or].push(
+                    { start_date: { [Op.eq]: new Date(parsedDate) } },
+                    { end_date: { [Op.eq]: new Date(parsedDate) } }
+                );
+            }
+        } else {
+            delete where[Op.or]; // 没搜索就删掉空条件
+        }
 
         const result = await getPaginatedResults(CourseOffering, {
             page,
             pageSize,
             where,
+            include,
         });
 
-        return result;
+        const finalRows = (result.data.items || []).map(item => {
+            const json = item.toJSON();
+            return {
+                ...json,
+                courseTitle: json.CourseInstance?.Course?.title || '',
+                teacherFullName:
+                    `${json.teacher?.firstName || ''} ${json.teacher?.lastName || ''}`.trim(),
+            };
+        });
+
+        return {
+            isSuccess: true,
+            message: 'Success',
+            data: {
+                items: finalRows,
+                total: result.data.total,
+                totalPages: result.data.totalPages,
+                currentPage: result.data.currentPage,
+                perPage: result.data.perPage,
+            },
+        };
     } catch (error) {
         logger.error('getCourseOfferingListAsync error:', error);
         return { isSuccess: false, message: 'Server error', data: null };

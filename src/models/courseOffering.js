@@ -2,6 +2,9 @@ const { DataTypes } = require('sequelize');
 
 const { sequelize } = require('../db/sequelizedb');
 
+const CourseInstance = require('./CourseInstance');
+const User = require('./User');
+
 const CourseOffering = sequelize.define(
     'CourseOffering',
     {
@@ -73,4 +76,12 @@ const CourseOffering = sequelize.define(
     }
 );
 
+CourseOffering.belongsTo(CourseInstance, {
+    foreignKey: 'course_instance_id',
+});
+
+CourseOffering.belongsTo(User, {
+    as: 'teacher',
+    foreignKey: 'teacher_id',
+});
 module.exports = CourseOffering;

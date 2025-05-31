@@ -1,30 +1,31 @@
-const { Op } = require("sequelize");
-const { sequelize } = require("../../db/sequelizedb");
-const CourseNotification = require("../../models/courseNotification");
-const { getPaginatedResults } = require("../../utils/pagination");
-const logger = require("../../common/logSetting");
+const { Op } = require('sequelize');
+
+const { sequelize } = require('../../db/sequelizedb');
+const CourseNotification = require('../../models/courseNotification');
+const { getPaginatedResults } = require('../../utils/pagination');
+const logger = require('../../common/logSetting');
 
 // Get course notification by ID
-const getCourseNotificationByIdAsync = async (id) => {
+const getCourseNotificationByIdAsync = async id => {
     try {
         const notification = await CourseNotification.findByPk(id);
         if (!notification) {
-            return { isSuccess: false, message: "Notification not found", data: { id: 0 } };
+            return { isSuccess: false, message: 'Notification not found', data: { id: 0 } };
         }
-        return { isSuccess: true, message: "", data: notification };
+        return { isSuccess: true, message: '', data: notification };
     } catch (error) {
-        logger.error("getCourseNotificationByIdAsync error:", error);
-        return { isSuccess: false, message: "Server error", data: null };
+        logger.error('getCourseNotificationByIdAsync error:', error);
+        return { isSuccess: false, message: 'Server error', data: null };
     }
 };
 
-// Get course notifications list with pagination 
-const getCourseNotificationListAsync = async (page = 1, pageSize = 10, search = "") => {
+// Get course notifications list with pagination
+const getCourseNotificationListAsync = async (page = 1, pageSize = 10, search = '') => {
     try {
         const where = search
             ? {
-                recipient_id: parseInt(search, 10),
-            }
+                  recipient_id: parseInt(search, 10),
+              }
             : {};
 
         const result = await getPaginatedResults(CourseNotification, {
@@ -35,19 +36,19 @@ const getCourseNotificationListAsync = async (page = 1, pageSize = 10, search = 
 
         return result;
     } catch (error) {
-        logger.error("getCourseNotificationListAsync error:", error);
-        return { isSuccess: false, message: "Server error", data: null };
+        logger.error('getCourseNotificationListAsync error:', error);
+        return { isSuccess: false, message: 'Server error', data: null };
     }
 };
 
 // Add new course notification
-const addCourseNotificationAsync = async (notificationData) => {
+const addCourseNotificationAsync = async notificationData => {
     try {
         const newNotification = await CourseNotification.create(notificationData);
-        return { isSuccess: true, message: "Notification added", data: newNotification };
+        return { isSuccess: true, message: 'Notification added', data: newNotification };
     } catch (error) {
-        logger.error("addCourseNotificationAsync error:", error);
-        return { isSuccess: false, message: "Add notification failed", data: null };
+        logger.error('addCourseNotificationAsync error:', error);
+        return { isSuccess: false, message: 'Add notification failed', data: null };
     }
 };
 
@@ -67,32 +68,31 @@ const updateCourseNotificationByIdAsync = async (id, updateData) => {
 
         return {
             isSuccess: true,
-            message: affectedRows > 0
-            ? "Notification updated successfully"
-            : "No changes made",            data: affectedRows,
+            message: affectedRows > 0 ? 'Notification updated successfully' : 'No changes made',
+            data: affectedRows,
         };
     } catch (error) {
-        logger.error("updateCourseNotificationByIdAsync error:", error);
-        return { isSuccess: false, message: "Update failed", data: null };
+        logger.error('updateCourseNotificationByIdAsync error:', error);
+        return { isSuccess: false, message: 'Update failed', data: null };
     }
 };
 
 // Delete course notification(s) by ID(s)
-const deleteCourseNotificationByIdAsync = async (idsString) => {
-    const ids = idsString.split(",").map((id) => parseInt(id, 10));
+const deleteCourseNotificationByIdAsync = async idsString => {
+    const ids = idsString.split(',').map(id => parseInt(id, 10));
     try {
         const deleteCount = await CourseNotification.destroy({
             where: { id: ids },
         });
 
         if (deleteCount > 0) {
-            return { isSuccess: true, message: "Deleted successfully" };
+            return { isSuccess: true, message: 'Deleted successfully' };
         }
 
-        return { isSuccess: false, message: "No matching notifications found" };
+        return { isSuccess: false, message: 'No matching notifications found' };
     } catch (error) {
-        logger.error("deleteCourseNotificationByIdAsync error:", error);
-        return { isSuccess: false, message: "Delete failed", data: null };
+        logger.error('deleteCourseNotificationByIdAsync error:', error);
+        return { isSuccess: false, message: 'Delete failed', data: null };
     }
 };
 
