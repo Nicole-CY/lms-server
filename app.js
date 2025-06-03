@@ -101,6 +101,11 @@ app.use('/api/sessions', sessionRouter);
 const mediaRouter = require('./src/routers/mediaRouter');
 app.use('/api/media', mediaRouter);
 
+// config uploadMediaRouter
+const uploadMediaRouter = require('./src/routers/uploadMediaRouter');
+app.use("/api", uploadMediaRouter);
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
+
 // config courseOfferingRouter
 const courseOfferingRouter = require('./src/routers/courseOfferingRouter');
 app.use('/api/courseOfferings', courseOfferingRouter);
