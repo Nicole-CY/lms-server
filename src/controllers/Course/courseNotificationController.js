@@ -20,10 +20,12 @@ const getCourseNotificationListAsync = async (req, res) => {
     try {
         const page = parseInt(req.params.page, 10) || 1;
         const pageSize = parseInt(req.params.pageSize, 10) || 10;
+        const search = req.query.search || '';
 
         const result = await CourseNotificationService.getCourseNotificationListAsync(
             page,
-            pageSize
+            pageSize,
+            search
         );
 
         if (result.isSuccess) {

@@ -67,6 +67,10 @@ User.associate = function (models) {
         foreignKey: 'user_id',
         otherKey: 'role_id',
     });
+    User.hasMany(models.UserRole, {
+        foreignKey: 'user_id',
+        as: 'userRoles',
+    });
 };
 
 module.exports = User;
