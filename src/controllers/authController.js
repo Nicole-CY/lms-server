@@ -127,7 +127,9 @@ const meAsync = async (req, res) => {
                 email: result.data.email,
                 firstName: result.data.firstName,
                 lastName: result.data.lastName,
+                roleName: result.data.Roles?.map(role => role.roleName).join(', '),
             },
+
             'User information retrieved successfully.',
             1
         );

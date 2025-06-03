@@ -12,6 +12,7 @@ const {
     deleteMenuByIdValidator,
 } = require('../validator/menuValidator');
 const menuController = require('../controllers/menuController');
+const setUserFromToken = require('../middlewares/setUserFromToken');
 
 /**
  * @openapi
@@ -270,5 +271,31 @@ router.delete('/:id', commonValidate(deleteMenuByIdValidator), menuController.de
  *        description: Server Error
  */
 router.get('/getMenuTree', commonValidate([]), menuController.getMenuTreeAsync);
+
+/**
+ * @openapi
+ * '/api/menus/by-role':
+ *  get:
+ *     tags:
+ *     - Menu Controller
+ *     summary: Get menu list by current user's role
+ *     description: Returns menu tree based on user's assigned role
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *      200:
+ *        description: Successfully retrieved role-based menu
+ *      400:
+ *        description: Missing role
+ *      401:
+ *        description: Unauthorized
+ *      500:
+ *        description: Internal server error
+ */
+router.get(
+    '/by-role',
+    setUserFromToken, // extract user from JWT, sets req.user
+    menuController.getMenuByRoleAsync
+);
 
 module.exports = router;

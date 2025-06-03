@@ -20,6 +20,8 @@ module.exports = {
                         gender: 1,
                         avatar: 'https://via.placeholder.com/150',
                         active: true,
+                        created_at: new Date(),
+                        updated_at: new Date(),
                     },
                     {
                         id: 2, // Explicitly set ID for admin
@@ -31,6 +33,8 @@ module.exports = {
                         gender: 1,
                         avatar: 'https://via.placeholder.com/150',
                         active: true,
+                        created_at: new Date(),
+                        updated_at: new Date(),
                     },
                 ],
                 {}

@@ -18,13 +18,13 @@ function courseFilter(query) {
     const where = {};
     const include = [];
     // Filter by title if provided (partial match, case-insensitive)
-    if (query.title) {
-        where.title = { [Op.like]: `%${query.title}%` };
+    if (query.search) {
+        where[Op.or] = [
+            { title: { [Op.like]: `%${query.search}%` } },
+            { courseCode: { [Op.like]: `%${query.search}%` } },
+        ];
     }
-    // Filter by courseCode if provided (partial match, case-insensitive)
-    if (query.courseCode) {
-        where.courseCode = { [Op.like]: `%${query.courseCode}%` };
-    }
+
     // Filter by categories if provided as an array
     if (query.categories && Array.isArray(query.categories) && query.categories.length > 0) {
         // Convert category IDs to numbers

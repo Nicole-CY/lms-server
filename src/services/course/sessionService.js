@@ -78,11 +78,12 @@ const getSessionsByCourseInstanceIdAsync = async (courseInstanceId) => {
             where: { courseInstanceId },
             order: [['order', 'DESC']],
         });
-        if (sessions.length === 0) {
-            return { isSuccess: false, message: "No sessions found for this course instance", data: [] };
+        
+        return {
+            isSuccess: true,
+            message: sessions.length > 0 ? "Sessions fetched successfully" : "No sessions found for this course instance",
+            data: sessions
         };
-
-        return { isSuccess: true, message: "Sessions fetched successfully", data: sessions };
 
     } catch (err) {
         logger.error("getSessionsByCourseInstanceIdAsync error:", err);

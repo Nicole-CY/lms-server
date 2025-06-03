@@ -12,7 +12,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/programming.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/programming.png',
             },
             {
                 id: 2,
@@ -21,7 +22,8 @@ module.exports = {
                 parent_id: 1,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/web-dev.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/web-dev.png',
             },
             {
                 id: 3,
@@ -30,7 +32,8 @@ module.exports = {
                 parent_id: 1,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/mobile.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/mobile.png',
             },
             {
                 id: 4,
@@ -39,7 +42,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/data-science.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/data-science.png',
             },
             {
                 id: 5,
@@ -48,7 +52,8 @@ module.exports = {
                 parent_id: 4,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/python.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/python.png',
             },
             {
                 id: 6,
@@ -57,7 +62,8 @@ module.exports = {
                 parent_id: 1,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/javascript.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/javascript.png',
             },
             {
                 id: 7,
@@ -66,7 +72,8 @@ module.exports = {
                 parent_id: 6,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/react.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/react.png',
             },
             {
                 id: 8,
@@ -75,7 +82,8 @@ module.exports = {
                 parent_id: 6,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/node.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/node.png',
             },
             {
                 id: 9,
@@ -84,7 +92,7 @@ module.exports = {
                 parent_id: 4,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/ai.png',
+                icon_url: 'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/ai.png',
             },
             {
                 id: 10,
@@ -93,7 +101,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/cloud.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/cloud.png',
             },
             {
                 id: 11,
@@ -102,7 +111,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/cyber.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/cyber.png',
             },
             {
                 id: 12,
@@ -111,7 +121,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/devops.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/devops.png',
             },
             {
                 id: 13,
@@ -120,7 +131,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/analytics.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/analytics.png',
             },
             {
                 id: 14,
@@ -129,7 +141,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/app-store.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/app-store.png',
             },
             {
                 id: 15,
@@ -138,7 +151,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/digital.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/digital.png',
             },
             {
                 id: 16,
@@ -147,7 +161,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/blockchain.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/blockchain.png',
             },
             {
                 id: 17,
@@ -156,7 +171,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/game.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/game.png',
             },
             {
                 id: 18,
@@ -165,7 +181,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/math.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/math.png',
             },
             {
                 id: 19,
@@ -174,7 +191,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/finance.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/finance.png',
             },
             {
                 id: 20,
@@ -183,7 +201,8 @@ module.exports = {
                 parent_id: null,
                 created_by: 1,
                 updated_by: 1,
-                icon_url: '../assets/writing.png',
+                icon_url:
+                    'https://mooc-2025.s3.ap-southeast-2.amazonaws.com/category-icons/writing.png',
             },
         ]);
     },

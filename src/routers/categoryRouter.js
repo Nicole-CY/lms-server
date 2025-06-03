@@ -1,6 +1,7 @@
 const express = require('express');
 require('express-async-errors');
 const router = express.Router();
+const multer = require('multer');
 
 const { commonValidate } = require('../middlewares/expressValidator');
 const {
@@ -13,6 +14,8 @@ const {
     updateCategoryByNameValidator,
 } = require('../validator/categoryValidator');
 const categoryController = require('../controllers/Course/categoryController');
+
+const upload = multer({ storage: multer.memoryStorage() }); // to store file buffer in memory
 
 /**
  * @openapi
@@ -60,6 +63,14 @@ router.get(
  *         in: query
  *         description: pageSize
  *         required: true
+ *       - name: search
+ *         in: query
+ *         description: search
+ *         required: false
+ *       - name: parentId
+ *         in: query
+ *         description: parent Id
+ *         required: false
  *     responses:
  *      200:
  *        description: Fetched Successfully
@@ -84,18 +95,14 @@ router.get('/', commonValidate(getCategoryListValidator), categoryController.get
  *     requestBody:
  *      required: true
  *      content:
- *        application/json:
+ *        multipart/form-data:
  *           schema:
  *            type: object
  *            required:
  *              - categoryName
  *              - description
  *              - parentId
- *              - createdAt
- *              - updatedAt
  *              - createdBy
- *              - updatedBy
- *              - iconUrl
  *            properties:
  *              categoryName:
  *                type: string
@@ -104,17 +111,19 @@ router.get('/', commonValidate(getCategoryListValidator), categoryController.get
  *                type: string
  *                example: Category for electronic items
  *              parentId:
- *                type: integer
+ *                oneOf:
+ *                  - type: integer
+ *                  - type: 'null'
  *                example: 1
  *              createdBy:
- *                type: integer
- *                example: 1
- *              updatedBy:
  *                type: integer
  *                example: 1
  *              iconUrl:
  *                type: string
  *                example: "https://example.com/icon.png"
+ *              iconFile:
+ *                type: string
+ *                format: binary
  *     responses:
  *      201:
  *        description: Created
@@ -127,7 +136,12 @@ router.get('/', commonValidate(getCategoryListValidator), categoryController.get
  *      500:
  *        description: Server Error
  */
-router.post('/', commonValidate(addCategoryValidator), categoryController.addCategoryAsync);
+router.post(
+    '/',
+    upload.single('iconFile'),
+    commonValidate(addCategoryValidator),
+    categoryController.addCategoryAsync
+);
 
 /**
  * @openapi
@@ -194,64 +208,73 @@ router.get(
  * '/api/categories/updateCategoriesById':
  *  put:
  *     tags:
- *     - Category Controller
- *     summary: update a category by id
+ *       - Category Controller
+ *     summary: Update a category by id
  *     parameters:
- *      - name: id
- *        in: query
- *        description: The id of the category
- *        required: true
+ *       - name: id
+ *         in: query
+ *         description: The id of the category
+ *         required: true
+ *         schema:
+ *           type: integer
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *      required: true
- *      content:
- *        application/json:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
  *           schema:
- *            type: object
- *            required:
- *              - id
- *              - categoryName
- *              - description
- *              - parentId
- *              - createdAt
- *              - updatedAt
- *              - createdBy
- *              - updatedBy
- *              - iconUrl
- *            properties:
- *              categoryName:
- *                type: string
- *                example: Electronics
- *              description:
- *                type: string
- *                example: Category for electronic items
- *              parentId:
- *                type: integer
- *                example: 1
- *              createdBy:
- *                type: integer
- *                example: 1
- *              updatedBy:
- *                type: integer
- *                example: 1
- *              iconUrl:
- *                type: string
- *                example: "https://example.com/icon.png"
+ *             type: object
+ *             required:
+ *               - id
+ *               - categoryName
+ *               - description
+ *               - createdBy
+ *               - updatedBy
+ *             properties:
+ *               id:
+ *                 type: integer
+ *                 example: 22
+ *               categoryName:
+ *                 type: string
+ *                 example: Electronics
+ *               description:
+ *                 type: string
+ *                 example: Category for electronic items
+ *               parentId:
+ *                 oneOf:
+ *                   - type: integer
+ *                   - type: 'null'
+ *                 example: 1
+ *               createdBy:
+ *                 type: integer
+ *                 example: 1
+ *               updatedBy:
+ *                 type: integer
+ *                 example: 1
+ *               iconUrl:
+ *                 type: string
+ *                 example: "https://example.com/icon.png"
+ *               iconFile:
+ *                 type: string
+ *                 format: binary
  *     responses:
- *      201:
- *        description: Created
- *      400:
- *        description: Bad Request
- *      404:
- *        description: Not Found
- *      409:
- *        description: Conflict
- *      500:
- *        description: Server Error
+ *       200:
+ *         description: Category updated successfully
+ *       400:
+ *         description: Bad Request
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Not Found
+ *       409:
+ *         description: Conflict
+ *       500:
+ *         description: Server Error
  */
 router.put(
     '/updateCategoriesById',
+    upload.single('iconFile'),
     commonValidate(updateCategoryByIdValidator),
     categoryController.updateCategoryByIdAsync
 );

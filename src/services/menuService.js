@@ -4,6 +4,7 @@ const { BadRequestError } = require('../utils/errors');
 const Menu = require('../models/menu');
 const pagination = require('../utils/pagination');
 const logger = require('../common/logSetting');
+const Role = require('../models/role');
 
 // Get menu list
 const getMenuListAsync = async (page = 1, pageSize = 10, search = '') => {
@@ -225,6 +226,35 @@ const createMenuTree = (menus, parentId = null) => {
     return tree;
 };
 
+// Get menus by role name
+const getMenuByRoleAsync = async roleName => {
+    try {
+        const role = await Role.findOne({
+            where: { roleName: roleName },
+            include: [
+                {
+                    model: Menu,
+                    as: 'menus',
+                    through: { attributes: [] },
+                },
+            ],
+        });
+
+        if (!role) {
+            throw new BadRequestError('Role not found');
+        }
+
+        // transfer to tree structure
+        const menus = role.menus.map(menu => menu.toJSON());
+        const menuTree = createMenuTree(menus);
+
+        return { isSuccess: true, message: '', data: menuTree };
+    } catch (error) {
+        logger.error('getMenuByRoleAsync error:', error);
+        return { isSuccess: false, message: 'Get menu by role failed', data: null };
+    }
+};
+
 module.exports = {
     getMenuByNameAsync,
     getMenuListAsync,
@@ -233,4 +263,5 @@ module.exports = {
     updateMenuByIdAsync,
     deleteMenuByIdAsync,
     getMenuTreeAsync,
+    getMenuByRoleAsync,
 };

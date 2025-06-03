@@ -2,8 +2,8 @@ const express = require('express');
 
 require('express-async-errors');
 const router = express.Router();
-const { commonValidate } = require('../middleware/expressValidator');
-const courseInstanceController = require('../controller/course/courseInstanceController');
+const { commonValidate } = require('../middlewares/expressValidator');
+const courseInstanceController = require('../controllers/Course/courseInstanceController');
 const {
     addCourseInstanceValidator,
     updateCourseInstanceValidator,
@@ -264,7 +264,7 @@ router.put(
  *     tags:
  *     - Course Instance Controller
  *     summary: Bulk delete course instances
- *     description: Delete multiple course instances at once. Cannot delete instances with existing sessions.
+ *     description: Delete multiple course instances at once.
  *     requestBody:
  *      required: true
  *      content:

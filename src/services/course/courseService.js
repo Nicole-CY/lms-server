@@ -1,10 +1,12 @@
+const { Op } = require('sequelize');
+
 // const Course = require("../../models/course");
 // const CourseCategory = require("../../models/courseCategory");
 const { Course, CourseCategory } = require('../../models');
 const logger = require('../../common/logSetting');
 const { getPagination } = require('../../common/pagination');
 const { courseFilter } = require('../../filters/courseFilter');
-const { sequelize } = require('../../db/sequelizedb');
+const { sequelize, Sequelize } = require('../../db/sequelizedb');
 
 const addCourseAsync = async courseData => {
     const t = await sequelize.transaction();
@@ -191,6 +193,47 @@ const updateCourseAsync = async (courseData, courseId) => {
             await t.rollback();
             return { isSuccess: false, message: 'course not found', data: null };
         }
+
+        // check if courseCode exists
+        const existingCourse = await Course.findOne({
+            where: {
+                courseCode: courseData.courseCode,
+                id: {
+                    [Op.ne]: courseId, // exclude current course
+                },
+            },
+            transaction: t,
+        });
+
+        if (existingCourse) {
+            await t.rollback();
+            return {
+                isSuccess: false,
+                message: `Course with code "${courseData.courseCode}" already exists`,
+                data: null,
+            };
+        }
+
+        // check if title exists
+        const existingTitle = await Course.findOne({
+            where: {
+                title: courseData.title,
+                id: {
+                    [Op.ne]: courseId, // exclude current course
+                },
+            },
+            transaction: t,
+        });
+
+        if (existingTitle) {
+            await t.rollback();
+            return {
+                isSuccess: false,
+                message: `Course with title "${courseData.title}" already exists`,
+                data: null,
+            };
+        }
+
         course.title = courseData.title;
         course.courseCode = courseData.courseCode;
         course.coverImage = courseData.coverImage;

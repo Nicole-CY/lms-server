@@ -100,6 +100,7 @@ const updateSessionAsync = async (req, res) => {
         session.id = req.body.id;
         session.courseInstanceId = req.body.courseInstanceId;
         session.sessionTitle = req.body.sessionTitle;
+        session.sessionDescription = req.body.sessionDescription;
         session.order = req.body.order;
         session.updatedBy = req.body.updatedBy;
 

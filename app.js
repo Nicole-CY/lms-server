@@ -1,3 +1,5 @@
+const path = require('path');
+
 const express = require('express');
 const cookieParser = require('cookie-parser');
 
@@ -23,6 +25,9 @@ app.use(returnValue.returnValue);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
+
 // parse Cookie
 app.use(cookieParser());
 
@@ -33,8 +38,19 @@ app.use(
         secret: appConfig.jwtConfig.secret,
         algorithms: appConfig.jwtConfig.algorithms,
         getToken: req => req.cookies.token,
-    }).unless({ path: ['/', /^\/api-docs/, '/api/auth/login', '/api/auth/register'] })
+    }).unless({
+        path: [
+            '/',
+            /^\/api-docs/,
+            '/api/auth/login',
+            '/api/auth/register',
+            '/api/courses',
+            '/api/upload',
+        ],
+    })
 );
+
+app.use(express.static('public'));
 
 // config Swagger
 const swaggerDocument = require('./src/common/swagger');
@@ -73,6 +89,10 @@ app.use('/api/categories', categoryRouter);
 const courseRouter = require('./src/routers/courseRouter');
 app.use('/api/courses', courseRouter);
 
+// config courseInstanceRouter
+const courseInstanceRouter = require('./src/routers/courseInstanceRouter');
+app.use('/api/course-instances', courseInstanceRouter);
+
 // config sessionRouter
 const sessionRouter = require('./src/routers/sessionsRouter');
 app.use('/api/sessions', sessionRouter);
@@ -96,6 +116,17 @@ app.use('/api/menus', menuRouter);
 // config permissionRouter
 const permissionRouter = require('./src/routers/permissionRouter');
 app.use('/api/permissions', permissionRouter);
+
+// config uploadRouter
+const uploadRouter = require('./src/routers/upload');
+
+// 先注册API路由，确保能处理POST请求
+app.use('/api', uploadRouter);
+
+// 然后注册静态文件路由
+// to handle static files directory
+// GET /upload/xxx.png -> public/images/courses/xxx.png
+app.use('/upload', express.static(path.join(__dirname, 'public/images/courses')));
 
 // config errorHandle
 const errorHandle = require('./src/middlewares/errorHandling');

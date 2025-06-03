@@ -1,4 +1,4 @@
-const userService = require('../../service/userService');
+const userService = require('../../services/userService');
 const User = require('../../models/user');
 jest.mock('../../models/user');
 

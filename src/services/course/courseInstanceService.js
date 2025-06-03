@@ -1,169 +1,171 @@
-const { CourseInstance, Course, CourseInstanceUser, Session } = require('../../models');
+const { Op } = require('sequelize'); // 直接从sequelize包导入Op
+
+const { CourseInstance, Course, Session } = require('../../models');
 const logger = require('../../common/logSetting');
 const { getPagination } = require('../../common/pagination');
 const { courseInstanceFilter } = require('../../filters/courseInstanceFilter');
 const { sequelize } = require('../../db/sequelizedb');
 
 const addCourseInstanceAsync = async courseInstanceData => {
-    // const t = await sequelize.transaction();
-    // try {
-    //     // Check if course exists
-    //     const course = await Course.findByPk(courseInstanceData.courseId);
-    //     if (!course) {
-    //         await t.rollback();
-    //         return { isSuccess: false, message: 'Course not found', data: null };
-    //     }
-
-    //     // Check for overlapping dates with other instances of the same course
-    //     const existingInstances = await CourseInstance.findAll({
-    //         where: {
-    //             courseId: courseInstanceData.courseId,
-    //             [sequelize.Op.or]: [
-    //                 {
-    //                     startDate: {
-    //                         [sequelize.Op.between]: [
-    //                             courseInstanceData.startDate,
-    //                             courseInstanceData.endDate,
-    //                         ],
-    //                     },
-    //                 },
-    //                 {
-    //                     endDate: {
-    //                         [sequelize.Op.between]: [
-    //                             courseInstanceData.startDate,
-    //                             courseInstanceData.endDate,
-    //                         ],
-    //                     },
-    //                 },
-    //             ],
-    //         },
-    //     });
-
-    //     if (existingInstances.length > 0) {
-    //         await t.rollback();
-    //         return {
-    //             isSuccess: false,
-    //             message: 'Date range overlaps with existing course instance',
-    //             data: null,
-    //         };
-    //     }
-
-    //     const newCourseInstance = await CourseInstance.create(
-    //         {
-    //             courseId: courseInstanceData.courseId,
-    //             startDate: courseInstanceData.startDate,
-    //             endDate: courseInstanceData.endDate,
-    //             totalSessions: courseInstanceData.totalSessions,
-    //             launchStatus: courseInstanceData.launchStatus || 'Scheduled',
-    //             createdBy: courseInstanceData.createdBy,
-    //             updatedBy: courseInstanceData.updatedBy,
-    //         },
-    //         { transaction: t }
-    //     );
-
-    //     await t.commit();
-
-    //     // Fetch the created instance with its associations
-    //     const courseInstanceWithAssociations = await CourseInstance.findByPk(newCourseInstance.id, {
-    //         include: [
-    //             {
-    //                 model: Course,
-    //                 attributes: ['title', 'courseCode'],
-    //             },
-    //         ],
-    //     });
-
-    //     return {
-    //         isSuccess: true,
-    //         message: '',
-    //         data: courseInstanceWithAssociations,
-    //     };
-    // } catch (err) {
-    //     await t.rollback();
-    //     logger.error('addCourseInstanceAsync error:', err);
-    //     return { isSuccess: false, message: 'Failed to create course instance', data: null };
-    // }
-
-
-    const addCourseInstanceAsync = async courseInstanceData => {
-        // 1. 先查询课程是否存在（不需要事务）
+    const t = await sequelize.transaction();
+    try {
+        // Check if course exists
         const course = await Course.findByPk(courseInstanceData.courseId);
         if (!course) {
+            await t.rollback();
             return { isSuccess: false, message: 'Course not found', data: null };
         }
 
-        // 2. 现在开启事务（准备读写操作）
-        const t = await sequelize.transaction();
-        try {
-            // 3. 查询是否有时间重叠的课程实例，并加 FOR UPDATE 锁（防并发）
-            const [existingInstances] = await sequelize.query(
-                `SELECT * FROM CourseInstances
-                 WHERE courseId = ?
-                 AND (
-                     (startDate BETWEEN ? AND ?) OR
-                     (endDate BETWEEN ? AND ?)
-                 )
-                 FOR UPDATE`,
-                {
-                    replacements: [
-                        courseInstanceData.courseId,
-                        courseInstanceData.startDate,
-                        courseInstanceData.endDate,
-                        courseInstanceData.startDate,
-                        courseInstanceData.endDate,
-                    ],
-                    transaction: t,
-                }
-            );
-
-            if (existingInstances.length > 0) {
-                await t.rollback();
-                return {
-                    isSuccess: false,
-                    message: 'Date range overlaps with existing course instance',
-                    data: null,
-                };
-            }
-
-            // 4. 创建课程实例（事务内执行）
-            const newCourseInstance = await CourseInstance.create(
-                {
-                    courseId: courseInstanceData.courseId,
-                    startDate: courseInstanceData.startDate,
-                    endDate: courseInstanceData.endDate,
-                    totalSessions: courseInstanceData.totalSessions,
-                    launchStatus: courseInstanceData.launchStatus || 'Scheduled',
-                    createdBy: courseInstanceData.createdBy,
-                    updatedBy: courseInstanceData.updatedBy,
-                },
-                { transaction: t }
-            );
-
-            await t.commit();
-
-            // 5. 查询带关联数据（可以不在事务里查）
-            const courseInstanceWithAssociations = await CourseInstance.findByPk(newCourseInstance.id, {
-                include: [
+        // Check for overlapping dates with other instances of the same course
+        const existingInstances = await CourseInstance.findAll({
+            where: {
+                courseId: courseInstanceData.courseId,
+                [Op.or]: [
                     {
-                        model: Course,
-                        attributes: ['title', 'courseCode'],
+                        startDate: {
+                            [Op.between]: [
+                                courseInstanceData.startDate,
+                                courseInstanceData.endDate,
+                            ],
+                        },
+                    },
+                    {
+                        endDate: {
+                            [Op.between]: [
+                                courseInstanceData.startDate,
+                                courseInstanceData.endDate,
+                            ],
+                        },
                     },
                 ],
-            });
+            },
+        });
 
-            return {
-                isSuccess: true,
-                message: '',
-                data: courseInstanceWithAssociations,
-            };
-        } catch (err) {
+        if (existingInstances.length > 0) {
             await t.rollback();
-            logger.error('addCourseInstanceAsync error:', err);
-            return { isSuccess: false, message: 'Failed to create course instance', data: null };
+            return {
+                isSuccess: false,
+                message: 'Date range overlaps with existing course instance',
+                data: null,
+            };
         }
-    };
 
+        const newCourseInstance = await CourseInstance.create(
+            {
+                courseId: courseInstanceData.courseId,
+                startDate: courseInstanceData.startDate,
+                endDate: courseInstanceData.endDate,
+                totalSessions: courseInstanceData.totalSessions,
+                launchStatus: courseInstanceData.launchStatus || 'Scheduled',
+                createdBy: courseInstanceData.createdBy,
+                updatedBy: courseInstanceData.updatedBy,
+            },
+            { transaction: t }
+        );
+
+        await t.commit();
+
+        // Fetch the created instance with its associations
+        const courseInstanceWithAssociations = await CourseInstance.findByPk(newCourseInstance.id, {
+            include: [
+                {
+                    model: Course,
+                    attributes: ['title', 'courseCode'],
+                },
+            ],
+        });
+
+        return {
+            isSuccess: true,
+            message: '',
+            data: courseInstanceWithAssociations,
+        };
+    } catch (err) {
+        await t.rollback();
+        logger.error('addCourseInstanceAsync error:', err);
+        return { isSuccess: false, message: 'Failed to create course instance', data: null };
+    }
 };
+// const addCourseInstanceAsync = async courseInstanceData => {
+//     // 1. 先查询课程是否存在（不需要事务）
+//     const course = await Course.findByPk(courseInstanceData.courseId);
+//     if (!course) {
+//         return { isSuccess: false, message: 'Course not found', data: null };
+//     }
+
+//     // 2. 现在开启事务（准备读写操作）
+//     const t = await sequelize.transaction();
+//     try {
+//         // 3. 查询是否有时间重叠的课程实例，并加 FOR UPDATE 锁（防并发）
+//         const [existingInstances] = await sequelize.query(
+//             `SELECT * FROM CourseInstances
+//              WHERE courseId = ?
+//              AND (
+//                  (startDate BETWEEN ? AND ?) OR
+//                  (endDate BETWEEN ? AND ?)
+//              )
+//              FOR UPDATE`,
+//             {
+//                 replacements: [
+//                     courseInstanceData.courseId,
+//                     courseInstanceData.startDate,
+//                     courseInstanceData.endDate,
+//                     courseInstanceData.startDate,
+//                     courseInstanceData.endDate,
+//                 ],
+//                 transaction: t,
+//             }
+//         );
+
+//         if (existingInstances.length > 0) {
+//             await t.rollback();
+//             return {
+//                 isSuccess: false,
+//                 message: 'Date range overlaps with existing course instance',
+//                 data: null,
+//             };
+//         }
+
+//         // 4. 创建课程实例（事务内执行）
+//         const newCourseInstance = await CourseInstance.create(
+//             {
+//                 courseId: courseInstanceData.courseId,
+//                 startDate: courseInstanceData.startDate,
+//                 endDate: courseInstanceData.endDate,
+//                 totalSessions: courseInstanceData.totalSessions,
+//                 launchStatus: courseInstanceData.launchStatus || 'Scheduled',
+//                 createdBy: courseInstanceData.createdBy,
+//                 updatedBy: courseInstanceData.updatedBy,
+//             },
+//             { transaction: t }
+//         );
+
+//         await t.commit();
+
+//         // 5. 查询带关联数据（可以不在事务里查）
+//         const courseInstanceWithAssociations = await CourseInstance.findByPk(
+//             newCourseInstance.id,
+//             {
+//                 include: [
+//                     {
+//                         model: Course,
+//                         attributes: ['title', 'courseCode'],
+//                     },
+//                 ],
+//             }
+//         );
+
+//         return {
+//             isSuccess: true,
+//             message: '',
+//             data: courseInstanceWithAssociations,
+//         };
+//     } catch (err) {
+//         await t.rollback();
+//         logger.error('addCourseInstanceAsync error:', err);
+//         return { isSuccess: false, message: 'Failed to create course instance', data: null };
+//     }
+// };
 
 const getCourseInstanceByIdAsync = async id => {
     try {
@@ -175,15 +177,7 @@ const getCourseInstanceByIdAsync = async id => {
                 },
                 {
                     model: Session,
-                    attributes: ['id', 'sessionTitle', 'order'],
-                    include: [
-                        {
-                            model: sequelize.models.Media,
-                            as: 'media',
-                            attributes: ['id', 'fileType', 'fileName', 'filePath'],
-                            required: false,
-                        },
-                    ],
+                    attributes: ['id', 'sessionTitle', 'order', 'sessionDescription'],
                 },
             ],
         });
@@ -255,11 +249,11 @@ const updateCourseInstanceAsync = async (courseInstanceData, courseInstanceId) =
             const existingInstances = await CourseInstance.findAll({
                 where: {
                     courseId: courseInstance.courseId,
-                    id: { [sequelize.Op.ne]: courseInstanceId },
-                    [sequelize.Op.or]: [
+                    id: { [Op.ne]: courseInstanceId },
+                    [Op.or]: [
                         {
                             startDate: {
-                                [sequelize.Op.between]: [
+                                [Op.between]: [
                                     courseInstanceData.startDate || courseInstance.startDate,
                                     courseInstanceData.endDate || courseInstance.endDate,
                                 ],
@@ -267,7 +261,7 @@ const updateCourseInstanceAsync = async (courseInstanceData, courseInstanceId) =
                         },
                         {
                             endDate: {
-                                [sequelize.Op.between]: [
+                                [Op.between]: [
                                     courseInstanceData.startDate || courseInstance.startDate,
                                     courseInstanceData.endDate || courseInstance.endDate,
                                 ],
@@ -333,25 +327,21 @@ const deleteCourseInstanceAsync = async id => {
             return { isSuccess: false, message: 'Course instance not found', data: null };
         }
 
-        // Check if there are any sessions
-        const sessionCount = await Session.count({
+        // delete all sessions of the course instance
+        const deletedSessionsCount = await Session.destroy({
             where: { courseInstanceId: id },
             transaction: t,
         });
 
-        if (sessionCount > 0) {
-            await t.rollback();
-            return {
-                isSuccess: false,
-                message: 'Cannot delete course instance with existing sessions',
-                data: null,
-            };
-        }
-
+        // delete the course instance itself
         await courseInstance.destroy({ transaction: t });
         await t.commit();
 
-        return { isSuccess: true, message: '', data: courseInstance };
+        return {
+            isSuccess: true,
+            message: `Course instance and ${deletedSessionsCount} related sessions deleted successfully`,
+            data: courseInstance,
+        };
     } catch (err) {
         await t.rollback();
         logger.error('deleteCourseInstanceAsync error:', err);
@@ -362,21 +352,13 @@ const deleteCourseInstanceAsync = async id => {
 const bulkDeleteCourseInstancesAsync = async ids => {
     const t = await sequelize.transaction();
     try {
-        // Check if any of the instances have sessions
-        const instancesWithSessions = await Session.findAll({
+        // delete all sessions of the course instances
+        const deletedSessionsCount = await Session.destroy({
             where: { courseInstanceId: ids },
             transaction: t,
         });
 
-        if (instancesWithSessions.length > 0) {
-            await t.rollback();
-            return {
-                isSuccess: false,
-                message: 'Cannot delete course instances with existing sessions',
-                data: null,
-            };
-        }
-
+        // delete the course instances themselves
         const deletedCount = await CourseInstance.destroy({
             where: { id: ids },
             transaction: t,
@@ -388,7 +370,11 @@ const bulkDeleteCourseInstancesAsync = async ids => {
         }
 
         await t.commit();
-        return { isSuccess: true, message: '', data: { deletedCount } };
+        return {
+            isSuccess: true,
+            message: `${deletedCount} course instances and ${deletedSessionsCount} related sessions deleted successfully`,
+            data: { deletedInstancesCount: deletedCount, deletedSessionsCount },
+        };
     } catch (err) {
         await t.rollback();
         logger.error('bulkDeleteCourseInstancesAsync error:', err);
