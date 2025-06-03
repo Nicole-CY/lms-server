@@ -6,6 +6,7 @@ const router = express.Router();
 
 // upload
 router.post("/uploadMedia", upload.fields([{ name: "file" }, { name: "thumbnail" }]), (req, res) => {
+    console.log("Upload endpoint hit");
     try {
         const filePath = req.files?.file?.[0]?.path?.replace(/\\/g, "/");
         const thumbnailPath = req.files?.thumbnail?.[0]?.path?.replace(/\\/g, "/");
