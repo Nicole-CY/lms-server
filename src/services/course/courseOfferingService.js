@@ -2,9 +2,7 @@ const { Op } = require('sequelize');
 
 const { sequelize } = require('../../db/sequelizedb');
 const CourseOffering = require('../../models/courseOffering');
-const CourseInstance = require('../../models/courseInstance');
-const Course = require('../../models/course');
-const User = require('../../models/user');
+const { CourseInstance, Course, User, UserRole } = require('../../models');
 const { getPaginatedResults } = require('../../utils/pagination');
 const logger = require('../../common/logSetting');
 
@@ -50,7 +48,6 @@ const getCourseOfferingListAsync = async (page = 1, pageSize = 10, search = '') 
         ];
 
         if (search) {
-            // 放在 where，而不是 include.where
             where[Op.or].push(
                 { '$teacher.first_name$': { [Op.like]: `%${search}%` } },
                 { '$teacher.last_name$': { [Op.like]: `%${search}%` } },
@@ -59,7 +56,6 @@ const getCourseOfferingListAsync = async (page = 1, pageSize = 10, search = '') 
                 { student_capacity: { [Op.like]: `%${search}%` } }
             );
 
-            // 仅当 search 是合法时间再判断日期
             const parsedDate = Date.parse(search);
             if (!isNaN(parsedDate)) {
                 where[Op.or].push(
@@ -68,7 +64,7 @@ const getCourseOfferingListAsync = async (page = 1, pageSize = 10, search = '') 
                 );
             }
         } else {
-            delete where[Op.or]; // 没搜索就删掉空条件
+            delete where[Op.or];
         }
 
         const result = await getPaginatedResults(CourseOffering, {
@@ -102,6 +98,89 @@ const getCourseOfferingListAsync = async (page = 1, pageSize = 10, search = '') 
     } catch (error) {
         logger.error('getCourseOfferingListAsync error:', error);
         return { isSuccess: false, message: 'Server error', data: null };
+    }
+};
+
+const getTeacherOptionsAsync = async () => {
+    try {
+        if (!User.associations.userRoles) {
+            throw new Error('UserRole is not associated with User. Check model definitions.');
+        }
+
+        const teachers = await User.findAll({
+            include: [
+                {
+                    model: UserRole,
+                    as: 'userRoles',
+                    where: { roleId: 3 },
+                    attributes: [],
+                    required: true,
+                },
+            ],
+            attributes: ['id', 'firstName', 'lastName'],
+            limit: 100,
+        });
+
+        if (!teachers || teachers.length === 0) {
+            console.warn('No teachers found with roleId=3. Check database records.');
+        }
+
+        const options = teachers.map(teacher => ({
+            id: teacher.id,
+            label: `${teacher.firstName} ${teacher.lastName}`,
+        }));
+
+        return {
+            isSuccess: true,
+            data: options,
+        };
+    } catch (error) {
+        logger.error('Error in getTeacherOptionsAsync:', {
+            message: error.message,
+            stack: error.stack,
+            sequelizeError: error.original,
+        });
+        return {
+            isSuccess: false,
+            message: 'Failed to fetch teachers',
+            debug: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        };
+    }
+};
+
+const getCourseInstanceOptionsAsync = async () => {
+    try {
+        const courseInstances = await CourseInstance.findAll({
+            include: [
+                {
+                    model: Course,
+                    attributes: ['title'],
+                },
+            ],
+            attributes: ['id', 'courseId', 'startDate', 'endDate'],
+            order: [['startDate', 'DESC']],
+        });
+
+        const options = courseInstances.map(instance => {
+            const formatDate = iso => new Date(iso).toISOString().split('T')[0];
+            const title = instance.Course?.title || `Course #${instance.courseId}`;
+
+            return {
+                id: instance.id,
+                label: `${title} (${formatDate(instance.startDate)} to ${formatDate(instance.endDate)})`,
+            };
+        });
+
+        return {
+            isSuccess: true,
+            data: options,
+        };
+    } catch (error) {
+        logger.error('Error in getCourseInstanceOptionsAsync:', error);
+        return {
+            isSuccess: false,
+            message: 'Failed to fetch course instances',
+        };
     }
 };
 
@@ -242,4 +321,6 @@ module.exports = {
     addCourseOfferingAsync,
     updateCourseOfferingByIdAsync,
     deleteCourseOfferingByIdAsync,
+    getCourseInstanceOptionsAsync,
+    getTeacherOptionsAsync,
 };

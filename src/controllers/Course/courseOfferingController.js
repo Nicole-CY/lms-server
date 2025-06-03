@@ -38,6 +38,33 @@ const getCourseOfferingListAsync = async (req, res) => {
     }
 };
 
+const getCourseOfferingOptionsAsync = async (req, res) => {
+    try {
+        const [courseInstancesRes, teachersRes] = await Promise.all([
+            CourseOfferingService.getCourseInstanceOptionsAsync(),
+            CourseOfferingService.getTeacherOptionsAsync(),
+        ]);
+
+        if (!courseInstancesRes.isSuccess || !teachersRes.isSuccess) {
+            return res.status(500).json({
+                message: 'Failed to fetch options',
+                details: {
+                    courseInstances: courseInstancesRes.message,
+                    teachers: teachersRes.message,
+                },
+            });
+        }
+
+        res.json({
+            courseInstances: courseInstancesRes.data,
+            teachers: teachersRes.data,
+        });
+    } catch (err) {
+        logger.error('getCourseOfferingOptionsAsync error:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 const addCourseOfferingAsync = async (req, res) => {
     try {
         const {
@@ -152,4 +179,5 @@ module.exports = {
     addCourseOfferingAsync,
     deleteCourseOfferingByIdAsync,
     updateCourseOfferingByIdAsync,
+    getCourseOfferingOptionsAsync,
 };
