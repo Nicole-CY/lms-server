@@ -2,6 +2,7 @@ const { Op } = require('sequelize');
 
 const { sequelize } = require('../../db/sequelizedb');
 const CourseNotification = require('../../models/courseNotification');
+const { User, CourseOffering, CourseInstance, Course } = require('../../models');
 const { getPaginatedResults } = require('../../utils/pagination');
 const logger = require('../../common/logSetting');
 
@@ -22,11 +23,14 @@ const getCourseNotificationByIdAsync = async id => {
 // Get course notifications list with pagination
 const getCourseNotificationListAsync = async (page = 1, pageSize = 10, search = '') => {
     try {
-        const where = search
-            ? {
-                  recipient_id: parseInt(search, 10),
-              }
-            : {};
+        const where = {};
+
+        if (search) {
+            const userId = parseInt(search, 10);
+            if (!isNaN(userId)) {
+                where.recipient_id = userId;
+            }
+        }
 
         const result = await getPaginatedResults(CourseNotification, {
             page,
@@ -34,10 +38,103 @@ const getCourseNotificationListAsync = async (page = 1, pageSize = 10, search = 
             where,
         });
 
-        return result;
+        return {
+            isSuccess: true,
+            data: result,
+        };
     } catch (error) {
-        logger.error('getCourseNotificationListAsync error:', error);
+        logger.error('getCourseNotificationListAsync error:', {
+            message: error.message,
+            stack: error.stack,
+        });
+
         return { isSuccess: false, message: 'Server error', data: null };
+    }
+};
+
+const getUserOptionsAsync = async () => {
+    try {
+        const users = await User.findAll({
+            attributes: ['id', 'firstName', 'lastName'],
+        });
+
+        const options = users.map(user => ({
+            id: user.id,
+            label: `${user.firstName} ${user.lastName}`,
+        }));
+
+        return {
+            isSuccess: true,
+            data: options,
+        };
+    } catch (error) {
+        logger.error('Error in getUserOptionsAsync:', {
+            message: error.message,
+            stack: error.stack,
+        });
+        return {
+            isSuccess: false,
+            message: 'Failed to fetch users',
+        };
+    }
+};
+
+const getCourseOfferingOptionsAsync = async () => {
+    try {
+        const offerings = await CourseOffering.findAll({
+            include: [
+                {
+                    model: CourseInstance,
+                    include: [
+                        {
+                            model: Course,
+                            attributes: ['title'],
+                        },
+                    ],
+                    attributes: ['id'],
+                },
+                {
+                    model: User,
+                    as: 'teacher',
+                    attributes: ['firstName', 'lastName'],
+                },
+            ],
+            attributes: ['id', 'startDate', 'endDate'],
+            order: [['startDate', 'DESC']],
+        });
+
+        const formatDate = date => {
+            if (!date) return '';
+            return new Date(date).toISOString().split('T')[0];
+        };
+
+        const options = offerings.map(offering => {
+            const courseTitle = offering.CourseInstance?.Course?.title || 'Untitled Course';
+            const teacherName = offering.teacher
+                ? `${offering.teacher.firstName} ${offering.teacher.lastName}`
+                : 'Unknown Teacher';
+            const startDate = formatDate(offering.startDate);
+            const endDate = formatDate(offering.endDate);
+
+            return {
+                id: offering.id,
+                label: `${courseTitle} - ${teacherName} (${startDate} to ${endDate})`,
+            };
+        });
+
+        return {
+            isSuccess: true,
+            data: options,
+        };
+    } catch (error) {
+        logger.error('Error in getCourseOfferingOptionsAsync:', {
+            message: error.message,
+            stack: error.stack,
+        });
+        return {
+            isSuccess: false,
+            message: 'Failed to fetch course offerings',
+        };
     }
 };
 
@@ -102,4 +199,6 @@ module.exports = {
     addCourseNotificationAsync,
     updateCourseNotificationByIdAsync,
     deleteCourseNotificationByIdAsync,
+    getCourseOfferingOptionsAsync,
+    getUserOptionsAsync,
 };

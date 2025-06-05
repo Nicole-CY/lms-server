@@ -51,6 +51,44 @@ router.get(
 
 /**
  * @openapi
+ * '/api/courseNotifications/options':
+ *  get:
+ *     tags:
+ *     - CourseNotification
+ *     summary: Get notification options (users and course offerings)
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       label:
+ *                         type: string
+ *                 courseOfferings:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       label:
+ *                         type: string
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get('/options', courseNotificationController.getNotificationOptionsAsync);
+
+/**
+ * @openapi
  * '/api/courseNotifications/detail':
  *  get:
  *     tags:

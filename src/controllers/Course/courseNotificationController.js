@@ -39,6 +39,33 @@ const getCourseNotificationListAsync = async (req, res) => {
     }
 };
 
+const getNotificationOptionsAsync = async (req, res) => {
+    try {
+        const [usersRes, courseOfferingsRes] = await Promise.all([
+            CourseNotificationService.getUserOptionsAsync(),
+            CourseNotificationService.getCourseOfferingOptionsAsync(),
+        ]);
+
+        if (!usersRes.isSuccess || !courseOfferingsRes.isSuccess) {
+            return res.status(500).json({
+                message: 'Failed to fetch options',
+                details: {
+                    users: usersRes.message,
+                    courseOfferings: courseOfferingsRes.message,
+                },
+            });
+        }
+
+        res.json({
+            users: usersRes.data,
+            courseOfferings: courseOfferingsRes.data,
+        });
+    } catch (err) {
+        logger.error('getNotificationOptionsAsync error:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 const addCourseNotificationAsync = async (req, res) => {
     try {
         const { recipient_id, course_offering_id, message, status } = req.body;
@@ -122,4 +149,5 @@ module.exports = {
     addCourseNotificationAsync,
     updateCourseNotificationByIdAsync,
     deleteCourseNotificationByIdAsync,
+    getNotificationOptionsAsync,
 };
