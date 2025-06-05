@@ -11,6 +11,7 @@ const {
     getSessionsByCourseInstanceIdValidator,
     getSessionListValidator,
     deleteSessionValidator,
+    reorderSessionValidator,
 } = require('../validator/sessionValidator');
 
 // Add session
@@ -322,5 +323,11 @@ router.put('/:id', commonValidate(updateSessionValidator), sessionController.upd
  *         description: Server Error
  */
 router.delete('/:id', commonValidate(deleteSessionValidator), sessionController.deleteSessionAsync);
+
+router.post(
+    '/reorder',
+    commonValidate(reorderSessionValidator),
+    sessionController.reorderSessionAsync
+);
 
 module.exports = router;
