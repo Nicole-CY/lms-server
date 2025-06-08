@@ -90,7 +90,7 @@ const addMenuAsync = async (req, res) => {
 
 // Update menu by id
 const updateMenuByIdAsync = async (req, res) => {
-    const id = parseInt(req.query.id, 10);
+    const id = parseInt(req.params.id, 10);
     const newMenuData = req.body;
 
     const checkMenuNameResult = await menuService.getMenuByNameAsync(newMenuData.menuName);

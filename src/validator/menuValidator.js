@@ -50,8 +50,8 @@ const addMenuValidator = [
         .isLength({ max: 50 })
         .withMessage('Menu name must not exceed 50 characters'),
     body('routePath')
-        .notEmpty()
-        .withMessage('Route path is required')
+        .optional()
+        .customSanitizer(value => (value === null ? undefined : value))
         .isString()
         .withMessage('Route path must be a string')
         .isLength({ max: 255 })
@@ -62,14 +62,15 @@ const addMenuValidator = [
         .withMessage('Parent ID must be a positive integer'),
     body('componentPath')
         .optional()
+        .customSanitizer(value => (value === null ? undefined : value))
         .isString()
         .withMessage('Component path must be a string')
         .isLength({ max: 255 })
         .withMessage('Component path must not exceed 255 characters'),
     body('menuType')
         .optional()
-        .isIn(['page', 'button', 'group'])
-        .withMessage('Menu type must be one of page, button, or group'),
+        .isIn(['page', 'button', 'menuItem', 'subMenu'])
+        .withMessage('Menu type must be one of page, button, menuItem or subMenu'),
     body('sortOrder')
         .optional()
         .isInt({ min: 0 })
@@ -82,6 +83,7 @@ const addMenuValidator = [
         .withMessage('Permission must not exceed 100 characters'),
     body('icon')
         .optional()
+        .customSanitizer(value => (value === null ? undefined : value))
         .isString()
         .withMessage('Icon must be a string')
         .isLength({ max: 100 })
@@ -90,7 +92,7 @@ const addMenuValidator = [
 
 // Update menu by id
 const updateMenuByIdValidator = [
-    query('id')
+    param('id')
         .notEmpty()
         .withMessage('Menu ID is required')
         .isInt({ min: 1 })
