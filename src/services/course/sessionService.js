@@ -2,6 +2,7 @@ const { Op } = require('sequelize');
 
 const { sequelize } = require('../../db/sequelizedb');
 const Session = require('../../models/session');
+const Media = require('../../models/sessionMedia');
 const logger = require('../../common/logSetting');
 const { getPaginatedResults } = require('../../utils/pagination');
 
@@ -76,6 +77,12 @@ const getSessionsByCourseInstanceIdAsync = async courseInstanceId => {
         const sessions = await Session.findAll({
             where: { courseInstanceId },
             order: [['order', 'DESC']],
+            include: [
+                {
+                    model: Media,
+                    as: 'media',
+                },
+            ],
         });
 
         return {

@@ -79,7 +79,10 @@ const Media = sequelize.define(
 );
 
 Media.associate = function (models) {
-    Media.belongsTo(models.Session, { foreignKey: 'sessionId' });
+    Media.belongsTo(models.Session, {
+        foreignKey: 'sessionId',
+        as: 'session',
+    });
 };
 
 module.exports = Media;
