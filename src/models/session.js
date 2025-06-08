@@ -75,6 +75,10 @@ const Session = sequelize.define(
 
 Session.associate = function (models) {
     Session.belongsTo(models.CourseInstance, { foreignKey: 'courseInstanceId' });
+    Session.hasMany(models.Media, {
+        foreignKey: 'sessionId',
+        as: 'media',
+    });
 };
 
 module.exports = Session;
