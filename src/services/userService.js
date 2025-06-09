@@ -7,8 +7,6 @@ const { getPaginatedResults } = require('../utils/pagination');
 
 // Get user list
 const getUserListAsync = async (page = 1, pageSize = 10, searchTerm = '') => {
-    const cacheKey = `user:list:page=${page}:size=${pageSize}`;
-
     try {
         const where = searchTerm
             ? {
@@ -24,32 +22,6 @@ const getUserListAsync = async (page = 1, pageSize = 10, searchTerm = '') => {
         console.log('🔍 [UserService] SearchTerm:', searchTerm);
         console.log('🔍 [UserService] WHERE condition:', JSON.stringify(where, null, 2));
 
-        // use cache only when there is no search term
-        if (!searchTerm) {
-            const result = await cache(cacheKey, 300, async () => {
-                return await getPaginatedResults(User, {
-                    where,
-                    page,
-                    pageSize,
-                    attributes: { exclude: ['password'] },
-                    include: [
-                        {
-                            model: Role,
-                            attributes: ['roleName'],
-                            through: { attributes: [] },
-                        },
-                    ],
-                });
-            });
-
-            return {
-                isSuccess: true,
-                message: 'Success (cached)',
-                data: result,
-            };
-        }
-
-        // skip cache when there is a search term
         const result = await getPaginatedResults(User, {
             where,
             page,
@@ -66,7 +38,7 @@ const getUserListAsync = async (page = 1, pageSize = 10, searchTerm = '') => {
 
         return {
             isSuccess: true,
-            message: 'Success (no-cache)',
+            message: 'Success',
             data: result,
         };
     } catch (error) {
@@ -135,7 +107,6 @@ const getUserByEmailAsync = async (email, includePassword = false) => {
                 },
             ],
         });
-        
 
         if (!user) {
             return {
