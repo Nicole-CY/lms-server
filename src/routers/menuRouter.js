@@ -195,7 +195,7 @@ router.post('/', commonValidate(addMenuValidator), menuController.addMenuAsync);
  *                example: Dashboard
  *              menuType:
  *                type: string
- *                enum: [page, group, link, button]
+ *                enum: [page, subMenu, menuItem, button]
  *                example: page
  *              sortOrder:
  *                type: integer
