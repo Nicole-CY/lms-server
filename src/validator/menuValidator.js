@@ -121,8 +121,8 @@ const updateMenuByIdValidator = [
         .withMessage('Component path must not exceed 255 characters'),
     body('menuType')
         .optional()
-        .isIn(['page', 'button', 'group'])
-        .withMessage('Menu type must be one of page, button, or group'),
+        .isIn(['page', 'button', 'subMenu', 'menuItem'])
+        .withMessage('Menu type must be one of page, button, menuItem, or subMenu'),
     body('sortOrder')
         .optional()
         .isInt({ min: 0 })
