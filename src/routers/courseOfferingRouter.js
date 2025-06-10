@@ -97,6 +97,44 @@ router.get(
 
 /**
  * @openapi
+ * '/api/courseOfferings/options':
+ *  get:
+ *     tags:
+ *     - CourseOffering
+ *     summary: Get course offering options (course instances and teachers)
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 courseInstances:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       label:
+ *                         type: string
+ *                 teachers:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       label:
+ *                         type: string
+ *       500:
+ *         description: Internal Server Error
+ */
+router.get('/options', courseOfferingController.getCourseOfferingOptionsAsync);
+
+/**
+ * @openapi
  * '/api/courseOfferings/add':
  *  post:
  *     tags:

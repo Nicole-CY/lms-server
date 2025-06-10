@@ -46,10 +46,16 @@ const Media = sequelize.define(
             allowNull: false,
             field: 'uploader_id',
             references: {
-                model: "user",
-                key: "id",
+                model: 'user',
+                key: 'id',
             },
             onDelete: 'CASCADE',
+        },
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+            field: 'created_at',
         },
         updatedAt: {
             type: DataTypes.DATE,
@@ -73,7 +79,10 @@ const Media = sequelize.define(
 );
 
 Media.associate = function (models) {
-    Media.belongsTo(models.Session, { foreignKey: 'sessionId' });
+    Media.belongsTo(models.Session, {
+        foreignKey: 'sessionId',
+        as: 'session',
+    });
 };
 
 module.exports = Media;

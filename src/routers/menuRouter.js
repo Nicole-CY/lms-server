@@ -159,14 +159,14 @@ router.post('/', commonValidate(addMenuValidator), menuController.addMenuAsync);
 
 /**
  * @openapi
- * '/api/menus/updateMenuById':
+ * '/api/menus/{id}':
  *  put:
  *     tags:
  *     - Menu Controller
  *     summary: Update menu by ID
  *     parameters:
  *       - name: id
- *         in: query
+ *         in: path
  *         required: true
  *     security:
  *       - BearerAuth: []
@@ -195,7 +195,7 @@ router.post('/', commonValidate(addMenuValidator), menuController.addMenuAsync);
  *                example: Dashboard
  *              menuType:
  *                type: string
- *                enum: [page, group, link, button]
+ *                enum: [page, subMenu, menuItem, button]
  *                example: page
  *              sortOrder:
  *                type: integer
@@ -219,11 +219,7 @@ router.post('/', commonValidate(addMenuValidator), menuController.addMenuAsync);
  *      500:
  *        description: Server Error
  */
-router.put(
-    '/updateMenuById',
-    commonValidate(updateMenuByIdValidator),
-    menuController.updateMenuByIdAsync
-);
+router.put('/:id', commonValidate(updateMenuByIdValidator), menuController.updateMenuByIdAsync);
 
 /**
  * @openapi

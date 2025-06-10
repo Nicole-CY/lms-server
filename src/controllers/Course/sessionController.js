@@ -100,6 +100,7 @@ const updateSessionAsync = async (req, res) => {
         session.id = req.body.id;
         session.courseInstanceId = req.body.courseInstanceId;
         session.sessionTitle = req.body.sessionTitle;
+        session.sessionDescription = req.body.sessionDescription;
         session.order = req.body.order;
         session.updatedBy = req.body.updatedBy;
 
@@ -133,6 +134,24 @@ const deleteSessionAsync = async (req, res) => {
     }
 };
 
+/**
+ * Reorder Session
+ */
+const reorderSessionAsync = async (req, res) => {
+    try {
+        const { courseInstanceId, order } = req.body;
+        const result = await sessionService.reorderSessionAsync(courseInstanceId, order);
+
+        if (result.isSuccess) {
+            res.sendCommonValue({}, 'Sessions reordered successfully', 1, 200);
+        } else {
+            res.sendCommonValue({}, result.message, 0, 400);
+        }
+    } catch (err) {
+        res.sendCommonValue({}, err.message || 'Internal Server Error', 0, 500);
+    }
+};
+
 module.exports = {
     addSessionAsync,
     getSessionByIdAsync,
@@ -140,4 +159,5 @@ module.exports = {
     getSessionListAsync,
     updateSessionAsync,
     deleteSessionAsync,
+    reorderSessionAsync,
 };

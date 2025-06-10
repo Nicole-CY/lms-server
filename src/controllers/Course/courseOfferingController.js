@@ -20,7 +20,12 @@ const getCourseOfferingListAsync = async (req, res) => {
     try {
         const page = parseInt(req.params.page, 10) || 1;
         const pageSize = parseInt(req.params.pageSize, 10) || 10;
-        const result = await CourseOfferingService.getCourseOfferingListAsync(page, pageSize);
+        const search = req.query.search || '';
+        const result = await CourseOfferingService.getCourseOfferingListAsync(
+            page,
+            pageSize,
+            search
+        );
 
         if (result.isSuccess) {
             res.sendCommonValue(result.data, 'Course offering list retrieved', 1);
@@ -30,6 +35,33 @@ const getCourseOfferingListAsync = async (req, res) => {
     } catch (error) {
         console.error('Error in getCourseOfferingListAsync:', error);
         res.sendCommonValue({}, 'Internal Server Error', 0);
+    }
+};
+
+const getCourseOfferingOptionsAsync = async (req, res) => {
+    try {
+        const [courseInstancesRes, teachersRes] = await Promise.all([
+            CourseOfferingService.getCourseInstanceOptionsAsync(),
+            CourseOfferingService.getTeacherOptionsAsync(),
+        ]);
+
+        if (!courseInstancesRes.isSuccess || !teachersRes.isSuccess) {
+            return res.status(500).json({
+                message: 'Failed to fetch options',
+                details: {
+                    courseInstances: courseInstancesRes.message,
+                    teachers: teachersRes.message,
+                },
+            });
+        }
+
+        res.json({
+            courseInstances: courseInstancesRes.data,
+            teachers: teachersRes.data,
+        });
+    } catch (err) {
+        logger.error('getCourseOfferingOptionsAsync error:', err);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
@@ -147,4 +179,5 @@ module.exports = {
     addCourseOfferingAsync,
     deleteCourseOfferingByIdAsync,
     updateCourseOfferingByIdAsync,
+    getCourseOfferingOptionsAsync,
 };

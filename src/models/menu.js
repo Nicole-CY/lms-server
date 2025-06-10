@@ -30,7 +30,7 @@ const Menu = sequelize.define(
         routePath: {
             type: DataTypes.STRING,
             field: 'route_path',
-            allowNull: false,
+            allowNull: true,
         },
         componentPath: {
             type: DataTypes.STRING,
