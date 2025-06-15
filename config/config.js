@@ -15,6 +15,7 @@ module.exports = {
         password: mysqlConfig.password,
         database: mysqlConfig.database,
         dialect: 'mysql',
+        dialectModule: require('mysql2'),
         migrationStorageTableName: 'sequelize_meta',
         dialectOptions: {
             charset: 'utf8mb4',
@@ -29,6 +30,7 @@ module.exports = {
         password: mysqlConfig.password,
         database: mysqlConfig.database,
         dialect: 'mysql',
+        dialectModule: require('mysql2'),
         migrationStorageTableName: 'sequelize_meta',
         dialectOptions: {
             charset: 'utf8mb4',

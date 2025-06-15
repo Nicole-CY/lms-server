@@ -6,6 +6,7 @@ const sequelize = new Sequelize(mysqlConfig.database, mysqlConfig.user, mysqlCon
     port: mysqlConfig.port,
     dialect:
         'mysql' /* one of 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql' | 'db2' | 'snowflake' | 'oracle' */,
+    dialectModule: require('mysql2'),
     define: {
         underscored: true,
         freezeTableName: true,
