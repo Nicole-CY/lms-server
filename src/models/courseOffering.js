@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 
 const { sequelize } = require('../db/sequelizedb');
 
-const CourseInstance = require('./CourseInstance');
+const CourseInstance = require('./courseInstance.js');
 const User = require('./User');
 
 const CourseOffering = sequelize.define(
