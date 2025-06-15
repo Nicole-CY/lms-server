@@ -1,8 +1,8 @@
 const winston = require('winston');
 require('winston-daily-rotate-file');
 
-const isLocal = process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'staging';
-
+// const isLocal = process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'staging';
+const isLocal = false;
 // Define transports
 const transports = [];
 
