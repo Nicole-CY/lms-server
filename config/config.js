@@ -33,6 +33,6 @@ module.exports = {
         dialectOptions: {
             charset: 'utf8mb4',
         },
-        logginh: false,
+        logging: false,
     },
 };
